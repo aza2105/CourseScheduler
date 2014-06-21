@@ -13,7 +13,7 @@ public class Utility {
 	}
 	
 	// Return the utility value of a semester full of section objects
-	private static double checkUtility(ArrayList <Section> section, Preferences prefs){
+	private static double getUtility(ArrayList <Section> section, Preferences prefs){
 		/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
 		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
 		 * 3 - Class Timing Preferences (30 - Day, 100 - Night, 0 - DC), # Courses to Take
