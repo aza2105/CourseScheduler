@@ -1,4 +1,4 @@
-course,section,pts,days,start,end,last,first,middle
+#course,section,pts,days,start,end,last,first,middle
 COMS W1001,001,3,INTRO TO INFORMATION SCIENCE,MW,1140,1255,Xie,Boyi,,
 COMS W1004,001,3,INTRO-COMPUT SCI/PROGRAM-JAVA,MW,1610,1725,Cannon,Adam,H,
 COMS W1005,001,3,INTRO-COMPUT SCI/PROG-MATLAB,MW,1010,1125,Vovsha,Ilia,,
