@@ -20,6 +20,16 @@ public class Main {
 	public static void main(String[] args) {
 
 		parseUserInput(args);
+		// Input file test
+		/*System.out.println("COURSES ALREADY TAKEN: ");
+		for(int i = 0; i < prefs.getCoursesTaken().size(); i++){
+			System.out.println(prefs.getCoursesTaken().get(i));
+		}
+		for(int i = 0; i < prefs.getNumCoursesPerSem().length; i++){
+			System.out.println("Semester " + i + ": " + prefs.getNumCoursesPerSem(i));
+		}
+		System.out.println("DayNightVal = " + prefs.getDayNight());
+		*/
 		
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();

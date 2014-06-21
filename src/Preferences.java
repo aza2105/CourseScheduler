@@ -30,22 +30,22 @@ public class Preferences {
 	}
 	
 	// Return the entire array of courses per semester index
-	private int [] getNumCoursesPerSem(){
+	public int [] getNumCoursesPerSem(){
 		return numCoursesPerSem;
 	}
 		
 	// Return the number of courses requested by the user per the given semester.
-	private int getNumCoursesPerSem(int generation){
+	public int getNumCoursesPerSem(int generation){
 		return numCoursesPerSem[generation];
 	}
 	
 	// Return the user preferences for day or night classes
-	private int getDayNight(){
+	public int getDayNight(){
 		return dayNight;
 	}
 	
 	// Return the array list containing the courses taken (COMS W4701, ELEN 6261, etc.)
-	private ArrayList <String> getCoursesTaken(){
+	public ArrayList <String> getCoursesTaken(){
 		return coursesTaken;
 	}
 }
