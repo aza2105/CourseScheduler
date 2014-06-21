@@ -44,7 +44,8 @@ public class Main {
 		
 		// A maximum of one parameter is allowed (the file location/name).
 		if(userInput.length > 1){
-			System.out.println("Too many parameters. Please only include preferences file");
+			System.out.println("Too many parameters. Please only include preferences file.");
+			System.exit(1);
 		}
 		
 		// If there are no parameters, assume the default settings for preferences/courses taken.
@@ -86,6 +87,9 @@ public class Main {
 			} catch (IOException e) {
 				System.out.println("IO Exception. Exiting program.");
 				System.exit(1);
+			} catch (IllegalArgumentException e) {
+			      System.out.println("Invalid input file! Exiting program.");
+			      System.exit(1);
 			}
 		}
 	}
