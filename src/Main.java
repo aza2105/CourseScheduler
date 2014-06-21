@@ -11,6 +11,8 @@ public class Main {
 		parseUserInput(args);
 		
 		Parser parser = new Parser(Track.SECURITY);
+		parser.parseAll();
+		
 		
 		parser.parseAll();
 	}
