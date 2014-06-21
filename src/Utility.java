@@ -13,7 +13,7 @@ public class Utility {
 	}
 	
 	// Return the utility value of a semester full of section objects
-	private static double checkUtility(ArrayList <Section> section){
+	private static double checkUtility(ArrayList <Section> section, Preferences prefs){
 		/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
 		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
 		 * 3 - Class Timing Preferences (30 - Day, 100 - Night, 0 - DC), # Courses to Take
@@ -23,6 +23,8 @@ public class Utility {
 		double tempUtil = 0;
 		// Initial value for the requirement of a course
 		double requiredVal = 0;
+		// Initial value for day/night class preferences
+		int dayNightVal = 0;
 		
 		// Successively check and add the value of each sections utility to the total utility
 		// of the semester
@@ -45,8 +47,19 @@ public class Utility {
 			// Compute the utility for requirement points
 			requiredVal = section.get(i).getRequired() * 75;
 			
+			// Add the utility for user preferences
+			if(prefs.dayNight == 0){
+				dayNightVal = 30;
+			}
+			else if(prefs.dayNight == 1){
+				dayNightVal = 100;
+			}
+			else if(prefs.dayNight == 2){
+				dayNightVal = 0;
+			}
+			
 			// Sum the components of the utility
-			tempUtil = tempUtil + nuggetVal;
+			tempUtil = tempUtil + nuggetVal + dayNightVal;
 		}
 				
 		return totalUtility;

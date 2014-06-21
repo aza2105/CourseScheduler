@@ -16,6 +16,11 @@ public class Preferences {
 		dayNight = 2; // Initially set for don't care
 	}
 	
+	public Preferences(int [] numCoursesPerSem, int dayNight){
+		this.numCoursesPerSem = numCoursesPerSem;
+		this.dayNight = dayNight;
+	}
+	
 	// Return the number of courses requested by the user per the given semester.
 	private int getNumCoursesPerSem(int generation){
 		return numCoursesPerSem[generation];
