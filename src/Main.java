@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 
 public class Main {
@@ -36,6 +37,9 @@ public class Main {
 			
 			} catch (FileNotFoundException e) {
 				System.out.println("File not found. Exiting program.");
+				System.exit(1);
+			} catch (IOException e) {
+				System.out.println("IO Exception. Exiting program.")
 				System.exit(1);
 			}
 		}

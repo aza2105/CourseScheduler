@@ -25,4 +25,9 @@ public class Preferences {
 	private int getNumCoursesPerSem(int generation){
 		return numCoursesPerSem[generation];
 	}
+	
+	// Return the user preferences for day or night classes
+	private int getDayNight(){
+		return dayNight;
+	}
 }
