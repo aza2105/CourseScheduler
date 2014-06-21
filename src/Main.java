@@ -31,6 +31,7 @@ public class Main {
 		}
 		// If there is one argument, assume it is the location of input file.
 		else if(args.length == 1){
+			// Adds the preferences from the user input into a Preferences object 'prefs'
 			Preferences.parseUserInput(args);
 		}
 		// Input file test
@@ -44,6 +45,8 @@ public class Main {
 		}
 		System.out.println("DayNightVal = " + Preferences.prefs.getDayNight());
 		*/
+		
+		// Adds the instructor csv data into a static ArrayList 'instructorList'
 		Instructor.parseUserInput("instructors.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
