@@ -7,12 +7,14 @@ public class Course {
 	private int credits;
 	private int startTime;
 	private int endTime;
+	private double requiredValue;
 	
 	public Course(String t, String n, char o) {
 		
 		title = t;
 		number = n;
 		offered = o;
+		requiredValue = 0;
 	}
 	
 	public void setCredits(int a) {
@@ -31,6 +33,7 @@ public class Course {
 		return title + ": " + number + " for " + credits + " credit hours" + "\n";
 	}
 	
+
 	public boolean equals(Course c) {
 		
 		if (this.number.equals(c.number))
@@ -39,5 +42,13 @@ public class Course {
 		return false;
 	}
 	
+
+	public void setRequired(double r){
+		requiredValue = r;
+	}
+	
+	public double getRequired() {
+		return requiredValue;
+	}
 
 }
