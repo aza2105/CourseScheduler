@@ -61,7 +61,8 @@ public class Parser {
 			int group2 = 0;
 			int group3 = 0;
 			
-			
+			//Cycles through the file once to count the number of courses
+			//that are each contained in the 3 groups, to calculate requirement
 			while( (line = input.readLine()) != null) {
 				
 				if(line.contains("group 1 courses")) {
@@ -84,6 +85,8 @@ public class Parser {
 					group3++;
 			}
 			input.close();
+			
+			//now we'll pull the actual courses out
 			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
 			String in = null;
 			
@@ -95,16 +98,17 @@ public class Parser {
 					
 					for (int j = 0; j < course.size(); j++) {
 						
-						if(i[0].equals(course.get(j).getID()))
+						if(i[0].equals(course.get(j).getID())) //If the course is in there, set the boolean
 							isIn = true;
 					}
 					if (isIn == false) {
-						Course c = new Course("",i[0], i[1].charAt(0));
+						Course c = new Course("Lorem Ipsum",i[0], i[1].charAt(0));
 						c.setCredits(3);
 						course.add(c);
 					}
 				}
-			}
+			}//end while
+			
 			/*
 			System.out.println("Updated List:");
 			for(int i = 0; i < course.size(); i++) {
