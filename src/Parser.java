@@ -36,11 +36,11 @@ public class Parser {
 				mycourse.setCredits(Integer.parseInt(dataLine[3]));
 				course.add(mycourse);
 			}
-			
+			/*
 			for(int i = 0; i < course.size(); i++) {
 				System.out.print(course.get(i));
 			}
-			
+			*/
 			input.close();
 			
 		}
@@ -91,21 +91,26 @@ public class Parser {
 			while((in = read.readLine()) != null) {
 				String[] i = in.split(",");
 				boolean isIn = false;
-				if(i[0].matches("[A-Z]{4}.+\\d{4}")) {
-					//we have a course to add to the list
+				if(i[0].matches("[A-Z]{4}.+\\d{4}")) { //If we find a course, we want to see if we need to add it
+					
 					for (int j = 0; j < course.size(); j++) {
+						
 						if(i[0].equals(course.get(j).getID()))
 							isIn = true;
 					}
-					if (isIn == false)
-						course.add(new Course("",i[0], 'T'));
+					if (isIn == false) {
+						Course c = new Course("",i[0], i[1].charAt(0));
+						c.setCredits(3);
+						course.add(c);
+					}
 				}
 			}
+			/*
 			System.out.println("Updated List:");
 			for(int i = 0; i < course.size(); i++) {
 				System.out.print(course.get(i));
 			}
-			
+			*/
 			read.close();
 			
 		}

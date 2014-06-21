@@ -14,6 +14,10 @@ CLASSES = \
 	  Semester.java \
 	  Utility.java	\
 	  Instructor.java \
+	  Preferences.java \
+	  Course.java \
+	  CourseReview.java \
+	  Scheduler.java \
 	  Track.java
 
 default: classes
