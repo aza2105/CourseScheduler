@@ -29,6 +29,7 @@ public class Main {
 		else if(args.length == 0){
 			Preferences prefs = new Preferences();
 		}
+		// If there is one argument, assume it is the location of input file.
 		else if(args.length == 1){
 			Preferences.parseUserInput(args);
 		}
@@ -43,7 +44,7 @@ public class Main {
 		}
 		System.out.println("DayNightVal = " + Preferences.prefs.getDayNight());
 		*/
-		
+		Instructor.parseUserInput("instructors.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 	}	

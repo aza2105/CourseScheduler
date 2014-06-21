@@ -70,7 +70,7 @@ public class Preferences {
 		// If the length of the input is 1, the parameter should be the preferences file location.
 		if (userInput.length == 1){
 			String fileLocation = userInput[0];
-			String line = "";
+			String line = null;
 			
 			// Open a buffered/file reader to read the input file.
 			try {
@@ -95,6 +95,7 @@ public class Preferences {
 				prefs = new Preferences(numCoursesPerSem, dayNight, coursesTaken);
 				br.close();
 				
+				// Catch the exceptions and print the corresponding results.
 			} catch (FileNotFoundException e) {
 				System.out.println("File not found. Exiting program.");
 				System.exit(1);
