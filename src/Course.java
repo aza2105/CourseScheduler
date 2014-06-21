@@ -31,5 +31,13 @@ public class Course {
 		return title + ": " + number + " for " + credits + " credit hours" + "\n";
 	}
 	
+	public boolean equals(Course c) {
+		
+		if (this.number.equals(c.number))
+			return true;
+		
+		return false;
+	}
+	
 
 }
