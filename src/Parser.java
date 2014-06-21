@@ -64,12 +64,18 @@ public class Parser {
 			
 			while( (line = input.readLine()) != null) {
 				
-				if(line.contains("group 1"))
+				if(line.contains("group 1 courses")) {
 					whichGroup = 1;
-				if(line.contains("group 2"))
+					continue;
+				}
+				if(line.contains("group 2")) {
 					whichGroup = 2;
-				if(line.contains("group 3"))
+					continue; 
+				}
+				if(line.contains("group 3")) {
 					whichGroup = 3;
+					continue;
+				}
 				if(whichGroup == 1) //We're counting Group 1
 					group1++;
 				if(whichGroup == 2)
