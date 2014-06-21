@@ -39,7 +39,7 @@ public class Main {
 				System.out.println("File not found. Exiting program.");
 				System.exit(1);
 			} catch (IOException e) {
-				System.out.println("IO Exception. Exiting program.")
+				System.out.println("IO Exception. Exiting program.");
 				System.exit(1);
 			}
 		}
