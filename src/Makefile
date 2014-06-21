@@ -13,6 +13,7 @@ CLASSES = \
 	  Section.java \
 	  Semester.java \
 	  Utility.java	\
+	  Instructor.java \
 	  Track.java
 
 default: classes
