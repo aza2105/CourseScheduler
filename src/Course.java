@@ -17,6 +17,11 @@ public class Course {
 		requiredValue = 0;
 	}
 	
+	public String getID() {
+		
+		return number;
+	}
+	
 	public void setCredits(int a) {
 		
 		credits = a;

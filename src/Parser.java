@@ -83,11 +83,30 @@ public class Parser {
 				if(whichGroup == 3)
 					group3++;
 			}
+			input.close();
+			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
+			String in = null;
 			
-			System.out.println(group1);
-			System.out.println(group2);
-			System.out.println(group3);
 			
+			while((in = read.readLine()) != null) {
+				String[] i = in.split(",");
+				boolean isIn = false;
+				if(i[0].matches("[A-Z]{4}.+\\d{4}")) {
+					//we have a course to add to the list
+					for (int j = 0; j < course.size(); j++) {
+						if(i[0].equals(course.get(j).getID()))
+							isIn = true;
+					}
+					if (isIn == false)
+						course.add(new Course("",i[0], 'T'));
+				}
+			}
+			System.out.println("Updated List:");
+			for(int i = 0; i < course.size(); i++) {
+				System.out.print(course.get(i));
+			}
+			
+			read.close();
 			
 		}
 		catch(Exception e) {
