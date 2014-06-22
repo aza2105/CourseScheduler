@@ -17,6 +17,7 @@ public class Parser {
 		
 		importData(track);
 		parseBreadthRequirements();
+		parseRequirements(track);
 		
 	}
 	
@@ -123,6 +124,49 @@ public class Parser {
 			System.exit(1);
 		}
 		
+		
+	}
+	
+	public void parseRequirements(String filename) {
+		
+		filename += "Reqs";
+		Requirements reqs = new Requirements();
+		
+		try {
+			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
+			String in = null;
+			boolean required = false;
+			boolean looseReqs = false;
+			
+			while( (in = read.readLine()) != null) {
+				
+				String[] s = in.split(",");
+				
+				if (s[0].equals("Required")) {
+					required = true;
+					looseReqs = false;
+				}
+				
+				if (s[0].equals("Number of following courses required")) {
+					looseReqs = true;
+					required = false;
+					reqs.setChooseBetweenNum(Integer.parseInt(s[1]));
+				}
+				
+				if (required) {
+					reqs.addRequiredClass(new Course(s[1],s[0], 'T'));
+				}
+				if (looseReqs) {
+					reqs.addLooseRequirement(new Course(s[1],s[0], 'T'));
+				}
+			}//end while
+			
+			reqs.printRequirements();
+		}
+		catch(Exception e) {
+			System.out.println(e);
+			System.exit(1);
+		}
 		
 	}
 	
