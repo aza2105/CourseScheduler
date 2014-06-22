@@ -12,7 +12,6 @@ public class Semester
 
     private LinkedList<Section> sections;
     private int depth; //depth = distance from origin semester
-    //private int MAXSIZE;
 
     /*
      * semesterNumber is an int that is defined as follows:
@@ -21,11 +20,10 @@ public class Semester
      * this system does not handle summer semesters for now
      */
     private int semesterID; 
-    
-    
     private int semesterYear;
     
-    //constructor
+    
+    //constructors
     public Semester()
     {
     	
@@ -74,7 +72,26 @@ public class Semester
     //successor method to generate next semester
     public Semester getNextSemester()
     {
-    	return new Semester();	
+    	int nextSemesterID = -1;
+    	int nextSemesterYear = -1;
+    	
+    	//if current semester is a fall semester
+    	if (semesterID == 0)
+    	{
+    		nextSemesterID = 1;
+    		nextSemesterYear = semesterYear + 1;
+    	}
+    	//else if current semester is a spring semester
+    	else if (semesterID == 1)
+    	{
+    		nextSemesterID = 0;
+    		nextSemesterYear = semesterYear;
+    	}
+    	
+    	//choose next semester's sections
+    	LinkedList<Section> nextSemesterSections = new LinkedList<Section>();
+    	
+    	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections);	
     }
     
 }
