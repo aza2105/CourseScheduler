@@ -24,12 +24,14 @@ public class Semester
         sections = new LinkedList<Section>();
     }
     
-    public int getDepth 
+    public int getDepth() 
     {
     	return depth;
     }
     
-    public void setSections()
+    public void setSections(){
+    	
+    }
     public LinkedList<Section> getSections() 
     {
     	return sections;
