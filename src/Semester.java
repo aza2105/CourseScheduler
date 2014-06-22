@@ -69,8 +69,9 @@ public class Semester
     	sections = newSections;
     }
     
+    //TBD
     //successor method to generate next semester
-    public Semester getNextSemester()
+    public Semester generateNextSemester()
     {
     	int nextSemesterID = -1;
     	int nextSemesterYear = -1;
