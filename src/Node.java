@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class Node 
 {
@@ -7,21 +7,31 @@ public class Node
 	//the previous semester
 	private Node parentNode;
 	
+	
+	
+	
+	//public Node(Semester semester, )
+	
+	
+	
+	
 	// provide a textual representation of a Node object
 	public String toString()
 	{
 		if (semester != null)
 		{
-			LinkedList<sections> semesterSections = semester.getSections();
+			LinkedList<Section> semesterSections = semester.getSections();
 			for (Section s : semesterSections)
 			{
 				System.out.print(s);
+				return null;
 			}
 		}
 		else
 		{
 			return null;
 		}
+		return null;
 	}
 	
 	public Semester getSemester()
@@ -43,5 +53,16 @@ public class Node
 	{
 		this.parentNode = parentNode;
 	}
+	
+	public boolean isGoalNode()
+	{
+		return true;
+	}
+	
+	public String getOperatorName()
+	{
+		return "";
+	}
+	//public void 
 	
 }

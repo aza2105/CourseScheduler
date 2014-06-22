@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Scheduler 
 {
     /*
@@ -18,10 +20,10 @@ public class Scheduler
      */
 
 
-	public static Semester generateSemester() 
-	{
+	//public static Semester generateSemester() 
+	//{
 		
-	}
+	//}
 	
 	public static String depthFirstSearch(Node theNode, int depth)
 	{
@@ -39,7 +41,7 @@ public class Scheduler
 		// check if this node is the goal node
 		if (theNode != null)
 		{
-			if (theNode.getState() != null)
+			if (theNode.getSemester() != null)
 			{
 				// goal test on the node
 				if (theNode.isGoalNode())
