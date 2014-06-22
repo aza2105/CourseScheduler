@@ -3,7 +3,7 @@ import java.util.*;
 public class Node 
 {
 	private Semester semester;
-	private Node parentNode; ////the previous semester's node
+	private Node parentNode; //the previous semester's node
 		
 	//constructor
 	public Node(Semester semester, Node parentNode)
@@ -19,7 +19,7 @@ public class Node
 		 * if the semester for the current node is not null
 		 */
 		if (semester != null)
-			return new Node(semester.getNextSemester(), this);
+			return new Node(semester.generateNextSemester(), this);
 		else
 			return null;
 	}

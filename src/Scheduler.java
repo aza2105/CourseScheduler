@@ -19,11 +19,6 @@ public class Scheduler
      *
      */
 
-
-	//public static Semester generateSemester() 
-	//{
-		
-	//}
 	
 	public static String depthFirstSearch(Node theNode, int depth)
 	{
