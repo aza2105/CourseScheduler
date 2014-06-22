@@ -11,32 +11,70 @@ public class Semester
 {
 
     private LinkedList<Section> sections;
-    
-    //depth = distance from origin semester
-    private int depth;
-    
-    private int MAXSIZE;
+    private int depth; //depth = distance from origin semester
+    //private int MAXSIZE;
 
-    public Semester(int i) 
+    /*
+     * semesterNumber is an int that is defined as follows:
+     * for fall, semesterID = 0
+     * for spring, semesterID = 1
+     * this system does not handle summer semesters for now
+     */
+    private int semesterID; 
+    
+    
+    private int semesterYear;
+    
+    //constructor
+    public Semester()
     {
-
-        MAXSIZE = i;
-        sections = new LinkedList<Section>();
+    	
     }
+    
+    public Semester(int semesterID, int semesterYear, LinkedList<Section> sections) 
+    {
+    	this.semesterID = semesterID;
+    	this.semesterYear = semesterYear;
+    	this.sections = sections;
+    	
+    }
+    
+    public int getSemesterID()
+    {
+    	return semesterID;
+    }
+    
+    public void setSemesterID(int semesterID)
+    {
+    	this.semesterID = semesterID;
+    }
+    
     
     public int getDepth() 
     {
     	return depth;
     }
     
-    public void setSections(){
-    	
+    public void setDepth(int depth)
+    {
+    	this.depth = depth;
     }
+    
     public LinkedList<Section> getSections() 
     {
     	return sections;
     }
     
+    //decide which sections will be added to this semester object
+    public void setSections()
+    {
+    	
+    }
     
-
+    //successor method to generate next semester
+    public Semester getNextSemester()
+    {
+    	return new Semester();	
+    }
+    
 }

@@ -6,14 +6,20 @@ public class Node
 	
 	//the previous semester
 	private Node parentNode;
+		
+	public Node(Semester semester, Node parentNode)
+	{
+		this.semester = semester;
+		this.parentNode = parentNode;
+	}
 	
-	
-	
-	
-	//public Node(Semester semester, )
-	
-	
-	
+	public Node getSuccessorNode()
+	{
+		if (semester != null)
+			return new Node(semester.getNextSemester(), this);
+		else
+			return null;
+	}
 	
 	// provide a textual representation of a Node object
 	public String toString()
