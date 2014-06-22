@@ -6,6 +6,7 @@ import java.util.regex.*;
 public class Parser {
 	
 	private static ArrayList<Course> course;
+	static Requirements reqs = new Requirements();
 	private String track;
 	
 	public Parser(String t) {
@@ -58,18 +59,11 @@ public class Parser {
 		try {	
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
 			String line = null;
-			Requirements reqs = new Requirements();
+			Rule rule = null;
 
 			
 			while( (line = input.readLine()) != null) {
-				
-				String[] tokens = line.split(",");
-				
-				if (tokens[0].equals("RULE") && tokens[2].equals("1")) {
-
-				}
-
-				
+					
 			}
 			
 			
