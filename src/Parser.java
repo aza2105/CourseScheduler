@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.regex.*;
 public class Parser {
 	
@@ -17,7 +18,7 @@ public class Parser {
 		
 		importData(track);
 		parseBreadthRequirements();
-		parseRequirements(track);
+		//parseRequirements(track);
 		
 	}
 	
@@ -57,67 +58,22 @@ public class Parser {
 		try {	
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
 			String line = null;
-			int whichGroup = 0;
-			int group1 = 0;
-			int group2 = 0;
-			int group3 = 0;
+			Requirements reqs = new Requirements();
+
 			
-			//Cycles through the file once to count the number of courses
-			//that are each contained in the 3 groups, to calculate requirement
 			while( (line = input.readLine()) != null) {
 				
-				if(line.contains("group 1 courses")) {
-					whichGroup = 1;
-					continue;
+				String[] tokens = line.split(",");
+				
+				if (tokens[0].equals("RULE") && tokens[2].equals("1")) {
+
 				}
-				if(line.contains("group 2")) {
-					whichGroup = 2;
-					continue; 
-				}
-				if(line.contains("group 3")) {
-					whichGroup = 3;
-					continue;
-				}
-				if(whichGroup == 1) //We're counting Group 1
-					group1++;
-				if(whichGroup == 2)
-					group2++;
-				if(whichGroup == 3)
-					group3++;
+
+				
 			}
+			
+			
 			input.close();
-			
-			//now we'll pull the actual courses out
-			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
-			String in = null;
-			
-			
-			while((in = read.readLine()) != null) {
-				String[] i = in.split(",");
-				boolean isIn = false;
-				if(i[0].matches("[A-Z]{4}.+\\d{4}")) { //If we find a course, we want to see if we need to add it
-					
-					for (int j = 0; j < course.size(); j++) {
-						
-						if(i[0].equals(course.get(j).getID())) //If the course is in there, set the boolean
-							isIn = true;
-					}
-					if (isIn == false) {
-						Course c = new Course("Lorem Ipsum",i[0], i[1].charAt(0));
-						c.setCredits(3);
-						course.add(c);
-					}
-				}
-			}//end while
-			
-			/*
-			System.out.println("Updated List:");
-			for(int i = 0; i < course.size(); i++) {
-				System.out.print(course.get(i));
-			}
-			*/
-			read.close();
-			
 		}
 		catch(Exception e) {
 			System.out.println(e);
@@ -135,41 +91,7 @@ public class Parser {
 		try {
 			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
 			String in = null;
-			boolean required = false;
-			boolean looseReqs = false;
-			
-			while( (in = read.readLine()) != null) {
-				
-				String[] s = in.split(",");
-				
-				if (s[0].equals("Required")) {
-					required = true;
-					looseReqs = false;
-					continue;
-				}
-				
-				if (s[0].equals("Number of following courses required")) {
-					looseReqs = true;
-					required = false;
-					reqs.setChooseBetweenNum(Integer.parseInt(s[1]));
-					continue;
-				}
-				
-				if (s[0].equals("Minimum number of 6000 courses required")) {
-					reqs.set6000Level(Integer.parseInt(s[1]));
-					continue;
-				}
-				
-				if (required) {
-					reqs.addRequiredClass(new Course(s[1],s[0], 'T'));
-				}
-				if (looseReqs) {
-					reqs.addLooseRequirement(new Course(s[1],s[0], 'T'));
-				}
-				
-			}//end while
-			
-			reqs.printRequirements();
+			//parsing logic goes here
 		}
 		catch(Exception e) {
 			System.out.println(e);

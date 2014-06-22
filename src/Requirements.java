@@ -15,6 +15,11 @@ public class Requirements {
 		
 		req6000 = i;
 	}
+	
+	public void addRule(Rule r) {
+		
+		ruleList.add(r);
+	}
 
 	
 

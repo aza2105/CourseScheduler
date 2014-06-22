@@ -8,4 +8,9 @@ public class Rule {
 		
 		rule.add(c);
 	}
+	
+	public void addCourseList(LinkedList<Course> list) {
+		
+		rule = list;
+	}
 }

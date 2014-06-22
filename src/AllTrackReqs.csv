@@ -1,5 +1,5 @@
 Total Required Credits:,30
-Minimum number of following group 1 courses required,1
+RULE,Minimum number of following group 1 courses required,1
 COMS W4111,B
 COMS W4112,S
 COMS W4115,B
@@ -16,7 +16,7 @@ CSEE W4824,F
 CSEE W4840,S
 EECS 4340,F
 COMS W4444,F
-Minimum number of following group 2 courses required,1
+RULE,Minimum number of following group 2 courses required,1
 COMS W4203,S
 COMS W4205,F
 CSOR W4231,B
@@ -25,7 +25,7 @@ COMS W4241,S
 COMS W4252,T
 COMS W4261,T
 COMS W4281,T
-Minimum number of following group 3 courses required,1
+RULE,Minimum number of following group 3 courses required,1
 COMS W4701,B
 COMS W4705,F
 COMS W4706,S
