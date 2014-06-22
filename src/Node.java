@@ -3,18 +3,21 @@ import java.util.*;
 public class Node 
 {
 	private Semester semester;
-	
-	//the previous semester
-	private Node parentNode;
+	private Node parentNode; ////the previous semester's node
 		
+	//constructor
 	public Node(Semester semester, Node parentNode)
 	{
 		this.semester = semester;
 		this.parentNode = parentNode;
 	}
 	
-	public Node getSuccessorNode()
+	public Node generateSuccessorNode()
 	{
+		/*
+		 * only generate a new successor node for the current node
+		 * if the semester for the current node is not null
+		 */
 		if (semester != null)
 			return new Node(semester.getNextSemester(), this);
 		else
@@ -24,20 +27,18 @@ public class Node
 	// provide a textual representation of a Node object
 	public String toString()
 	{
+		String nodeString = "";
+		
 		if (semester != null)
 		{
 			LinkedList<Section> semesterSections = semester.getSections();
 			for (Section s : semesterSections)
 			{
-				System.out.print(s);
-				return null;
+				nodeString += s+"\t";
 			}
 		}
-		else
-		{
-			return null;
-		}
-		return null;
+		
+		return nodeString;
 	}
 	
 	public Semester getSemester()

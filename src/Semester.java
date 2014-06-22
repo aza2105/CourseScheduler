@@ -63,10 +63,10 @@ public class Semester
     	return sections;
     }
     
-    //decide which sections will be added to this semester object
-    public void setSections()
+    //not sure if we need this
+    public void setSections(LinkedList<Section> newSections)
     {
-    	
+    	sections = newSections;
     }
     
     //successor method to generate next semester
