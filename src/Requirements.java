@@ -65,6 +65,11 @@ public class Requirements {
 			System.out.println(c);
 	}
 	
+	public void set6000Level(int i) {
+		
+		req6000 = i;
+	}
+	
 	public boolean reqsMet(LinkedList<Course> taken) {
 		
 		int totalCredits = 0;

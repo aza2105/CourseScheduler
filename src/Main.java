@@ -49,7 +49,7 @@ public class Main {
 		// Adds the instructor csv data into a static ArrayList of instructors - 'instructorList'
 		Instructor.parseUserInput("instructors.csv");
 		// Adds the instructor csv data into a static ArrayList of courses - 'historicalCourseList'
-		HistoricalData.parseUserInput("historical.csv");
+		//HistoricalData.parseUserInput("historical.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 	}	

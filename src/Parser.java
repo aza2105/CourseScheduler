@@ -129,7 +129,7 @@ public class Parser {
 	
 	public void parseRequirements(String filename) {
 		
-		filename += "Reqs";
+		filename += "Reqs.csv";
 		Requirements reqs = new Requirements();
 		
 		try {
@@ -145,12 +145,19 @@ public class Parser {
 				if (s[0].equals("Required")) {
 					required = true;
 					looseReqs = false;
+					continue;
 				}
 				
 				if (s[0].equals("Number of following courses required")) {
 					looseReqs = true;
 					required = false;
 					reqs.setChooseBetweenNum(Integer.parseInt(s[1]));
+					continue;
+				}
+				
+				if (s[0].equals("Minimum number of 6000 courses required")) {
+					reqs.set6000Level(Integer.parseInt(s[1]));
+					continue;
 				}
 				
 				if (required) {
@@ -159,6 +166,7 @@ public class Parser {
 				if (looseReqs) {
 					reqs.addLooseRequirement(new Course(s[1],s[0], 'T'));
 				}
+				
 			}//end while
 			
 			reqs.printRequirements();
