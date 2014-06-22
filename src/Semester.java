@@ -10,9 +10,9 @@ import java.util.*;
 public class Semester 
 {
 
+	//instance variables
     private LinkedList<Section> sections;
     private int depth; //depth = distance from origin semester
-
     /*
      * semesterNumber is an int that is defined as follows:
      * for fall, semesterID = 0
@@ -35,6 +35,37 @@ public class Semester
     	this.semesterYear = semesterYear;
     	this.sections = sections;
     	
+    }
+    
+    //methods
+    //returns semester name as a string
+    public String getSemesterName()
+    {
+    	String semesterName = "";
+    	if (semesterID == 0)
+    	{
+    		semesterName += "FALL ";
+    	}
+    	else if (semesterID == 1)
+    	{
+    		semesterName += "SPRING ";
+    	}
+    	
+    	semesterName += semesterYear;
+    	return semesterName;
+    }
+    
+    //returns string representation of semester state
+    public String toString()
+    {
+    	String semesterString = getSemesterName();
+    	
+    	for(Section s:sections)
+    	{
+    		semesterString += "," + s;
+    	}
+    	
+    	return semesterString;
     }
     
     public int getSemesterID()
@@ -91,6 +122,8 @@ public class Semester
     	
     	//choose next semester's sections
     	LinkedList<Section> nextSemesterSections = new LinkedList<Section>();
+    	
+    	
     	
     	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections);	
     }

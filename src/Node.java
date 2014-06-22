@@ -24,6 +24,7 @@ public class Node
 			return null;
 	}
 	
+	/*
 	// provide a textual representation of a Node object
 	public String toString()
 	{
@@ -31,6 +32,18 @@ public class Node
 		
 		if (semester != null)
 		{
+			Node currentNode = this;
+			
+			//keep traversing nodes up the tree until you reach the root
+			while (currentNode.parentNode != null)
+			{
+				
+				
+				
+				
+			}
+			
+			
 			LinkedList<Section> semesterSections = semester.getSections();
 			for (Section s : semesterSections)
 			{
@@ -40,6 +53,8 @@ public class Node
 		
 		return nodeString;
 	}
+	
+	*/
 	
 	public Semester getSemester()
 	{

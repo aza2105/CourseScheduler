@@ -2,7 +2,7 @@ public class Course {
 
 	private String title;
 	private String courseID;
-	private char offered; // semester typically offered
+	private char offered; // semester typically offered: F(Fall), S(Spring), B(Both), T(Indeterminate)
 	private int credits;
 	private int startTime;
 	private int endTime;
