@@ -31,7 +31,7 @@ public class Main {
 		}
 		// If there is one argument, assume it is the location of input file.
 		else if(args.length == 1){
-			// Adds the preferences from the user input into a Preferences object 'prefs'
+			// Adds the preferences from the user input into a static Preferences object - 'prefs'
 			Preferences.parseUserInput(args);
 		}
 		// Input file test
@@ -46,8 +46,10 @@ public class Main {
 		System.out.println("DayNightVal = " + Preferences.prefs.getDayNight());
 		*/
 		
-		// Adds the instructor csv data into a static ArrayList 'instructorList'
+		// Adds the instructor csv data into a static ArrayList of instructors - 'instructorList'
 		Instructor.parseUserInput("instructors.csv");
+		// Adds the instructor csv data into a static ArrayList of courses - 'historicalCourseList'
+		HistoricalData.parseUserInput("historical.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 	}	
