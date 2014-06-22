@@ -1,7 +1,7 @@
 public class Course {
 
 	private String title;
-	private String number;
+	private String courseID;
 	private char offered; // semester typically offered
 	private int credits;
 	private int startTime;
@@ -19,19 +19,19 @@ public class Course {
 
 	private double requiredValue;
 
-	public Course(String t, String n, char o) {
+	public Course(String title, String courseID, char offered) {
 
-		title = t;
-		number = n;
-		offered = o;
+		this.title = title;
+		this.courseID = courseID;
+		this.offered = offered;
 		requiredValue = 0;
 	}
 
-	public Course(String number, int year, String semester, int section,
+	public Course(String courseID, int year, String semester, int section,
 			int credits, String title, String daysOffered, int startTime,
 			int endTime, Instructor instructor, int enrolled, int enrolledMax,
 			String enrollDate) {
-		this.number = number;
+		this.courseID = courseID;
 		this.year = year;
 		this.semester = semester;
 		this.section = section;
@@ -48,7 +48,7 @@ public class Course {
 
 	public String getID() {
 
-		return number;
+		return courseID;
 	}
 
 	public void setCredits(int a) {
@@ -65,13 +65,13 @@ public class Course {
 
 	public String toString() {
 
-		return title + ": " + number + " for " + credits + " credit hours"
+		return title + ": " + courseID + " for " + credits + " credit hours"
 				+ "\n";
 	}
 
 	public boolean equals(Course c) {
 
-		if (this.number.equals(c.number))
+		if (this.courseID.equals(c.courseID))
 			return true;
 
 		return false;
