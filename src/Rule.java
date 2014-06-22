@@ -13,4 +13,10 @@ public class Rule {
 		
 		rule = list;
 	}
+	
+	public void printRule() {
+		
+		for(Course c : rule)
+			System.out.println(c);
+	}
 }

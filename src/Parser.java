@@ -63,11 +63,23 @@ public class Parser {
 
 			
 			while( (line = input.readLine()) != null) {
-					
+				
+				String[] tokens = line.split(",");
+				if (tokens[0].equals("RULE")) { //starting a RULE
+					if (rule != null) {
+						Parser.reqs.addRule(rule);
+					}
+					rule = new Rule();
+					continue;
+				}
+				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
+					rule.addCourseRule(new Course("Lorem Ipsum", tokens[0], tokens[1].charAt(0)));;
+				}	
 			}
-			
+			reqs.addRule(rule); //to add the final rule that it otherwise would've missed
 			
 			input.close();
+			reqs.printRules();
 		}
 		catch(Exception e) {
 			System.out.println(e);

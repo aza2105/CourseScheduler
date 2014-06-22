@@ -20,6 +20,14 @@ public class Requirements {
 		
 		ruleList.add(r);
 	}
+	
+	public void printRules() {
+		
+		for(Rule r : ruleList) {
+			System.out.println("RULE::");
+			r.printRule();
+		}
+	}
 
 	
 
