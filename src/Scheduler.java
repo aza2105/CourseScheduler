@@ -18,7 +18,7 @@ public class Scheduler
      */
 
 
-	public static Semester generateSemester 
+	public static Semester generateSemester() 
 	{
 		
 	}
