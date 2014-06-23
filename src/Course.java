@@ -19,8 +19,12 @@ public class Course {
 
 	private double requiredValue;
 
+	public Course(String title, String courseID) {
+		this.title = title;
+		this.courseID = courseID;
+	}
+	
 	public Course(String title, String courseID, char offered) {
-
 		this.title = title;
 		this.courseID = courseID;
 		this.offered = offered;
