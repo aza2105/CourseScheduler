@@ -5,13 +5,13 @@ import java.util.LinkedList;
 import java.util.regex.*;
 public class Parser {
 	
-	private static ArrayList<Course> course;
+	private static LinkedList<Course> course;
 	static Requirements reqs = new Requirements();
 	private String track;
 	
 	public Parser(String t) {
 		
-		course = new ArrayList<Course>();
+		course = new LinkedList<Course>();
 		track = t;
 	}
 	
@@ -23,6 +23,7 @@ public class Parser {
 		
 	}
 	
+	//TODO: Need to parse this into rules properly, and reformat the csv file accordingly
 	public void importData(String track) {
 		
 		track = track + "Courses.csv";
@@ -54,6 +55,7 @@ public class Parser {
 		
 	}
 	
+	//TODO: Add the final rule that has the entirety of the breadth requirements (take one additional from any group)
 	public void parseBreadthRequirements() {
 		
 		try {	
@@ -77,6 +79,7 @@ public class Parser {
 				}	
 			}
 			reqs.addRule(rule); //to add the final rule that it otherwise would've missed
+			//TODO: FIX THE LINE ABOVE TO BE LESS HACKY
 			
 			input.close();
 			reqs.printRules();
@@ -97,7 +100,7 @@ public class Parser {
 		try {
 			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
 			String in = null;
-			//parsing logic goes here
+			//TODO: New rule parsing logic goes here
 		}
 		catch(Exception e) {
 			System.out.println(e);

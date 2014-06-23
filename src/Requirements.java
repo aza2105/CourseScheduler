@@ -28,6 +28,20 @@ public class Requirements {
 			r.printRule();
 		}
 	}
+	
+	//TODO: Need to ensure that this captures all rules.
+	public int rulesMet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
+		
+		int total = 0;
+		
+		for(int i = 0; i < ruleList.size(); i++) {
+			
+			if (ruleList.get(i).isRuleMet(completed) )
+				total++;
+		}//end for
+		
+		return ruleList.size() - total;
+	}
 
 	
 
