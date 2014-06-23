@@ -1,7 +1,4 @@
-/**
- * @author aalsyed
- *
- */
+
 public class CourseReview
 {
 	//instance variables

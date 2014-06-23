@@ -21,6 +21,7 @@ public class Semester
      */
     private int semesterID; 
     private int semesterYear;
+    private Semester parentSemester; //previous semester aka parent in the tree
     
     
     //constructors
@@ -29,11 +30,12 @@ public class Semester
     	
     }
     
-    public Semester(int semesterID, int semesterYear, LinkedList<Section> sections) 
+    public Semester(int semesterID, int semesterYear, LinkedList<Section> sections, Semester parentSemester) 
     {
     	this.semesterID = semesterID;
     	this.semesterYear = semesterYear;
     	this.sections = sections;
+    	this.parentSemester = parentSemester;
     	
     }
     
@@ -100,10 +102,20 @@ public class Semester
     	sections = newSections;
     }
     
+    /*
+     * this method returns true if for a given semester schedule, the 
+     * student would have compl
+     */
+    public boolean alreadyTaken(Section givenSection)
+    {
+    	return true;
+    }
+    
     //TBD
     //successor method to generate next semester
     public Semester generateNextSemester()
     {
+    	//initialize to invalid values
     	int nextSemesterID = -1;
     	int nextSemesterYear = -1;
     	
@@ -123,9 +135,13 @@ public class Semester
     	//choose next semester's sections
     	LinkedList<Section> nextSemesterSections = new LinkedList<Section>();
     	
-    	
-    	
-    	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections);	
+    	/*
+    	 * populate next semester's sections
+    	 * we need to ensure that a course that has already been taken 
+    	 * is not scheduled again. Also, only courses that meet the 
+    	 * degree requirements should be scheduled.
+    	 */    	
+    	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections, this);	
     }
     
 }
