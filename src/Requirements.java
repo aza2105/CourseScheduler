@@ -30,7 +30,7 @@ public class Requirements {
 	}
 	
 	//TODO: Need to ensure that this captures all rules.
-	public int rulesMet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
+	public int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
 		
 		int total = 0;
 		
