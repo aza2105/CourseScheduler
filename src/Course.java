@@ -1,5 +1,9 @@
 public class Course {
 
+	/*TODO: consider speedups in comparisons by creating an internal standardized identifier for
+	 * each course that would be [Course Code][4digits]. These could be sorted and therefore a
+	 * binary search could be used instead of all the linear searches that we're using now
+	 * */
 	private String title;
 	private String courseID;
 	private char offered; // semester typically offered: F(Fall), S(Spring), B(Both), T(Indeterminate)
