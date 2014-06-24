@@ -41,15 +41,19 @@ public class HistoricalData {
 			// Catch the exceptions and print the corresponding results.
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found. Exiting program.");
+			System.out.println(line);
 			System.exit(1);
 		} catch (IOException e) {
 			System.out.println("IO Exception. Exiting program.");
+			System.out.println(line);
 			System.exit(1);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Array Index Out of Bounds. Exiting program.");
+			System.out.println(line);
 			System.exit(1);
 		} catch (NumberFormatException e) {
 			System.out.println("Number Format Exception. Exiting program.");
+			System.out.println(line);
 			System.exit(1);
 		}
 	}
