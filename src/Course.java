@@ -34,6 +34,12 @@ public class Course {
 		this.offered = offered;
 		requiredValue = 0;
 	}
+	
+	public Course(String title, String courseID, char offered, int credits) {
+		
+		this(title,courseID,offered);
+		this.credits = credits;
+	}
 
 	public Course(String courseID, int year, String semester, int section,
 			int credits, String title, String daysOffered, int startTime,
