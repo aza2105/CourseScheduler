@@ -3,15 +3,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HistoricalData {
 	private static ArrayList<Course> historicalCourseList;
-
+	private static HashMap<String,Course> courseMap;
+	
 	// Method to parse the historical data list from the csv file and store
 	// course data in an ArrayList.
-	public static void parseUserInput(String fileLocation){
+	public static HashMap<String,Course> parseUserInput(String fileLocation){
 		// Initialize instructor list and null string.
 		historicalCourseList = new ArrayList <Course>();
+		courseMap = new HashMap<String,Course>();
 		String line = null;
 		
 		// Open a buffered/file reader to read the input file.
@@ -29,18 +32,42 @@ public class HistoricalData {
 						}
 					}
 					// Add the historical course information to the list of historical courses.
-					historicalCourseList.add(new Course(dataLine[0], Integer.parseInt(dataLine[1]), dataLine[2], Integer.parseInt(dataLine[3]),
+//					historicalCourseList.add(new Course(dataLine[0], Integer.parseInt(dataLine[1]), dataLine[2], Integer.parseInt(dataLine[3]),
+//							Integer.parseInt(dataLine[4]), dataLine[5], dataLine[6], Integer.parseInt(dataLine[7]),
+//							Integer.parseInt(dataLine[8]), new Instructor(null, dataLine[10], dataLine[9], dataLine[11], 0), Integer.parseInt(dataLine[12]), Integer.parseInt(dataLine[13]),
+//							dataLine[14]));
+
+					// course already in hash? update the course object
+					if ( courseMap.containsKey( dataLine[0] )) {
+						
+						Course current = courseMap.get( dataLine[0] );
+						
+						current.update( dataLine[0], Integer.parseInt(dataLine[1]), dataLine[2], Integer.parseInt(dataLine[3]),
 							Integer.parseInt(dataLine[4]), dataLine[5], dataLine[6], Integer.parseInt(dataLine[7]),
 							Integer.parseInt(dataLine[8]), new Instructor(null, dataLine[10], dataLine[9], dataLine[11], 0), Integer.parseInt(dataLine[12]), Integer.parseInt(dataLine[13]),
-							dataLine[14]));
+							dataLine[14]);
+						
+						
+					}
+					else {
+						// create a course object and add it to our return hash
+						Course c = new Course(dataLine[0], Integer.parseInt(dataLine[1]), dataLine[2], Integer.parseInt(dataLine[3]),
+							Integer.parseInt(dataLine[4]), dataLine[5], dataLine[6], Integer.parseInt(dataLine[7]),
+							Integer.parseInt(dataLine[8]), new Instructor(null, dataLine[10], dataLine[9], dataLine[11], 0), Integer.parseInt(dataLine[12]), Integer.parseInt(dataLine[13]),
+							dataLine[14]);
+					
+						courseMap.put( dataLine[0], c );
+					}
 				}
 			}
 			// Close the buffered reader
 			br.close();
+
+			return courseMap;
 			
 			// Catch the exceptions and print the corresponding results.
 		} catch (FileNotFoundException e) {
-			System.out.println("File not found. Exiting program.");
+			System.out.println("File "+fileLocation+" not found. Exiting program.");
 			System.out.println(line);
 			System.exit(1);
 		} catch (IOException e) {
@@ -56,5 +83,8 @@ public class HistoricalData {
 			System.out.println(line);
 			System.exit(1);
 		}
+
+		return null;
+		
 	}
 }

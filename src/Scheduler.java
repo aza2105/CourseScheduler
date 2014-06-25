@@ -19,6 +19,31 @@ public class Scheduler
      *
      */
 
+	// number of semesters to consider
+	private int semesters;
+	
+	// hash map for getting course information and generating potential schedules
+	private HashMap<String,Course> courses;
+
+	// we'll need to initialize a Requirements object for track reqs
+	private Requirements trackReq;
+	
+	// default constructor
+	public Scheduler( Requirements r ) {
+		
+		semesters = 2;   // spring and fall
+
+		// set the requirements object
+		trackReq = r;
+
+		// grab a hash of all potential courses, regardless of specific
+		//   semester data
+		courses = new HashMap<String,Course>(); 
+		courses = HistoricalData.parseUserInput( "historical.csv" );
+
+		System.out.println( courses.get( "COMS W4701"));
+
+	}
 	
 	public static String depthFirstSearch(Node theNode, int depth)
 	{
@@ -50,8 +75,7 @@ public class Scheduler
 					{
 						theNode = theNode.getParentNode();
 						System.out.println(theNode);
-						outputStr = theNode.getOperatorName() + ", "
-								+ outputStr;
+						outputStr = theNode.getOperatorName() + ", " + outputStr;
 					}
 					return outputStr;
 				}
@@ -113,5 +137,11 @@ public class Scheduler
 		return "FAILURE: SCHEDULE THAT FULFILLS ALL REQUIREMENTS COULD NOT BE GENERATED";
 	}
 	
-
+//	public static void main(String[] args) {
+//	
+//		Requirements r = new Requirements();
+//		Scheduler s = new Scheduler( r );
+//		
+//	}
+	
 }
