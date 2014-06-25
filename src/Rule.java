@@ -20,6 +20,11 @@ public class Rule {
 			System.out.println(c);
 	}
 	
+	public int size() {
+		
+		return rule.size();
+	}
+	
 	public boolean isRuleMet(LinkedList<Course> completed) {
 		
 		for(int i = 0; i < completed.size(); i++) {

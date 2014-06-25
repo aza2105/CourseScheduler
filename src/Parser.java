@@ -99,7 +99,6 @@ public class Parser {
 	public void parseRequirements(String filename) {
 		
 		filename += "Reqs.csv";
-		Requirements reqs = new Requirements();
 		
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));

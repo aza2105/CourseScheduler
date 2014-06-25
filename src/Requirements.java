@@ -11,6 +11,11 @@ public class Requirements {
 		
 	}
 	
+	public int size() {
+		
+		return ruleList.size();
+	}
+	
 	public void set6000Level(int i) {
 		
 		req6000 = i;
