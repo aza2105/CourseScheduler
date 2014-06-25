@@ -1,9 +1,57 @@
-Required,
-COMS W4118,Operating Systems
-COMS W4156,Adv. Software Engineering
-COMS W4180,Network Security
-COMS W4187,Security Architecture and Engineering
-Number of following courses required,1
-COMS W4261,Introduction to Cryptography
-COMS E6185,Intrusion and Anomaly Detection Systems
-Minimum number of 6000 courses required,1
+RULE,Required,
+COMS W4118,Operating Systems,T
+RULE,Required,
+COMS W4156,Adv. Software Engineering,T
+RULE,Required,
+COMS W4180,Network Security,T
+RULE,Required,
+COMS W4187,Security Architecture and Engineering,T
+RULE,Number of following courses required,1
+COMS W4261,Introduction to Cryptography,T
+COMS E6185,Intrusion and Anomaly Detection Systems,T
+RULE,Minimum number of 6000 courses required,1
+COMS E6185,Intrusion and Anomaly Detection Systems,T
+COMS E6111,Lorem Ipsum,S
+COMS E6113,Lorem Ipsum,S
+COMS E6117,Lorem Ipsum,T
+COMS E6118,Operating Systems II,S
+COMS E6121,Lorem Ipsum,F
+COMS E6123,Lorem Ipsum,T 
+COMS E6125,Lorem Ipsum,S
+COMS E6160,Lorem Ipsum,T  
+COMS E6174,Lorem Ipsum,S  
+COMS E6176,Lorem Ipsum,T  
+CSEE E6180,Lorem Ipsum,T  
+COMS E6181,Advanced Internet Services,T 
+COMS E6183,Security,T  
+COMS E6184,Privacy and Anonymity,S 
+COMS E6185,Intrusion and Anomaly Detection,T 
+COMS E6204,Lorem Ipsum,T 
+COMS E6206,Lorem Ipsum,T
+COMS E6232,Lorem Ipsum,T
+COMS E6253,Lorem Ipsum,S 
+COMS E6261,Advanced Cryptography,T 
+COMS E6291,Lorem Ipsum,T
+COMS E6732,Lorem Ipsum,T 
+COMS E6733,Lorem Ipsum,T 
+COMS E6734,Lorem Ipsum,S 
+COMS E6735,Lorem Ipsum,S 
+COMS E6737,Lorem Ipsum,T 
+CSEE E6824,Lorem Ipsum,S  
+CSEE E6831,Lorem Ipsum,S  
+CSEE E6832,Lorem Ipsum,T 
+CSEE E6847,Lorem Ipsum,S
+CSEE E6861,Lorem Ipsum,S
+CSEE E6870,Lorem Ipsum,T 
+COMS E6900,Lorem Ipsum,B   
+COMS E6901,Projects in Computer Science,B    
+COMS E6902,Lorem Ipsum,B
+COMS E6998,Lorem Ipsum,B
+COMS E6999,Lorem Ipsum,B
+COMS E9800,Lorem Ipsum,B
+COMS E9910,Lorem Ipsum,B
+COMS E9911,Lorem Ipsum,B
+ELEN E6761,Computer Communication Networks,T
+ELEN E6886,Topics in Multimedia Security,T
+ELEN E6950,Wireless & Mobile Nets I,T
+ELEN E6951,Wireless & Mobile Nets II,T

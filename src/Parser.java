@@ -17,36 +17,41 @@ public class Parser {
 	
 	public void parseAll() {
 		
-		importData(track);
+		importElectives(track);
 		parseBreadthRequirements();
-		//parseRequirements(track);
+		parseRequirements(track);
+		reqs.printRules();
 		
 	}
 	
 	//TODO: Need to parse this into rules properly, and reformat the csv file accordingly
-	public void importData(String track) {
+	public void importElectives(String track) {
 		
 		track = track + "Courses.csv";
 		
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + track));
 			String line = null;
-			 
-			while((line = input.readLine()) != null) {
-				
-				String[] dataLine = line.split(",");
-				Course mycourse = new Course(dataLine[0],dataLine[1],dataLine[2].charAt(0));
-				
-				mycourse.setCredits(Integer.parseInt(dataLine[3]));
-				course.add(mycourse);
-			}
-			/*
-			for(int i = 0; i < course.size(); i++) {
-				System.out.print(course.get(i));
-			}
-			*/
-			input.close();
+			Rule rule = null;
+
 			
+			while( (line = input.readLine()) != null) {
+				
+				String[] tokens = line.split(",");
+				if (tokens[0].equals("RULE")) { //starting a RULE
+					if (rule != null) {
+						Parser.reqs.addRule(rule);
+					}
+					rule = new Rule();
+					continue;
+				}
+				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
+					rule.addCourseRule(new Course("Lorem Ipsum", tokens[0], tokens[1].charAt(0), 3));;
+				}	
+			}
+			reqs.addRule(rule);
+			
+			input.close();
 		}
 		catch (Exception e) {
 			System.out.println(e);
@@ -75,14 +80,13 @@ public class Parser {
 					continue;
 				}
 				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
-					rule.addCourseRule(new Course("Lorem Ipsum", tokens[0], tokens[1].charAt(0)));;
+					rule.addCourseRule(new Course("Lorem Ipsum", tokens[0], tokens[1].charAt(0), 3));;
 				}	
 			}
-			reqs.addRule(rule); //to add the final rule that it otherwise would've missed
-			//TODO: FIX THE LINE ABOVE TO BE LESS HACKY
+			reqs.addRule(rule);
 			
 			input.close();
-			reqs.printRules();
+			//reqs.printRules();
 		}
 		catch(Exception e) {
 			System.out.println(e);
@@ -98,9 +102,28 @@ public class Parser {
 		Requirements reqs = new Requirements();
 		
 		try {
-			BufferedReader read = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
-			String in = null;
-			//TODO: New rule parsing logic goes here
+			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
+			String line = null;
+			Rule rule = null;
+
+			
+			while( (line = input.readLine()) != null) {
+				
+				String[] tokens = line.split(",");
+				if (tokens[0].equals("RULE")) { //starting a RULE
+					if (rule != null) {
+						Parser.reqs.addRule(rule);
+					}
+					rule = new Rule();
+					continue;
+				}
+				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
+					rule.addCourseRule(new Course(tokens[1], tokens[0], tokens[2].charAt(0), 3));;
+				}	
+			}
+			reqs.addRule(rule);
+			
+			input.close();
 		}
 		catch(Exception e) {
 			System.out.println(e);

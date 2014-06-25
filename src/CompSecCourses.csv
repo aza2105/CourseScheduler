@@ -1,9 +1,30 @@
-COMS W4118,Operating Systems,B,3
-COMS W4156,Adv. Software Engineering,F,3
-COMS W4180,Network Security,T,3
-COMS W4187,Security Architecture and Engineering,T,3
-COMS W4261,Introduction to Cryptography,T,3
-COMS E6185,Intrusion and Anomaly Detection Systems,T,3
+RULE,Required,1
+COMS W4115,Programming Languages and Translators,B,3
+COMS W4119,Computer Networks,B,3
+COMS W4995,VOIP Security,B,3
+COMS W4995,Introduction to Computer Security,B,3
+COMS W4995,Crypto & Financial Processes,B,3
+COMS E6118,Operating Systems II,S,3
+COMS E6181,Advanced Internet Services,T,3
+COMS E6183,Security,T,3
+COMS E6184,Privacy & Anonymity,S,3
+COMS E6261,Advanced Cryptography,T,3
+COMS E6901,Projects in Computer Science,B,3
+COMS E6998,Advanced Topics in Security,B,3
+COMS E6998,Network Theory,B,3
+COMS E6998,Virtual Machines,B,3
+COMS E6998,Software Security and Exploitations,B,3
+COMS E6998,Cloud Computing,B,3
+COMS E6998,Formal Hardware & Software Verification,B,3
+COMS E6998,Resilient Hardware Systems,B,3
+COMS E6998,Cloud and Mobile Challenges,B,3
+COMS E6998,Privacy in Online Social Networks,B,3
+ELEN E4703,Wireless Communications,T,3
+ELEN E6761,Computer Communication Networks,T,3
+ELEN E6886,Topics in Multimedia Security,T,3
+ELEN E6950,Wireless & Mobile Nets I,T,3
+ELEN E6951,Wireless & Mobile Nets II,T,3
+RULE,Required,1
 COMS W4115,Programming Languages and Translators,B,3
 COMS W4119,Computer Networks,B,3
 COMS W4995,VOIP Security,B,3
