@@ -45,12 +45,24 @@ public class Requirements {
 		
 		int total = 0;
 		
-		for(int i = 0; i < ruleList.size(); i++) {
+		for(int i = 0; i < completed.size(); i++) {
+			for(int j = 0; j < ruleList.size(); j++) {
+				String s = ruleList.get(j).isRuleMet( (completed.get(i)) );
+				//need to cycle through the ruleList to pull out the course
+				for(int k = 0; k < ruleList.size(); k++) {
+					if (ruleList.get(k).getRuleType().equals(s) && (ruleList.get(k).getFulfilled() == false)) {
+						System.out.println("Removing " + completed.get(i) + "from " + k);
+						ruleList.get(k).removeCourse(completed.get(i));
+					}//endif
+				}
+				
+			}
 			
-			if (ruleList.get(i).isRuleMet(completed) )
-				total++;
 		}//end for
-		
+
+		for(Rule r : ruleList) {
+			System.out.println(r.getFulfilled());
+		}
 		System.out.println(ruleList.size());
 		System.out.println(total);
 		return ruleList.size() - total;
