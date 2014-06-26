@@ -1,10 +1,12 @@
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JFormattedTextField;
@@ -16,6 +18,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 public class FrontEnd extends JFrame {
@@ -71,15 +77,6 @@ public class FrontEnd extends JFrame {
 		
 		JButton btnAddCourse = new JButton("Add course");
 		
-		btnAddCourse.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				String tempCourse = textField.getText();
-				System.out.println(tempCourse);
-				
-			}
-		});
-		
 		btnAddCourse.setBounds(210, 12, 109, 23);
 		contentPane.add(btnAddCourse);
 		
@@ -96,10 +93,11 @@ public class FrontEnd extends JFrame {
 		contentPane.add(rdbtnNightClasses);
 		
 		JRadioButton rdbtnNoPreference = new JRadioButton("No Preference");
+		rdbtnNoPreference.setSelected(true);
 		rdbtnNoPreference.setBounds(220, 66, 109, 23);
 		contentPane.add(rdbtnNoPreference);
 		
-		ButtonGroup bg = new ButtonGroup();
+		final ButtonGroup bg = new ButtonGroup();
 		bg.add(rdbtnDayClasses);
 		bg.add(rdbtnNightClasses);
 		bg.add(rdbtnNoPreference);
@@ -113,13 +111,72 @@ public class FrontEnd extends JFrame {
 		textField_1.setBounds(186, 93, 86, 20);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
-		
-		JList list = new JList();
+
+		final DefaultListModel listModel = new DefaultListModel();
+		final JList list = new JList(listModel);
 		list.setBounds(335, 60, 89, 135);
 		contentPane.add(list);
 		
+		
 		JButton btnRemove = new JButton("Remove");
+		
 		btnRemove.setBounds(335, 199, 89, 23);
 		contentPane.add(btnRemove);
+		
+		// Add course button
+		btnAddCourse.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String addCourseName = textField.getText();
+				listModel.insertElementAt(addCourseName, listModel.size());
+			}
+		});
+		
+		// Remove button
+		btnRemove.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int[] index = list.getSelectedIndices();
+				if(index.length > 0){
+					for(int i = index.length - 1; i >= 0; i--){
+						listModel.remove(index[i]);
+					}
+				}
+			}
+		});
+		
+		// Create Schedule button
+		btnCreateSchedule.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				try {
+					 
+					//String content = "This is the content to write into file";
+					//String content2 = "This is the content to write into file";
+
+					File file = new File(System.getProperty("user.dir") + "/src/inputPrefs.csv");
+
+					FileWriter fw = new FileWriter(file.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					for(int i = 0; i < listModel.size(); i++){
+						bw.write("COURSE," + listModel.get(i).toString() + "\n");
+					}
+					int daynight = 0;
+					//if(rdbtnNoPreferences.isSelected())
+					bw.write("DAYNIGHT," + bg.getSelection().toString() + "\n");
+					//bw.write(content + "\n");
+					//bw.write(content2);
+					bw.close();
+		 
+					System.out.println("Done");
+		 
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		});
+		
 	}
 }
