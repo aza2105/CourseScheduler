@@ -51,6 +51,8 @@ public class Requirements {
 				total++;
 		}//end for
 		
+		System.out.println(ruleList.size());
+		System.out.println(total);
 		return ruleList.size() - total;
 	}
 

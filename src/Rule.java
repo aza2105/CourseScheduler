@@ -27,13 +27,19 @@ public class Rule {
 	
 	public boolean isRuleMet(LinkedList<Course> completed) {
 		
+		int count = 0;
 		for(int i = 0; i < completed.size(); i++) {
 			for(int j = 0; j < rule.size(); j++) {
-				if (completed.get(i).equals(rule.get(j)) )
-					return true;
+				if (completed.get(i).equals(rule.get(j)) ) {
+					System.out.println(completed.get(i) + " is met!");
+					count++;
+					//return true;
+				}
 			}
 		}//end fors
-		
+		System.out.println("RuleMet Count: " + count);
+		if (count > 0)
+			return true;
 		return false;
 	}
 }
