@@ -34,12 +34,12 @@ public class Course {
 	
 	public Course(String title, String courseID) {
 		this.title = title;
-		this.courseID = courseID;
+		setID(courseID);
 	}
 	
 	public Course(String title, String courseID, char offered) {
 		this.title = title;
-		this.courseID = courseID;
+		setID(courseID);
 		this.offered = offered;
 		requiredUtility = 0;
 	}
@@ -57,7 +57,7 @@ public class Course {
 
 //		this.cSpec = new HashMap<String, CourseSpec>();
 		this.offerings = new HashMap<String, Integer>();
-		this.courseID = courseID;
+		setID(courseID);
 		this.year = year;
 		this.semester = semester;
 
@@ -129,6 +129,13 @@ public class Course {
 		credits = a;
 
 	}
+	
+	public void setID(String s) {
+		
+		s = s.trim();
+		String t = s.substring(0,4) + s.substring(s.length() - 4, s.length());
+		courseID = t;
+	}
 
 	public int getCredits() {
 
@@ -142,12 +149,25 @@ public class Course {
 				+ "\n";
 	}
 
-	public boolean equals(Course c) {
+	public boolean equals(Object c) {
 
-		if (this.courseID.equals(c.courseID))
+		System.out.println("Does " + ((Course) c).getID() + " == " + this.courseID);
+		if (this == c) {
 			return true;
-
+		}
+		
+		if (this.courseID.trim().equals(((Course) c).getID().trim())) {
+			
+			return true;
+		}
+	
 		return false;
+
+	}
+	
+	public int hashcode() {
+		
+		return 0;
 	}
 
 	public void setRequired(double r) {

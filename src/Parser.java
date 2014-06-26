@@ -20,7 +20,7 @@ public class Parser {
 		importElectives(track);
 		parseBreadthRequirements();
 		parseRequirements(track);
-		reqs.printRules();
+		//reqs.printRules();
 		
 	}
 	
@@ -42,7 +42,7 @@ public class Parser {
 					if (rule != null) {
 						Parser.reqs.addRule(rule);
 					}
-					rule = new Rule();
+					rule = new Rule(Rule.ELECTIVE);
 					continue;
 				}
 				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
@@ -76,7 +76,7 @@ public class Parser {
 					if (rule != null) {
 						Parser.reqs.addRule(rule);
 					}
-					rule = new Rule();
+					rule = new Rule(Rule.BREADTH);
 					continue;
 				}
 				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
@@ -113,7 +113,7 @@ public class Parser {
 					if (rule != null) {
 						Parser.reqs.addRule(rule);
 					}
-					rule = new Rule();
+					rule = new Rule(Rule.REQUIREMENT);
 					continue;
 				}
 				else if(tokens[0].matches("[A-Z]{4}.+\\d{4}")){ //we're in a rule
