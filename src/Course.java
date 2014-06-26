@@ -151,7 +151,7 @@ public class Course {
 
 	public boolean equals(Object c) {
 
-		System.out.println("Does " + ((Course) c).getID() + " == " + this.courseID);
+		//System.out.println("Does " + ((Course) c).getID() + " == " + this.courseID);
 		if (this == c) {
 			return true;
 		}

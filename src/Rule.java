@@ -53,31 +53,22 @@ public class Rule {
 		
 		return rule.size();
 	}
-	
-	public boolean holds(Course c) {
-		
-		for(int i = 0; i < rule.size(); i++) {
-			System.out.println(rule.size());
-			if (rule.get(i).equals(c))
-				return true;
-		}
-		return false;
-	}
 
 	public String isRuleMet(Course completed) {
+		/*
 		System.out.println("Looking for: " + completed);
 		for(Course c : rule) {
 			System.out.println("In rule: " + c);
-		}
+		}*/
 		//if the rule has our course and has not yet been completed
-		System.out.println(ruleType + fulfilled);
+		//System.out.println(ruleType + fulfilled);
 		if (rule.contains(completed) && fulfilled == false) {
-			System.out.println("YAY!");
+			//System.out.println("YAY!");
 			fulfilled = true;
 			return ruleType;
 		}
 
-		System.out.println("returning TEST");
-		return "TEST";
+		//System.out.println("returning TEST");
+		return null;
 	}
 }

@@ -7,12 +7,10 @@ JFLAGS = -g
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-	  Main.java \
 	  Parser.java \
 	  Requirements.java \
 	  Rule.java    \
 	  Section.java \
-	  Semester.java \
 	  Utility.java	\
 	  Instructor.java \
 	  Preferences.java \
