@@ -25,16 +25,20 @@ public class Scheduler
 	// hash map for getting course information and generating potential schedules
 	private HashMap<String,Course> courses;
 
+	// set of valid candidates
+	private Set<Section> coursePool;
+	
 	// we'll need to initialize a Requirements object for track reqs
-	private Requirements trackReq;
+//	private Requirements trackReq;
+	// don't do this... access Parser.reqs directly
 	
 	// default constructor
-	public Scheduler( Requirements r ) {
+	public Scheduler() { //( Requirements r ) {
 		
 		semesters = 2;   // spring and fall
 
 		// set the requirements object
-		trackReq = r;
+		//trackReq = r;
 
 		// grab a hash of all potential courses, regardless of specific
 		//   semester data
@@ -137,11 +141,28 @@ public class Scheduler
 		return "FAILURE: SCHEDULE THAT FULFILLS ALL REQUIREMENTS COULD NOT BE GENERATED";
 	}
 	
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
+
+		if(args.length > 1){
+			System.out.println("Too many parameters. Please only include preferences file.");
+			System.exit(1);
+		}
+
+		// If there are no parameters, assume the default settings for preferences/courses taken.
+		else if(args.length == 0){
+			Preferences prefs = new Preferences();
+		}
+		// If there is one argument, assume it is the location of input file.
+		else if(args.length == 1){
+			// Adds the preferences from the user input into a static Preferences object - 'prefs'
+			Preferences.parseUserInput(args);
+		}
 
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 
+		
+		
 //		Requirements req = Parser.reqs;
 		
 		for(Rule r : Parser.reqs.getRules() ) {
@@ -152,8 +173,8 @@ public class Scheduler
 //			}
 		}
 		
-//		Scheduler s = new Scheduler( req );
+		Scheduler s = new Scheduler();// req );
 		
 	}
-	
-}
+	*/
+} 
