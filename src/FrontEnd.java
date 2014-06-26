@@ -396,6 +396,7 @@ public class FrontEnd extends JFrame {
 		int coursesTaken = 0;
 		int coursesPlanned = 0;
 		boolean invalidSched = false;
+		boolean invalidInt = false;
 		
 		coursesTaken = listModel.size();
 		
@@ -407,6 +408,9 @@ public class FrontEnd extends JFrame {
 				// remove whitespace
 				for(int i = 0; i < dataLine.length; i++){
 					coursesPlanned += Integer.parseInt(dataLine[i]);
+					if(Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) > 10){
+						invalidInt = true;
+					}
 				}
 				invalidSched = false;
 			} catch(NumberFormatException e){
@@ -414,7 +418,7 @@ public class FrontEnd extends JFrame {
 				invalidSched = true;
 			}
 		}
-		if(!invalidSched && (coursesTaken + coursesPlanned == 10)){
+		if(!invalidSched && !invalidInt && (coursesTaken + coursesPlanned == 10)){
 			btnCreateSchedule.setEnabled(true);
 		}
 		else{
@@ -422,6 +426,9 @@ public class FrontEnd extends JFrame {
 		}
 		
 		//textField_2.setText(Integer.toString(coursesTaken) + Integer.toString(coursesPlanned));
+		if(invalidInt){
+			coursesPlanned = 0;
+		}
 		textField_2.setText(Integer.toString(coursesTaken + coursesPlanned) + " / 10");
 	}
 }
