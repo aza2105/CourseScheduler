@@ -1,27 +1,27 @@
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JToolBar;
-import javax.swing.JRadioButton;
-import javax.swing.JList;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 
 public class FrontEnd extends JFrame {
@@ -29,6 +29,7 @@ public class FrontEnd extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
+	private JTextField textField_2;
 
 	/**
 	 * Launch the application.
@@ -50,15 +51,19 @@ public class FrontEnd extends JFrame {
 	 * Create the frame.
 	 */
 	public FrontEnd() {
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 658, 280);
 		contentPane = new JPanel();
+		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JButton btnCreateSchedule = new JButton("Create Schedule");
-		btnCreateSchedule.setBounds(129, 206, 132, 45);
+		final JButton btnCreateSchedule = new JButton("Create Schedule");
+		btnCreateSchedule.setEnabled(false);
+		btnCreateSchedule.setForeground(Color.BLACK);
+		btnCreateSchedule.setBounds(164, 160, 289, 66);
 		contentPane.add(btnCreateSchedule);
 		
 		JLabel lblLabel = new JLabel("Courses Taken:");
@@ -66,35 +71,36 @@ public class FrontEnd extends JFrame {
 		contentPane.add(lblLabel);
 		
 		textField = new JTextField();
-		textField.setToolTipText("ie. \"COMS W4701\"");
+		textField.setToolTipText("e.g. \"COMS W4701\"");
 		textField.setBounds(121, 13, 86, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
-		JLabel lblCourses = new JLabel("Courses");
-		lblCourses.setBounds(346, 16, 59, 14);
+		JLabel lblCourses = new JLabel("Courses Taken");
+		lblCourses.setBounds(509, 16, 89, 14);
 		contentPane.add(lblCourses);
 		
 		JButton btnAddCourse = new JButton("Add course");
+		btnAddCourse.setToolTipText("e.g. \"COMS W4701\"");
 		
 		btnAddCourse.setBounds(210, 12, 109, 23);
 		contentPane.add(btnAddCourse);
 		
 		JLabel lblTimingPreferences = new JLabel("Timing Preferences:");
-		lblTimingPreferences.setBounds(10, 47, 122, 14);
+		lblTimingPreferences.setBounds(10, 47, 150, 14);
 		contentPane.add(lblTimingPreferences);
 		
-		JRadioButton rdbtnDayClasses = new JRadioButton("Day Classes");
+		final JRadioButton rdbtnDayClasses = new JRadioButton("Day Classes");
 		rdbtnDayClasses.setBounds(10, 66, 101, 23);
 		contentPane.add(rdbtnDayClasses);
 		
-		JRadioButton rdbtnNightClasses = new JRadioButton("Night Classes");
+		final JRadioButton rdbtnNightClasses = new JRadioButton("Night Classes");
 		rdbtnNightClasses.setBounds(109, 66, 109, 23);
 		contentPane.add(rdbtnNightClasses);
 		
-		JRadioButton rdbtnNoPreference = new JRadioButton("No Preference");
+		final JRadioButton rdbtnNoPreference = new JRadioButton("No Preference");
 		rdbtnNoPreference.setSelected(true);
-		rdbtnNoPreference.setBounds(220, 66, 109, 23);
+		rdbtnNoPreference.setBounds(220, 66, 129, 23);
 		contentPane.add(rdbtnNoPreference);
 		
 		final ButtonGroup bg = new ButtonGroup();
@@ -102,37 +108,78 @@ public class FrontEnd extends JFrame {
 		bg.add(rdbtnNightClasses);
 		bg.add(rdbtnNoPreference);
 		
-		JLabel lblCoursesPerFuture = new JLabel("Courses per future semester");
-		lblCoursesPerFuture.setBounds(10, 96, 166, 14);
+		JLabel lblCoursesPerFuture = new JLabel("# Courses per future semesters:");
+		lblCoursesPerFuture.setToolTipText("The planned number of courses to take per future semester (e.g. \"2,1,1\" or \"1,1\")");
+		lblCoursesPerFuture.setBounds(10, 109, 197, 14);
 		contentPane.add(lblCoursesPerFuture);
 		
 		textField_1 = new JTextField();
-		textField_1.setToolTipText("ie. \"4,4,2\" or \"2,2,3,3\"");
-		textField_1.setBounds(186, 93, 86, 20);
+		textField_1.setToolTipText("");
+		textField_1.setBounds(218, 106, 86, 20);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
 		final DefaultListModel listModel = new DefaultListModel();
 		final JList list = new JList(listModel);
-		list.setBounds(335, 60, 89, 135);
+		list.setBounds(488, 41, 129, 151);
 		contentPane.add(list);
 		
 		
 		JButton btnRemove = new JButton("Remove");
 		
-		btnRemove.setBounds(335, 199, 89, 23);
+		btnRemove.setBounds(509, 203, 89, 23);
 		contentPane.add(btnRemove);
 		
-		// Add course button
+		JLabel lblIeOr = new JLabel("e.g. \"4,4,2\", \"2,2,3,3\", or \"4,2\"");
+		lblIeOr.setBounds(188, 130, 196, 14);
+		contentPane.add(lblIeOr);
+		
+		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
+		lblTotalCoursesPlanned.setBounds(10, 186, 150, 14);
+		contentPane.add(lblTotalCoursesPlanned);
+		
+		textField_2 = new JTextField();
+		textField_2.setEnabled(false);
+		textField_2.setBounds(10, 206, 65, 20);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+		textField_2.setText("0 / 10");
+		
+		final JLabel lblInvalidCourse = new JLabel("");
+		lblInvalidCourse.setForeground(Color.RED);
+		lblInvalidCourse.setBounds(329, 16, 109, 14);
+		contentPane.add(lblInvalidCourse);
+		
+		// Add course button (on mouse click)
 		btnAddCourse.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				boolean courseDuplicate = false;
 				String addCourseName = textField.getText();
-				listModel.insertElementAt(addCourseName, listModel.size());
+				if(addCourseName.length() > 5 && addCourseName.length() < 15){
+					for(int i = 0; i < listModel.size(); i++){
+						if(addCourseName.equals(listModel.get(i).toString())){
+							courseDuplicate = true;
+						}
+					}
+					
+					if(!addCourseName.isEmpty() && !courseDuplicate){
+						listModel.insertElementAt(addCourseName, listModel.size());
+						lblInvalidCourse.setText("");
+					}
+					else{
+						lblInvalidCourse.setText("Already added");
+					}
+				}
+				
+				else{
+					lblInvalidCourse.setText("Invalid Course");
+				}
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 			}
 		});
 		
-		// Remove button
+		// Remove button (on mouse click)
 		btnRemove.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -142,31 +189,172 @@ public class FrontEnd extends JFrame {
 						listModel.remove(index[i]);
 					}
 				}
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// textField_1 Mouse Listener on schedule input
+		textField_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+
+			}
+		});
+		
+		// Mouse Listener on create schedule button
+		btnCreateSchedule.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		
+		// lblCourses Mouse Listener
+		lblCourses.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblIeOr Mouse Listener
+		lblIeOr.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblTotalCoursesPlanned Mouse Listener
+		lblTotalCoursesPlanned.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblCoursesPerFuture Mouse Listener
+		lblCoursesPerFuture.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblTimingPreferences Mouse Listener
+		lblTimingPreferences.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblLabel Mouse Listener
+		lblLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Mouse Listener on list (generated)
+		list.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+
+		// Mouse listener on day radio button
+		rdbtnDayClasses.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Mouse listener on night radio button
+		rdbtnNightClasses.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Mouse listener on No Preferences radio button
+		rdbtnNoPreference.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Mouse listener on text field (course id text entrance)
+		textField.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Input listener (enter key) on future schedule input
+		textField_1.addInputMethodListener(new InputMethodListener() {
+			public void caretPositionChanged(InputMethodEvent event) {
+			}
+			public void inputMethodTextChanged(InputMethodEvent event) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Action performed on future schedule input
+		textField_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// Mouse listener on content pane
+		contentPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 			}
 		});
 		
 		// Create Schedule button
-		btnCreateSchedule.addMouseListener(new MouseAdapter() {
+		btnCreateSchedule.addActionListener(new ActionListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
+				
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 				
 				try {
-					 
 					//String content = "This is the content to write into file";
 					//String content2 = "This is the content to write into file";
 
-					File file = new File(System.getProperty("user.dir") + "/src/inputPrefs.csv");
+					File file = new File(System.getProperty("user.dir") + "/inputPrefs.csv");
 
 					FileWriter fw = new FileWriter(file.getAbsoluteFile());
 					BufferedWriter bw = new BufferedWriter(fw);
 					for(int i = 0; i < listModel.size(); i++){
 						bw.write("COURSE," + listModel.get(i).toString() + "\n");
 					}
-					int daynight = 0;
-					//if(rdbtnNoPreferences.isSelected())
-					bw.write("DAYNIGHT," + bg.getSelection().toString() + "\n");
-					//bw.write(content + "\n");
-					//bw.write(content2);
+					int dayNight = 2;
+					
+					if(rdbtnDayClasses.isSelected()){
+						dayNight = 0;
+					}
+					else if(rdbtnNightClasses.isSelected()){
+						dayNight = 1;
+					}
+					else if(rdbtnNoPreference.isSelected()){
+						dayNight = 2;
+					}
+					bw.write("DAYNIGHT," + dayNight + "\n");
+					
+					if(textField_1.getText() != null){
+						bw.write("SEM," + textField_1.getText() + "\n");
+					}
 					bw.close();
 		 
 					System.out.println("Done");
@@ -178,5 +366,38 @@ public class FrontEnd extends JFrame {
 			}
 		});
 		
+	}
+	
+	public void updateCourseQuantity(DefaultListModel listModel, JTextField textField_1, JTextField textField_2, JButton btnCreateSchedule){
+		int coursesTaken = 0;
+		int coursesPlanned = 0;
+		boolean invalidSched = false;
+		
+		coursesTaken = listModel.size();
+		
+		String line = textField_1.getText();
+		line = line.replaceAll("\\s","");
+		if(line != null){
+			String[] dataLine = line.split(",");
+			try{
+				// remove whitespace
+				for(int i = 0; i < dataLine.length; i++){
+					coursesPlanned += Integer.parseInt(dataLine[i]);
+				}
+				invalidSched = false;
+			} catch(NumberFormatException e){
+				coursesPlanned = 0;
+				invalidSched = true;
+			}
+		}
+		if(!invalidSched && (coursesTaken + coursesPlanned == 10)){
+			btnCreateSchedule.setEnabled(true);
+		}
+		else{
+			btnCreateSchedule.setEnabled(false);
+		}
+		
+		//textField_2.setText(Integer.toString(coursesTaken) + Integer.toString(coursesPlanned));
+		textField_2.setText(Integer.toString(coursesTaken + coursesPlanned) + " / 10");
 	}
 }
