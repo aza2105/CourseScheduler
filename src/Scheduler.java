@@ -137,11 +137,23 @@ public class Scheduler
 		return "FAILURE: SCHEDULE THAT FULFILLS ALL REQUIREMENTS COULD NOT BE GENERATED";
 	}
 	
-//	public static void main(String[] args) {
-//	
-//		Requirements r = new Requirements();
-//		Scheduler s = new Scheduler( r );
-//		
-//	}
+	public static void main(String[] args) {
+
+		Parser parser = new Parser(Track.SECURITY);
+		parser.parseAll();
+
+//		Requirements req = Parser.reqs;
+		
+		for(Rule r : Parser.reqs.getRules() ) {
+			Integer sz = new Integer( r.size() );
+//			if ( sz ) {
+				System.out.println("RULE::"+ r.size() );
+				r.printRule();
+//			}
+		}
+		
+//		Scheduler s = new Scheduler( req );
+		
+	}
 	
 }

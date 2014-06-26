@@ -23,7 +23,9 @@ public class Course {
 	private int enrolledMax;
 	private String enrollDate;
 
-	private double requiredValue;
+	// a utility value based on "how required" a course is.
+	// courses that are not options have a high level, electives are lower
+	private double requiredUtility;
 
 	private Integer totalOfferings;
 	private HashMap<String,Integer> offerings;
@@ -39,7 +41,7 @@ public class Course {
 		this.title = title;
 		this.courseID = courseID;
 		this.offered = offered;
-		requiredValue = 0;
+		requiredUtility = 0;
 	}
 	
 	public Course(String title, String courseID, char offered, int credits) {
@@ -114,7 +116,7 @@ public class Course {
 					this.offerings.put( "night", ( nightval+1 ) );
 				}
 			}
-		System.out.println ( courseID + " " + this.offerings.get( semester ) + " " + semester );
+		System.out.println ( courseID + " " + this.offerings.get( semester ) + " " + semester + " " + this.offerings.get( String.valueOf(year) ) + " " + year );
 	
 	}
 	public String getID() {
@@ -149,11 +151,13 @@ public class Course {
 	}
 
 	public void setRequired(double r) {
-		requiredValue = r;
+		requiredUtility = r;
 	}
 
 	public double getRequired() {
-		return requiredValue;
+		return requiredUtility;
 	}
 
+//	Parser.reqs.
+	
 }

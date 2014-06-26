@@ -10,6 +10,12 @@ public class Requirements {
 	public Requirements() {
 		
 	}
+
+	public LinkedList<Rule> getRules() {
+		
+		return ruleList;
+		
+	}
 	
 	public int size() {
 		
