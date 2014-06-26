@@ -9,36 +9,94 @@ import java.util.*;
 
 public class Semester 
 {	
-	//instance variables
-    private Set<Section> sections;
+	/*
+     * INSTANCE VARIABLES
+     */
     private int depth; //depth = distance from origin semester
     /*
-     * semesterNumber is an int that is defined as follows:
+     * semesterID is an int that is defined as follows:
      * for fall, semesterID = 0
      * for spring, semesterID = 1
      * this system does not handle summer semesters for now
      */
     private int semesterID; //0 or 1 depending on fall or spring
     private int semesterYear;
-    private Semester parentSemester; //previous semester aka parent in the tree
-    
-    private double utility;
+    private Set<Section> sections;
+    private Semester parentSemester; //previous semester aka parent in the tree  
     private Set<Course> inheritedCourses;
+    private double utility;
     
-    //constructors
+    /*
+     * CONSTRUCTORS
+     */
     public Semester()
     {
     	
     }
     
-    public Semester(int semesterID, int semesterYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses) 
+    public Semester(int depth, int semesterID, int semesterYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses) 
     {
+    	this.depth = depth;
     	this.semesterID = semesterID;
     	this.semesterYear = semesterYear;
     	this.sections = sections;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
-    	
+    }
+    
+    /*
+     * METHODS
+     */
+    
+    public int getDepth()
+    {
+    	return depth;
+    }
+    
+    public void setDepth(int depth)
+    {
+    	this.depth = depth;
+    }
+    
+    public int getSemesterID()
+    {
+    	return semesterID;
+    }
+    
+    public void setSemesterID(int semesterID)
+    {
+    	this.semesterID = semesterID;
+    }
+    
+    public int getSemesterYear()
+    {
+    	return semesterYear;
+    }
+    
+    public void setSemesterYear(int year)
+    {
+    	this.year = year;
+    }
+   
+    public Set<Section> getSections() 
+    {
+    	return sections;
+    }
+    
+    //not sure if we need this
+    public void setSections(Set<Section> newSections)
+    {
+    	sections = newSections;
+    }
+    
+    public Semester getParentSemester()
+    {
+    	return parentSemester;
+    }
+    
+    public void setParentSemester(Semester p)
+    {
+    	parentSemester = p;
     }
     
     //returns all courses taken by ancestors up until the root
@@ -47,14 +105,18 @@ public class Semester
     	return inheritedCourses;	
     }
     
-    
+    public void setInheritedCourses(Set<Course> inheritedCourses)
+    {
+    	this.inheritedCourses = inheritedCourse;
+    }
+        
     public double getUtility()
     {
     	return utility;
     }
     
     //sets the utility of the semester plus the utility of any ancestors all the way up to the root
-    public void setSemesterUtility(Requirements reqs, Preferences prefs)
+    public void setUtility(Requirements reqs, Preferences prefs)
     {
     	/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
 		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
@@ -141,49 +203,7 @@ public class Semester
     	
     	return semesterString;
     }
-    
-    public int getSemesterID()
-    {
-    	return semesterID;
-    }
-    
-    public void setSemesterID(int semesterID)
-    {
-    	this.semesterID = semesterID;
-    }
-    
-    
-    public int getDepth() 
-    {
-    	return depth;
-    }
-    
-    public void setDepth(int depth)
-    {
-    	this.depth = depth;
-    }
-    
-    public Set<Section> getSections() 
-    {
-    	return sections;
-    }
-    
-    //not sure if we need this
-    public void setSections(Set<Section> newSections)
-    {
-    	sections = newSections;
-    }
-    
-    /*
-     * this method returns true if for a given semester schedule, the 
-     * student would have compl
-     */
-    public boolean alreadyTaken(Course givenSection)
-    {
-    	return true;
-    }
-    
-    //TBD
+
     //successor method to generate next semester
     public Semester generateNextSemester()
     {
@@ -204,23 +224,42 @@ public class Semester
     		nextSemesterYear = semesterYear;
     	}
     	
-    	//choose next semester's sections TODOLATER
+    	/*
+    	 * populate next semester's sections
+    	 * we need to ensure that a course that has already been taken 
+    	 * is not scheduled again. Also, only courses that meet the 
+    	 * degree requirements should be scheduled.
+    	 */
     	Set<Section> nextSemesterSections = new HashSet<Section>();
     	
     	//populate next semester's inherited sections
     	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
     	nextSemesterInheritedCourses.addAll(sections);
     	nextSemesterInheritedCourses.addAll(inheritedCourses);
-    	
-    	
-    	
-    	/*
-    	 * populate next semester's sections
-    	 * we need to ensure that a course that has already been taken 
-    	 * is not scheduled again. Also, only courses that meet the 
-    	 * degree requirements should be scheduled.
-    	 */    	
+    	   	
     	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections, this, nextSemesterInheritedCourses);	
     }
+    
+    
+   
+   
+    
+    
+    
+  
+    
+    /*
+     * this method returns true if for a given semester schedule, the 
+     * student would have compl
+     * 
+     *  public boolean alreadyTaken(Course givenSection)
+    {
+    	return true;
+    }
+     * 
+     */
+   
+    
+    
     
 }
