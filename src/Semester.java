@@ -24,6 +24,7 @@ public class Semester
     private Set<Section> sections;
     private Semester parentSemester; //previous semester aka parent in the tree  
     private Set<Course> inheritedCourses;
+    private Set<Course> poolOfCoursesForChildSemesters;
     private double utility;
     
     /*
@@ -73,9 +74,9 @@ public class Semester
     	return semesterYear;
     }
     
-    public void setSemesterYear(int year)
+    public void setSemesterYear(int semesterYear)
     {
-    	this.year = year;
+    	this.semesterYear = semesterYear;
     }
    
     public Set<Section> getSections() 
@@ -107,9 +108,19 @@ public class Semester
     
     public void setInheritedCourses(Set<Course> inheritedCourses)
     {
-    	this.inheritedCourses = inheritedCourse;
+    	this.inheritedCourses = inheritedCourses;
     }
-        
+       
+    public Set<Course> getPoolOfCoursesForChildSemesters()
+    {
+    	return poolOfCoursesForChildSemesters;	
+    }
+    
+    public void setPoolOfCoursesForChildSemesters(Set<Course> poolOfCoursesForChildSemesters)
+    {
+    	this.poolOfCoursesForChildSemesters = poolOfCoursesForChildSemesters;
+    }
+    
     public double getUtility()
     {
     	return utility;
@@ -232,13 +243,17 @@ public class Semester
     	 */
     	Set<Section> nextSemesterSections = new HashSet<Section>();
     	
+    	
+    	
+    	
     	//populate next semester's inherited sections
     	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
     	nextSemesterInheritedCourses.addAll(sections);
     	nextSemesterInheritedCourses.addAll(inheritedCourses);
     	   	
-    	return new Semester(nextSemesterID, nextSemesterYear, nextSemesterSections, this, nextSemesterInheritedCourses);	
+    	return new Semester(depth+1, nextSemesterID, nextSemesterYear, nextSemesterSections, this, nextSemesterInheritedCourses);	
     }
+    
     
     
    
