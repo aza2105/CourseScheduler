@@ -22,6 +22,8 @@ import java.awt.event.InputMethodEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 public class FrontEnd extends JFrame {
@@ -130,8 +132,8 @@ public class FrontEnd extends JFrame {
 		btnRemove.setBounds(509, 203, 89, 23);
 		contentPane.add(btnRemove);
 		
-		JLabel lblIeOr = new JLabel("e.g. \"4,4,2\", \"2,2,3,3\", or \"4,2\"");
-		lblIeOr.setBounds(188, 130, 196, 14);
+		JLabel lblIeOr = new JLabel("e.g. \"4, 4, 2\", \"2, 2, 3, 3\", or \"4,2\"");
+		lblIeOr.setBounds(188, 130, 227, 14);
 		contentPane.add(lblIeOr);
 		
 		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
@@ -202,10 +204,19 @@ public class FrontEnd extends JFrame {
 			}
 		});
 		
-		// Mouse Listener on create schedule button
-		btnCreateSchedule.addMouseListener(new MouseAdapter() {
+		// textField_1 Key Listener on schedule input
+		textField_1.addKeyListener(new KeyAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void keyPressed(KeyEvent arg0) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+			@Override
+			public void keyTyped(KeyEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 			}
 		});
 		
@@ -321,51 +332,64 @@ public class FrontEnd extends JFrame {
 			}
 		});
 		
-		// Create Schedule button
-		btnCreateSchedule.addActionListener(new ActionListener() {
+		/*// Mouse Listener on create schedule button
+		btnCreateSchedule.addMouseListener(new MouseAdapter() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void mouseClicked(MouseEvent e) {
+			}
+		});*/
+		
+		// Create Schedule button
+		btnCreateSchedule.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 				
 				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
-				
-				try {
-					//String content = "This is the content to write into file";
-					//String content2 = "This is the content to write into file";
-
-					File file = new File(System.getProperty("user.dir") + "/inputPrefs.csv");
-
-					FileWriter fw = new FileWriter(file.getAbsoluteFile());
-					BufferedWriter bw = new BufferedWriter(fw);
-					for(int i = 0; i < listModel.size(); i++){
-						bw.write("COURSE," + listModel.get(i).toString() + "\n");
-					}
-					int dayNight = 2;
+				if(btnCreateSchedule.isEnabled()){
 					
-					if(rdbtnDayClasses.isSelected()){
-						dayNight = 0;
-					}
-					else if(rdbtnNightClasses.isSelected()){
-						dayNight = 1;
-					}
-					else if(rdbtnNoPreference.isSelected()){
-						dayNight = 2;
-					}
-					bw.write("DAYNIGHT," + dayNight + "\n");
 					
-					if(textField_1.getText() != null){
-						bw.write("SEM," + textField_1.getText() + "\n");
+					try {
+						//String content = "This is the content to write into file";
+						//String content2 = "This is the content to write into file";
+	
+						File file = new File(System.getProperty("user.dir") + "/inputPrefs.csv");
+	
+						FileWriter fw = new FileWriter(file.getAbsoluteFile());
+						BufferedWriter bw = new BufferedWriter(fw);
+						for(int i = 0; i < listModel.size(); i++){
+							bw.write("COURSE," + listModel.get(i).toString() + "\n");
+						}
+						int dayNight = 2;
+						
+						if(rdbtnDayClasses.isSelected()){
+							dayNight = 0;
+						}
+						else if(rdbtnNightClasses.isSelected()){
+							dayNight = 1;
+						}
+						else if(rdbtnNoPreference.isSelected()){
+							dayNight = 2;
+						}
+						bw.write("DAYNIGHT," + dayNight + "\n");
+						
+						if(textField_1.getText() != null){
+							String tempSched = textField_1.getText();
+							tempSched = tempSched.replaceAll("\\s","");
+							String[] dataLine = tempSched.split(",");
+							for(int i = 0; i < dataLine.length - 1; i++){
+								bw.write("SEMESTER," + i +"," + dataLine[i+1] + "\n");
+							}
+						}
+						bw.close();
+			 
+						System.out.println("Done");
+			 
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-					bw.close();
-		 
-					System.out.println("Done");
-		 
-				} catch (IOException e1) {
-					e1.printStackTrace();
 				}
-				
 			}
 		});
-		
 	}
 	
 	public void updateCourseQuantity(DefaultListModel listModel, JTextField textField_1, JTextField textField_2, JButton btnCreateSchedule){
