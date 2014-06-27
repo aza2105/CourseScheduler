@@ -111,12 +111,12 @@ public class FrontEnd extends JFrame {
 		
 		JLabel lblCoursesPerFuture = new JLabel("# Courses per future semesters:");
 		lblCoursesPerFuture.setToolTipText("The planned number of courses to take per future semester (e.g. \"2,1,1\" or \"1,1\")");
-		lblCoursesPerFuture.setBounds(10, 109, 197, 14);
+		lblCoursesPerFuture.setBounds(10, 109, 213, 14);
 		contentPane.add(lblCoursesPerFuture);
 		
 		textField_1 = new JTextField();
 		textField_1.setToolTipText("");
-		textField_1.setBounds(218, 106, 86, 20);
+		textField_1.setBounds(233, 106, 86, 20);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
