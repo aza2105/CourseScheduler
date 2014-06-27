@@ -2,7 +2,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
-public class Section  {
+public class Section {
 
 	private String daySchedule;
     private Date startTime;
@@ -10,6 +10,7 @@ public class Section  {
     private int sectionNumber;
     private String instructor;
     private Instructor inst;
+    private double dayNight;
 
     private Course parent;
     
@@ -64,5 +65,13 @@ public class Section  {
     	
     }
     
+ // Returns day or night class (0 - day, 1 - night)
+    public double getDayNight(){
+    	return dayNight;
+    }
+
+    public double getRequired(){
+    	return parent.getRequired();
+    }
     
 }
