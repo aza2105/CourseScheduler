@@ -92,16 +92,16 @@ public class FrontEnd extends JFrame {
 		contentPane.add(lblTimingPreferences);
 		
 		final JRadioButton rdbtnDayClasses = new JRadioButton("Day Classes");
-		rdbtnDayClasses.setBounds(10, 66, 101, 23);
+		rdbtnDayClasses.setBounds(10, 66, 123, 23);
 		contentPane.add(rdbtnDayClasses);
 		
 		final JRadioButton rdbtnNightClasses = new JRadioButton("Night Classes");
-		rdbtnNightClasses.setBounds(109, 66, 109, 23);
+		rdbtnNightClasses.setBounds(135, 66, 129, 23);
 		contentPane.add(rdbtnNightClasses);
 		
 		final JRadioButton rdbtnNoPreference = new JRadioButton("No Preference");
 		rdbtnNoPreference.setSelected(true);
-		rdbtnNoPreference.setBounds(220, 66, 129, 23);
+		rdbtnNoPreference.setBounds(266, 66, 149, 23);
 		contentPane.add(rdbtnNoPreference);
 		
 		final ButtonGroup bg = new ButtonGroup();
