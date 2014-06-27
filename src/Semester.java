@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
  * for Fall 2014 would be a different Semester instance.
  */
 
-public class Semester 
+public class Semester implements Comparable<Semester>
 {	
 	/*
 	 * CONSTANTS
@@ -36,6 +36,8 @@ public class Semester
     private Set<Course> sections;
     
     private Semester parentSemester; //previous semester aka parent in the tree  
+   
+    //optional, might remove in the end
     private Semester firstChildSemester;
 	private Semester nextSiblingSemester;
     
@@ -43,6 +45,7 @@ public class Semester
     private Set<Course> inheritedCourses;
     private Set<Course> poolOfCoursesForChildSemesters;
     private double utility;  
+    private int pathCost; //anti-utility
 	private Preferences preferencesObj;
     
     
@@ -245,6 +248,16 @@ public class Semester
 		this.preferencesObj = preferencesObj;
 	}
     
+	public int getPathCost()
+	{
+		return pathCost;
+	}
+
+	public void setPathCost(int pathCost)
+	{
+		this.pathCost = pathCost;
+	}
+
     //returns semester name as a string
     public String getSemesterName()
     {
@@ -367,6 +380,48 @@ public class Semester
     }
     
     /*
+     * takes a given power set and removes from it constituent sets that have the exact size
+     * returns the filtered power set
+     */
+    public static <T> Set<Set<T>> filterPowerSetExactSize(int exactSize, Set<Set<T>> originalPowerSet)
+    {
+    	for (Set<T> set : originalPowerSet)
+    	{
+    		if (set.size() != exactSize)
+    		{
+    			originalPowerSet.remove(set);
+    		}
+    	}	
+    	return originalPowerSet;
+    }
+
+	
+    @Override
+	public int compareTo(Semester s)
+	{
+    	return this.pathCost - s.getPathCost();
+	}
+
+    
+    /*
+     * takes a given power set and removes from it constituent sets that have size > MAX_SIZE
+     * returns the filtered power set
+     */
+    /*
+    public static <T> Set<Set<T>> filterPowerSetMaxSize(int maxSize, Set<Set<T>> originalPowerSet)
+    {
+    	for (Set<T> set : originalPowerSet)
+    	{
+    		if (set.size() > maxSize)
+    		{
+    			originalPowerSet.remove(set);
+    		}
+    	}	
+    	return originalPowerSet;
+    }
+    */
+    
+    /*
     //might want to use powerset from Guava instead
     //from Stackoverflow.com
     //http://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
@@ -387,41 +442,6 @@ public class Semester
         	sets.add(set);
         }		
         return sets;
-    }
-    */
-    
-    
-    /*
-     * takes a given power set and removes from it constituent sets that have the exact size
-     * returns the filtered power set
-     */
-    public static <T> Set<Set<T>> filterPowerSetExactSize(int exactSize, Set<Set<T>> originalPowerSet)
-    {
-    	for (Set<T> set : originalPowerSet)
-    	{
-    		if (set.size() != exactSize)
-    		{
-    			originalPowerSet.remove(set);
-    		}
-    	}	
-    	return originalPowerSet;
-    }
-    
-    /*
-     * takes a given power set and removes from it constituent sets that have size > MAX_SIZE
-     * returns the filtered power set
-     */
-    /*
-    public static <T> Set<Set<T>> filterPowerSetMaxSize(int maxSize, Set<Set<T>> originalPowerSet)
-    {
-    	for (Set<T> set : originalPowerSet)
-    	{
-    		if (set.size() > maxSize)
-    		{
-    			originalPowerSet.remove(set);
-    		}
-    	}	
-    	return originalPowerSet;
     }
     */
     

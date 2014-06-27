@@ -23,7 +23,27 @@ public class Scheduler
 	 * 
 	 */
    
-
+	private static LinkedList<Semester> uniformCostSearch()
+	{
+		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
+		
+		//Semester rootSemester = generateRootSemester(new Preferences(), new Requirements() etc..);
+		//rootSemester.pathCost = 0;
+		
+		//PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
+		
+		
+		
+		
+		return optimalSemesterList;
+		
+		
+	}
+	
+	
+	//private static Semester generateRootSemester(Preferences prefs, Requirements reqs)
+	
+	
 	// number of semesters to consider
 	private int semesters;
 	
