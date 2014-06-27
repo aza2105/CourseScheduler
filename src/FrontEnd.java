@@ -78,7 +78,7 @@ public class FrontEnd extends JFrame {
 		textField.setColumns(10);
 		
 		JLabel lblCourses = new JLabel("Courses Taken");
-		lblCourses.setBounds(509, 16, 89, 14);
+		lblCourses.setBounds(509, 16, 123, 14);
 		contentPane.add(lblCourses);
 		
 		JButton btnAddCourse = new JButton("Add course");
