@@ -48,6 +48,7 @@ public class Requirements {
 		for(int i = 0; i < completed.size(); i++) {
 			for(int j = 0; j < ruleList.size(); j++) {
 				String s = ruleList.get(j).isRuleMet( (completed.get(i)) );
+				
 				//need to cycle through the ruleList to pull out the course from any duplicate lists
 				for(int k = 0; k < ruleList.size(); k++) {
 					if (ruleList.get(k).getRuleType().equals(s) && (ruleList.get(k).getFulfilled() == false)) {

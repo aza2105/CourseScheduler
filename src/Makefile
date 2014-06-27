@@ -1,10 +1,11 @@
 JC = javac
 JFLAGS = -g
+JAR = -cp .:../*
 
 .SUFFIXES: .java .class
 
 .java.class:
-	$(JC) $(JFLAGS) $*.java
+	$(JC) $(JFLAGS) $(JAR) $*.java
 
 CLASSES = \
 	  Parser.java \
@@ -14,9 +15,9 @@ CLASSES = \
 	  Utility.java	\
 	  Instructor.java \
 	  Preferences.java \
+	  Semester.java	\
 	  Course.java \
 	  CourseReview.java \
-	  Scheduler.java \
 	  Track.java
 
 default: classes

@@ -8,6 +8,7 @@ public class Course {
 	 * */
 	private String title;
 	private String courseID;
+	private String internalID;
 	private char offered; // semester typically offered: F(Fall), S(Spring), B(Both), T(Indeterminate)
 	private int credits;
 	private int startTime;
@@ -133,14 +134,21 @@ public class Course {
 	public void setID(String s) {
 		
 		s = s.trim();
+		courseID = s;
 		String t = s.substring(0,4) + s.substring(s.length() - 4, s.length());
-		courseID = t;
+		internalID = t;
+		System.out.println(t);
 	}
 
 	public int getCredits() {
 
 		return credits;
 
+	}
+	
+	public String getInternal() {
+		
+		return internalID;
 	}
 
 	public String toString() {
@@ -156,7 +164,7 @@ public class Course {
 			return true;
 		}
 		
-		if (this.courseID.trim().equals(((Course) c).getID().trim())) {
+		if (this.internalID.trim().equals(((Course) c).getInternal().trim())) {
 			
 			return true;
 		}
