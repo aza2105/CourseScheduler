@@ -141,7 +141,6 @@ public class Course {
 		courseID = s;
 		String t = s.substring(0,4) + s.substring(s.length() - 4, s.length());
 		internalID = t;
-		System.out.println(t);
 	}
 
 	public int getCredits() {

@@ -35,9 +35,9 @@ public class Main {
 			Preferences.parseUserInput(args);
 		}
 		
-		/*
-		// Input file test
 		
+		// Input file test
+		/*
 		System.out.println("COURSES ALREADY TAKEN: ");
 		for(int i = 0; i < Preferences.prefs.getCoursesTaken().size(); i++){
 			System.out.println(Preferences.prefs.getCoursesTaken().get(i));
