@@ -19,7 +19,7 @@ public class Semester
 	 */
 	//the maximum number of courses a semester schedule can have
 	//this is the max allowed by the system for MS students in CS
-	protected static final int MAX_SIZE = 4; 
+	//protected static final int MAX_SIZE = 4; 
 	
 	/*
      * INSTANCE VARIABLES
@@ -34,7 +34,12 @@ public class Semester
     private int semesterID; //0 or 1 depending on fall or spring
     private int semesterYear;
     private Set<Course> sections;
+    
     private Semester parentSemester; //previous semester aka parent in the tree  
+    private Semester firstChildSemester;
+	private Semester nextSiblingSemester;
+    
+    private ArrayList<Semester> childSemesters;
     private Set<Course> inheritedCourses;
     private Set<Course> poolOfCoursesForChildSemesters;
     private double utility;  
@@ -116,6 +121,26 @@ public class Semester
     	parentSemester = p;
     }
     
+    public Semester getFirstChildSemester()
+	{
+		return firstChildSemester;
+	}
+
+	public void setFirstChildSemester(Semester firstChildSemester)
+	{
+		this.firstChildSemester = firstChildSemester;
+	}
+
+	public Semester getNextSiblingSemester()
+	{
+		return nextSiblingSemester;
+	}
+
+	public void setNextSiblingSemester(Semester nextSiblingSemester)
+	{
+		this.nextSiblingSemester = nextSiblingSemester;
+	}
+    
     //returns all courses taken by ancestors up until the root
     public Set<Course> getInheritedCourses()
     {
@@ -146,7 +171,8 @@ public class Semester
     	return utility;
     }
     
-    //sets the utility of the semester plus the utility of any ancestors all the way up to the root
+    
+    /*sets the utility of the semester plus the utility of any ancestors all the way up to the root*/
     public void setUtility(Requirements reqs, Preferences prefs)
     {
     	/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
@@ -165,13 +191,14 @@ public class Semester
 		// of the semester
 		//for(int i = 0; i < sections.size(); i++){
 		
-		/*fix polymorphism issue
+		//fix polymorphism issue
 		for (Course s : sections)
 		{
 			// Initial value for the nugget value for each section
 			int nuggetVal = 0;
 			
 			// Convert nugget String to a value
+			/*
 			if ((s.getNuggetValue()).equals("none"))
 			{
 				nuggetVal = 0;
@@ -184,6 +211,7 @@ public class Semester
 			{
 				nuggetVal = 40;
 			}
+			*/
 			
 			// Compute the utility for requirement points
 			requiredVal = s.getRequired() * 75;
@@ -202,11 +230,11 @@ public class Semester
 			// Sum the components of the utility
 			tempUtil += nuggetVal + dayNightVal;
 		}
-		*/
+		
 				
 		this.utility = tempUtil;
     }
-    
+   
     public Preferences getPreferencesObj() 
     {
 		return preferencesObj;
@@ -298,28 +326,34 @@ public class Semester
     	 * we also only filter using this exact size filter if user has provided us a preference, otherwise only filter
     	 * those sets with size greater than MAX_SIZE, since they are invalid configurations and can be safely pruned
     	 */
-    	Set<Set<Course>> allValidSetsOfCoursesForNextSemester;
+    	Set<Set<Course>> allPossibleSetsOfCoursesForNextSemester = new HashSet<Set<Course>>();
+    	if (sizeOfNextSemesterSections > 0 && sizeOfNextSemesterSections <= 10)
+    	{
+    		allPossibleSetsOfCoursesForNextSemester = 
+					filterPowerSetExactSize(sizeOfNextSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
+    	}
+    	
+    	
+    	
+    	/*
     	if (sizeOfNextSemesterSections == -1)
     	{
     		//we are done and have reached the max depth? check with Sam
     		return null;
-    	}
-    	else if (sizeOfNextSemesterSections == 0)
-    	{
-    		allValidSetsOfCoursesForNextSemester = 
-					filterPowerSetExactSize(sizeOfNextSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
     	}
     	else
     	{
     		allValidSetsOfCoursesForNextSemester = 
 					filterPowerSetMaxSize(Semester.MAX_SIZE, Sets.powerSet(poolOfCoursesForChildSemesters));
     	}
+    	*/
     	
+  
     	ArrayList<Semester> childSemestersArrayList = new ArrayList<Semester>();
     	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
     	
     	//instantiate the child semester objects
-    	for (Set<Course> aValidSet : allValidSetsOfCoursesForNextSemester)
+    	for (Set<Course> aValidSet : allPossibleSetsOfCoursesForNextSemester)
     	{
     		childSemestersArrayList
     				.add(
@@ -377,6 +411,7 @@ public class Semester
      * takes a given power set and removes from it constituent sets that have size > MAX_SIZE
      * returns the filtered power set
      */
+    /*
     public static <T> Set<Set<T>> filterPowerSetMaxSize(int maxSize, Set<Set<T>> originalPowerSet)
     {
     	for (Set<T> set : originalPowerSet)
@@ -388,6 +423,7 @@ public class Semester
     	}	
     	return originalPowerSet;
     }
+    */
     
     
     

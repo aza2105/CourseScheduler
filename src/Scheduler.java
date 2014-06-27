@@ -2,22 +2,27 @@ import java.util.*;
 
 public class Scheduler 
 {
-    /*
-     *
-     *function GRAPH-SEARCH(problem) returns a solution, or failure
-     *     initialize the frontier using the initial state of problem
-     *     initialize the explored set to be empty
-     *     loop do
-     *          if the frontier is empty then return failure
-     *          choose a leaf node and remove it from the frontier
-     *          if the node contains a goal state then return the corresponding solution
-     *          add the node to the explored set
-     *          expand the chosen node, adding the resulting nodes to the frontier
-     *             only if not in the frontier or explored set
-     *
-     *Russell, Peter Norvig Stuart (2009-12-01). Artificial Intelligence: A Modern Approach, 3/e (Page 77). Pearson HE, Inc.. Kindle Edition. 
-     *
-     */
+	/*
+	 *	function UNIFORM-COST-SEARCH(problem) returns a solution, or failure
+	 *		node <- a node with STATE = problem.INITIAL-STATE, PATH-COST = 0
+	 *		frontier <- a priority queue ordered by PATH-COST, with node as the only element
+	 *		explored <- an empty set
+	 *		loop do
+	 *			if EMPTY?(frontier) then return failure
+	 *			node <- POP(frontier ) // chooses the lowest-cost node in frontier 
+	 *			if problem.GOAL-TEST(node.STATE) then return SOLUTION(node)
+	 *			add node.STATE to explored
+	 *			for each action in problem.ACTIONS(node.STATE) do
+	 *				child <- CHILD-NODE(problem, node, action)
+	 *				if child.STATE is not in explored or frontier then
+	 *					frontier <- INSERT(child,frontier )
+	 *				else if child.STATE is in frontier with higher PATH-COST then
+	 *					replace that frontier node with child
+	 *
+	 *Russell, Peter Norvig Stuart (2009-12-01). Artificial Intelligence: A Modern Approach, 3/e (Page 84). Pearson HE, Inc.. Kindle Edition. 
+	 * 
+	 */
+   
 
 	// number of semesters to consider
 	private int semesters;
