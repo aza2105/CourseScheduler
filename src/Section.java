@@ -30,7 +30,8 @@ public class Section {
     		this.startTime = sdf.parse( start ); //new SimpleDateFormat( start );
     		this.endTime = sdf.parse( end );//new SimpleDateFormat( end );
     	} catch ( ParseException e ) {
-    	
+    		System.out.println("Parse Exception Error");
+    		System.exit(1);
     	}
     	
     	inst = Instructor.findInstructor( pFirst, pMiddle, pLast );
