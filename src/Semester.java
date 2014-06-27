@@ -48,7 +48,7 @@ public class Semester
     /*
      * METHODS
      */
-    
+ 
     public int getDepth()
     {
     	return depth;
@@ -246,9 +246,13 @@ public class Semester
     	
     	
     	
+    	
+    	
     	//populate next semester's inherited sections
     	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
+    	//add current semester's courses
     	nextSemesterInheritedCourses.addAll(sections);
+    	//add all previous semester courses
     	nextSemesterInheritedCourses.addAll(inheritedCourses);
     	   	
     	return new Semester(depth+1, nextSemesterID, nextSemesterYear, nextSemesterSections, this, nextSemesterInheritedCourses);	
