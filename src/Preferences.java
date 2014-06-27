@@ -23,9 +23,18 @@ public class Preferences {
 	public Preferences(){
 		// Default courses per semester is 4-4-2
 		numCoursesPerSem = new int[10];
-		numCoursesPerSem[0] = 4;
-		numCoursesPerSem[1] = 4;
-		numCoursesPerSem[2] = 2;
+		numCoursesPerSem[0] =  4;
+		numCoursesPerSem[1] =  4;
+		numCoursesPerSem[2] =  2;
+		//-1 indicates look no further, we're done
+		//however, 0 indicates user did not specify preference for that semester
+		numCoursesPerSem[3] = -1;
+		numCoursesPerSem[4] = -1;
+		numCoursesPerSem[5] = -1;
+		numCoursesPerSem[6] = -1;
+		numCoursesPerSem[7] = -1;
+		numCoursesPerSem[8] = -1;
+		numCoursesPerSem[9] = -1;
 		
 		dayNight = 2; // Initially set for don't care
 		
