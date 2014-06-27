@@ -26,7 +26,7 @@ public class Scheduler
 	private HashMap<String,Course> courses;
 
 	// set of valid candidates
-	private Set<Section> coursePool;
+	private Set<Section> coursePool;	
 	
 	// we'll need to initialize a Requirements object for track reqs
 //	private Requirements trackReq;
@@ -37,6 +37,8 @@ public class Scheduler
 		
 		semesters = 2;   // spring and fall
 
+		System.out.println( "Semesters: "+semesters);
+		
 		// set the requirements object
 		//trackReq = r;
 
@@ -45,11 +47,38 @@ public class Scheduler
 		courses = new HashMap<String,Course>(); 
 		courses = HistoricalData.parseUserInput( "historical.csv" );
 
-		System.out.println( courses.get( "COMS W4701"));
+		/* Course Requirement Utility setting */
+		
+		for(Map.Entry<String, Course> entry : courses.entrySet()){
+			entry.getValue().setRequired(8.00);
+			System.out.println( entry.getKey() + ": " + entry.getValue().getRequired());
+		}
 
+		for(Rule r : Parser.reqs.getRules() ) {
+			System.out.println("RULE::"+ r.size() );
+			for( Course c : r.getCourseList() ) {
+				double ru; // determine the "antiutility"
+				
+				ru = Math.log(r.size() )/Math.log(2);
+				
+				
+				System.out.println(c+" "+r.size()+" "+ru);
+			}
+			System.out.println();
+		
+		}
+
+		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
+
+		
+		
+//		System.out.println( courses.get( "COMS W4701"));
+
+		// 
+		
 	}
 	
-	public static String depthFirstSearch(Node theNode, int depth)
+/*	public static String depthFirstSearch(Node theNode, int depth)
 	{
 		String outputStr;
 
@@ -92,14 +121,14 @@ public class Scheduler
 			 * here we have decremented depth until we reached the depth limit
 			 * this method returns to the previously stacked instance of the DFS
 			 * where depth was 1
-			 */
+			 
 			return "FALSE";
 		}
 
 		/*
 		 * generate children of this node and add them to the list "sons" which is
 		 * the list of children nodes local to this function call 
-		 */
+		 
 		ArrayList<Node> sons = new ArrayList<Node>();
 
 		/*
@@ -114,14 +143,14 @@ public class Scheduler
 
 		Node topChildNode = theNode.getTopSuccessorNode();
 		sons.add(topChildNode);
-		*/
+		
 
 		for (Node node : sons)
 		{
 			/*
 			 * if this DFS didn't return false, that means it returned an output
 			 * string for the goal state, so return that
-			 */
+			 
 			if (node != null)
 			{
 				if (!depthFirstSearch((Node) sons.get(0), depth - 1).equals(
@@ -132,7 +161,7 @@ public class Scheduler
 				/* if depth first searching on the first son did return false,
 				 * remove the first son from the array of "sons" 
 				 * and depth first search on the rest of the sons
-				 */
+				 
 				// sons = (ArrayList<Node>) sons.subList(1, sons.size() - 1);
 				sons.remove(0);
 			}
@@ -140,10 +169,10 @@ public class Scheduler
 		// if we exhaust all the sons, return false (not solvable)
 		return "FAILURE: SCHEDULE THAT FULFILLS ALL REQUIREMENTS COULD NOT BE GENERATED";
 	}
-	
-/*	public static void main(String[] args) {
+	*/
+	public static void main(String[] args) {
 
-		if(args.length > 1){
+/*		if(args.length > 1){
 			System.out.println("Too many parameters. Please only include preferences file.");
 			System.exit(1);
 		}
@@ -157,7 +186,7 @@ public class Scheduler
 			// Adds the preferences from the user input into a static Preferences object - 'prefs'
 			Preferences.parseUserInput(args);
 		}
-
+*/
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 
@@ -165,16 +194,17 @@ public class Scheduler
 		
 //		Requirements req = Parser.reqs;
 		
-		for(Rule r : Parser.reqs.getRules() ) {
+/*		for(Rule r : Parser.reqs.getRules() ) {
 			Integer sz = new Integer( r.size() );
 //			if ( sz ) {
-				System.out.println("RULE::"+ r.size() );
-				r.printRule();
+			System.out.println("RULE::"+ r.size() );
+			r.printRule();
 //			}
 		}
-		
+*/		
+		System.out.println( "Main in Scheduler.java");
 		Scheduler s = new Scheduler();// req );
 		
 	}
-	*/
+	
 } 
