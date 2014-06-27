@@ -19,7 +19,8 @@ public class Node
 		 * if the semester for the current node is not null
 		 */
 		if (semester != null)
-			return new Node(semester.generateNextSemester(), this);
+			return null;
+			//return new Node(semester.generateNextSemester(), this);
 		else
 			return null;
 	}
