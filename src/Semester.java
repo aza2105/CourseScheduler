@@ -307,12 +307,12 @@ public class Semester
     	else if (sizeOfNextSemesterSections == 0)
     	{
     		allValidSetsOfCoursesForNextSemester = 
-					filterPowerSetExactSize(sizeOfNextSemesterSections, powerSet(poolOfCoursesForChildSemesters));
+					filterPowerSetExactSize(sizeOfNextSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
     	}
     	else
     	{
     		allValidSetsOfCoursesForNextSemester = 
-					filterPowerSetMaxSize(Semester.MAX_SIZE, powerSet(poolOfCoursesForChildSemesters));
+					filterPowerSetMaxSize(Semester.MAX_SIZE, Sets.powerSet(poolOfCoursesForChildSemesters));
     	}
     	
     	ArrayList<Semester> childSemestersArrayList = new ArrayList<Semester>();
@@ -332,8 +332,8 @@ public class Semester
     	return childSemestersArrayList;
     }
     
-    
-   
+    /*
+    //might want to use powerset from Guava instead
     //from Stackoverflow.com
     //http://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
     public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
@@ -354,6 +354,8 @@ public class Semester
         }		
         return sets;
     }
+    */
+    
     
     /*
      * takes a given power set and removes from it constituent sets that have the exact size
