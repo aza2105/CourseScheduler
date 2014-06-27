@@ -78,6 +78,22 @@ public class Instructor
 	{
 		this.instructorID = instructorID;
 	}
+
+	
+	public static Instructor findInstructor( String first, String middle, String last ) {
+		
+		for( Instructor i : instructorList ) {
+			
+			if ( i.getLastName().equalsIgnoreCase( last ) ) {
+				if ( i.getFirstName().equalsIgnoreCase( first ) ) {
+					return i;
+				}			
+			}	
+		}		
+		return null;
+	}
+	
+	
 	
 	// Method to parse the Instructor list from the csv file and store instructor info in an ArrayList.
 	public static void parseUserInput(String fileLocation){

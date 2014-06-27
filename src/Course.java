@@ -72,6 +72,7 @@ public class Course {
 			this.offerings.put( "night", 1 );
 		}
 		
+		this.requiredUtility = 10;
 		
 //		this.put( "section", section );
 		this.credits = credits;
@@ -117,7 +118,10 @@ public class Course {
 					this.offerings.put( "night", ( nightval+1 ) );
 				}
 			}
-		System.out.println ( courseID + " " + this.offerings.get( semester ) + " " + semester + " " + this.offerings.get( String.valueOf(year) ) + " " + year );
+
+		
+		
+		//System.out.println ( courseID + " " + this.offerings.get( semester ) + " " + semester + " " + this.offerings.get( String.valueOf(year) ) + " " + year );
 	
 	}
 	public String getID() {
@@ -137,7 +141,6 @@ public class Course {
 		courseID = s;
 		String t = s.substring(0,4) + s.substring(s.length() - 4, s.length());
 		internalID = t;
-		System.out.println(t);
 	}
 
 	public int getCredits() {
@@ -179,9 +182,12 @@ public class Course {
 	}
 
 	public void setRequired(double r) {
-		requiredUtility = r;
-	}
 
+		if ( r < requiredUtility ) {
+			requiredUtility = r;	
+		}
+	}
+	
 	public double getRequired() {
 		return requiredUtility;
 	}
