@@ -158,8 +158,8 @@ public class FrontEnd extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				boolean courseDuplicate = false;
 				String addCourseName = textField.getText();
-				//addCourseName.matches("[A-Z]{4}\\s[A-Z]\\d{4}")
-				if(addCourseName.length() > 5 && addCourseName.length() < 15){
+				
+				if(addCourseName.length() > 5 && addCourseName.length() < 15 && addCourseName.matches("[a-zA-Z]{4}.+\\d{4}")){
 					for(int i = 0; i < listModel.size(); i++){
 						if(addCourseName.equals(listModel.get(i).toString())){
 							courseDuplicate = true;
