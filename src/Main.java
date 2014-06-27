@@ -54,6 +54,6 @@ public class Main {
 		// Adds the instructor csv data into a static ArrayList of courses - 'historicalCourseList'
 		HistoricalData.parseUserInput("historical.csv");
 		Parser parser = new Parser(Track.SECURITY);
-		//parser.parseAll();
+		parser.parseAll();
 	}	
 }
