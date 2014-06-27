@@ -54,6 +54,11 @@ public class Rule {
 		return rule.size();
 	}
 
+	public LinkedList<Course> getCourseList() {
+		
+		return rule;
+	}
+	
 	public String isRuleMet(Course completed) {
 		/*
 		System.out.println("Looking for: " + completed);
