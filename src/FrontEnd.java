@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-
 public class FrontEnd extends JFrame {
 
 	private JPanel contentPane;
@@ -158,10 +157,20 @@ public class FrontEnd extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				boolean courseDuplicate = false;
 				String addCourseName = textField.getText();
+				String firstFour = "";
+				String lastFour = "";
+				String listFirstFour = "";
+				String listLastFour = "";
 				
-				if(addCourseName.length() > 5 && addCourseName.length() < 15 && addCourseName.matches("[a-zA-Z]{4}.+\\d{4}")){
+				if(addCourseName.length() > 5 && addCourseName.length() < 15 && (addCourseName.matches("[a-zA-Z]{4}.+\\d{4}") || addCourseName.matches("[a-zA-Z]{4}\\d{4}"))){
+					firstFour = addCourseName.substring(0, 4);
+					lastFour = addCourseName.substring(addCourseName.length()-4, addCourseName.length());
 					for(int i = 0; i < listModel.size(); i++){
-						if(addCourseName.equals(listModel.get(i).toString())){
+						listFirstFour = listModel.get(i).toString().substring(0, 4);
+						listLastFour = listModel.get(i).toString().substring(listModel.get(i).toString().length() - 4, listModel.get(i).toString().length());
+						
+						if(firstFour.equals(listFirstFour) && lastFour.equals(listLastFour)){
+						//if(addCourseName.equals(listModel.get(i).toString())){
 							courseDuplicate = true;
 						}
 					}
@@ -392,44 +401,48 @@ public class FrontEnd extends JFrame {
 			}
 		});
 	}
-	
-	public void updateCourseQuantity(DefaultListModel listModel, JTextField textField_1, JTextField textField_2, JButton btnCreateSchedule){
+
+	public void updateCourseQuantity(DefaultListModel listModel,
+			JTextField textField_1, JTextField textField_2,
+			JButton btnCreateSchedule) {
 		int coursesTaken = 0;
 		int coursesPlanned = 0;
 		boolean invalidSched = false;
 		boolean invalidInt = false;
-		
+
 		coursesTaken = listModel.size();
-		
+
 		String line = textField_1.getText();
-		line = line.replaceAll("\\s","");
-		if(line != null){
+		line = line.replaceAll("\\s", "");
+		if (line != null) {
 			String[] dataLine = line.split(",");
-			try{
+			try {
 				// remove whitespace
-				for(int i = 0; i < dataLine.length; i++){
+				for (int i = 0; i < dataLine.length; i++) {
 					coursesPlanned += Integer.parseInt(dataLine[i]);
-					if(Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) > 10){
+					if (Integer.parseInt(dataLine[i]) < 0
+							|| Integer.parseInt(dataLine[i]) > 10) {
 						invalidInt = true;
 					}
 				}
 				invalidSched = false;
-			} catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				coursesPlanned = 0;
 				invalidSched = true;
 			}
 		}
-		if(!invalidSched && !invalidInt && (coursesTaken + coursesPlanned == 10)){
+		if (!invalidSched && !invalidInt && (coursesTaken + coursesPlanned == 10)) {
 			btnCreateSchedule.setEnabled(true);
-		}
-		else{
+		} else {
 			btnCreateSchedule.setEnabled(false);
 		}
-		
-		//textField_2.setText(Integer.toString(coursesTaken) + Integer.toString(coursesPlanned));
-		if(invalidInt){
+
+		// textField_2.setText(Integer.toString(coursesTaken) +
+		// Integer.toString(coursesPlanned));
+		if (invalidInt) {
 			coursesPlanned = 0;
 		}
-		textField_2.setText(Integer.toString(coursesTaken + coursesPlanned) + " / 10");
+		textField_2.setText(Integer.toString(coursesTaken + coursesPlanned)
+				+ " / 10");
 	}
 }
