@@ -54,7 +54,7 @@ public class FrontEnd extends JFrame {
 	public FrontEnd() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 658, 280);
+		setBounds(100, 100, 658, 300);
 		contentPane = new JPanel();
 		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -64,7 +64,7 @@ public class FrontEnd extends JFrame {
 		final JButton btnCreateSchedule = new JButton("Create Schedule");
 		btnCreateSchedule.setEnabled(false);
 		btnCreateSchedule.setForeground(Color.BLACK);
-		btnCreateSchedule.setBounds(164, 160, 289, 66);
+		btnCreateSchedule.setBounds(149, 181, 289, 66);
 		contentPane.add(btnCreateSchedule);
 		
 		JLabel lblLabel = new JLabel("Courses Taken:");
@@ -122,13 +122,13 @@ public class FrontEnd extends JFrame {
 
 		final DefaultListModel listModel = new DefaultListModel();
 		final JList list = new JList(listModel);
-		list.setBounds(488, 41, 129, 151);
+		list.setBounds(488, 41, 129, 172);
 		contentPane.add(list);
 		
 		
 		JButton btnRemove = new JButton("Remove");
 		
-		btnRemove.setBounds(509, 203, 89, 23);
+		btnRemove.setBounds(510, 224, 89, 23);
 		contentPane.add(btnRemove);
 		
 		JLabel lblIeOr = new JLabel("e.g. \"4, 4, 2\", \"2, 2, 3, 3\", or \"4,2\"");
@@ -136,12 +136,12 @@ public class FrontEnd extends JFrame {
 		contentPane.add(lblIeOr);
 		
 		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
-		lblTotalCoursesPlanned.setBounds(10, 186, 150, 14);
+		lblTotalCoursesPlanned.setBounds(10, 207, 150, 14);
 		contentPane.add(lblTotalCoursesPlanned);
 		
 		textField_2 = new JTextField();
 		textField_2.setEnabled(false);
-		textField_2.setBounds(10, 206, 65, 20);
+		textField_2.setBounds(10, 227, 65, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
 		textField_2.setText("0 / 10");
@@ -162,30 +162,32 @@ public class FrontEnd extends JFrame {
 				String listFirstFour = "";
 				String listLastFour = "";
 				
-				if(addCourseName.length() > 5 && addCourseName.length() < 15 && (addCourseName.matches("[a-zA-Z]{4}.+\\d{4}") || addCourseName.matches("[a-zA-Z]{4}\\d{4}"))){
-					firstFour = addCourseName.substring(0, 4);
-					lastFour = addCourseName.substring(addCourseName.length()-4, addCourseName.length());
-					for(int i = 0; i < listModel.size(); i++){
-						listFirstFour = listModel.get(i).toString().substring(0, 4);
-						listLastFour = listModel.get(i).toString().substring(listModel.get(i).toString().length() - 4, listModel.get(i).toString().length());
+				if(listModel.size() <= 8){
+					if(addCourseName.length() > 5 && addCourseName.length() < 15 && (addCourseName.matches("[a-zA-Z]{4}.+\\d{4}") || addCourseName.matches("[a-zA-Z]{4}\\d{4}"))){
+						firstFour = addCourseName.substring(0, 4);
+						lastFour = addCourseName.substring(addCourseName.length()-4, addCourseName.length());
+						for(int i = 0; i < listModel.size(); i++){
+							listFirstFour = listModel.get(i).toString().substring(0, 4);
+							listLastFour = listModel.get(i).toString().substring(listModel.get(i).toString().length() - 4, listModel.get(i).toString().length());
+							
+							if(firstFour.equals(listFirstFour) && lastFour.equals(listLastFour)){
+							//if(addCourseName.equals(listModel.get(i).toString())){
+								courseDuplicate = true;
+							}
+						}
 						
-						if(firstFour.equals(listFirstFour) && lastFour.equals(listLastFour)){
-						//if(addCourseName.equals(listModel.get(i).toString())){
-							courseDuplicate = true;
+						if(!addCourseName.isEmpty() && !courseDuplicate){
+							listModel.insertElementAt(addCourseName, listModel.size());
+							lblInvalidCourse.setText("");
+						}
+						else{
+							lblInvalidCourse.setText("Already added");
 						}
 					}
 					
-					if(!addCourseName.isEmpty() && !courseDuplicate){
-						listModel.insertElementAt(addCourseName, listModel.size());
-						lblInvalidCourse.setText("");
-					}
 					else{
-						lblInvalidCourse.setText("Already added");
+						lblInvalidCourse.setText("Invalid Course");
 					}
-				}
-				
-				else{
-					lblInvalidCourse.setText("Invalid Course");
 				}
 				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 			}
@@ -420,7 +422,7 @@ public class FrontEnd extends JFrame {
 				// remove whitespace
 				for (int i = 0; i < dataLine.length; i++) {
 					coursesPlanned += Integer.parseInt(dataLine[i]);
-					if (Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) > 10 || Integer.parseInt(dataLine[i]) == 0) {
+					if (Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) == 0) {
 						invalidInt = true;
 					}
 				}
