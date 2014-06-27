@@ -1,5 +1,10 @@
 import java.util.*;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 /*
  * Semester here refers to a proposed semester schedule
  * So, for instance a proposed schedule for Fall 2014 would be 
@@ -9,6 +14,13 @@ import java.util.*;
 
 public class Semester 
 {	
+	/*
+	 * CONSTANTS
+	 */
+	//the maximum number of courses a semester schedule can have
+	//this is the max allowed by the system for MS students in CS
+	protected static final int MAX_SIZE = 4; 
+	
 	/*
      * INSTANCE VARIABLES
      */
@@ -21,21 +33,18 @@ public class Semester
      */
     private int semesterID; //0 or 1 depending on fall or spring
     private int semesterYear;
-    private Set<Section> sections;
+    private Set<Course> sections;
     private Semester parentSemester; //previous semester aka parent in the tree  
     private Set<Course> inheritedCourses;
     private Set<Course> poolOfCoursesForChildSemesters;
-    private double utility;
+    private double utility;  
+	private Preferences preferencesObj;
+    
     
     /*
      * CONSTRUCTORS
-     */
-    public Semester()
-    {
-    	
-    }
-    
-    public Semester(int depth, int semesterID, int semesterYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses) 
+     */ 
+    public Semester(int depth, int semesterID, int semesterYear, Set<Course> sections, Semester parentSemester, Set<Course> inheritedCourses) 
     {
     	this.depth = depth;
     	this.semesterID = semesterID;
@@ -43,6 +52,13 @@ public class Semester
     	this.sections = sections;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
+    	
+    	//populate next semester's inherited sections
+    	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
+    	//add current semester's courses
+    	nextSemesterInheritedCourses.addAll(this.sections);
+    	//add all previous semester courses
+    	nextSemesterInheritedCourses.addAll(this.inheritedCourses);
     }
     
     /*
@@ -79,13 +95,13 @@ public class Semester
     	this.semesterYear = semesterYear;
     }
    
-    public Set<Section> getSections() 
+    public Set<Course> getSections() 
     {
     	return sections;
     }
     
     //not sure if we need this
-    public void setSections(Set<Section> newSections)
+    public void setSections(Set<Course> newSections)
     {
     	sections = newSections;
     }
@@ -116,9 +132,13 @@ public class Semester
     	return poolOfCoursesForChildSemesters;	
     }
     
-    public void setPoolOfCoursesForChildSemesters(Set<Course> poolOfCoursesForChildSemesters)
+    public void setPoolOfCoursesForChildSemesters(Set<Course> allCourses)
     {
-    	this.poolOfCoursesForChildSemesters = poolOfCoursesForChildSemesters;
+    	//subtract all inherited courses as well as current semester courses 
+    	//aka sections from set of all courses 
+    	allCourses.removeAll(inheritedCourses);
+    	allCourses.removeAll(sections);
+    	this.poolOfCoursesForChildSemesters = allCourses;
     }
     
     public double getUtility()
@@ -144,8 +164,9 @@ public class Semester
 		// Successively check and add the value of each section's utility to the total utility
 		// of the semester
 		//for(int i = 0; i < sections.size(); i++){
-			
-		for (Section s : sections)
+		
+		/*fix polymorphism issue
+		for (Course s : sections)
 		{
 			// Initial value for the nugget value for each section
 			int nuggetVal = 0;
@@ -181,9 +202,20 @@ public class Semester
 			// Sum the components of the utility
 			tempUtil += nuggetVal + dayNightVal;
 		}
+		*/
 				
 		this.utility = tempUtil;
     }
+    
+    public Preferences getPreferencesObj() 
+    {
+		return preferencesObj;
+	}
+
+	public void setPreferencesObj(Preferences preferencesObj) 
+	{
+		this.preferencesObj = preferencesObj;
+	}
     
     //returns semester name as a string
     public String getSemesterName()
@@ -215,8 +247,8 @@ public class Semester
     	return semesterString;
     }
 
-    //successor method to generate next semester
-    public Semester generateNextSemester()
+    //successor method to generate child semesters of a given semester
+    public ArrayList<Semester> generateChildSemesters()
     {
     	//initialize to invalid values
     	int nextSemesterID = -1;
@@ -241,43 +273,120 @@ public class Semester
     	 * is not scheduled again. Also, only courses that meet the 
     	 * degree requirements should be scheduled.
     	 */
-    	Set<Section> nextSemesterSections = new HashSet<Section>();
+    	//Set<Section> nextSemesterSections = new HashSet<Section>();
     	
     	
+    	/*
+    	 * the size of nextSemesterSections set is determined by preferencesObj
+    	 * generation = depth - 1
+    	 * if user has not specified the num courses per sem,then sizeOfNextSemesterSections = 0 
+    	 */
+    	int sizeOfNextSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
     	
+    	/*
+    	Iterator iterator = poolOfCoursesForChildSemesters.iterator();
     	
+    	while (iterator.hasNext() && nextSemesterSections.size() <= sizeOfNextSemesterSections)
+    	{
+    		sections.add((Section)iterator.next());
+    	}
+		*/
     	
+    	/*
+    	 * we first get the power set of the Set poolOfCoursesForChildSemesters and then
+    	 * filter it to get only those sets (inside the power set) with size equal to sizeOfNextSemesterSections
+    	 * we also only filter using this exact size filter if user has provided us a preference, otherwise only filter
+    	 * those sets with size greater than MAX_SIZE, since they are invalid configurations and can be safely pruned
+    	 */
+    	Set<Set<Course>> allValidSetsOfCoursesForNextSemester;
+    	if (sizeOfNextSemesterSections == -1)
+    	{
+    		//we are done and have reached the max depth? check with Sam
+    		return null;
+    	}
+    	else if (sizeOfNextSemesterSections == 0)
+    	{
+    		allValidSetsOfCoursesForNextSemester = 
+					filterPowerSetExactSize(sizeOfNextSemesterSections, powerSet(poolOfCoursesForChildSemesters));
+    	}
+    	else
+    	{
+    		allValidSetsOfCoursesForNextSemester = 
+					filterPowerSetMaxSize(Semester.MAX_SIZE, powerSet(poolOfCoursesForChildSemesters));
+    	}
     	
-    	//populate next semester's inherited sections
-    	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
-    	//add current semester's courses
-    	nextSemesterInheritedCourses.addAll(sections);
-    	//add all previous semester courses
-    	nextSemesterInheritedCourses.addAll(inheritedCourses);
-    	   	
-    	return new Semester(depth+1, nextSemesterID, nextSemesterYear, nextSemesterSections, this, nextSemesterInheritedCourses);	
+    	ArrayList<Semester> childSemestersArrayList = new ArrayList<Semester>();
+    	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
+    	
+    	//instantiate the child semester objects
+    	for (Set<Course> aValidSet : allValidSetsOfCoursesForNextSemester)
+    	{
+    		childSemestersArrayList
+    				.add(
+    						new Semester(depth+1, nextSemesterID, nextSemesterYear, aValidSet, this, 
+    									Sets.union(sections, inheritedCourses).copyInto(childSemesterInheritedCourses)
+    									)
+    					);
+    	}
+    	
+    	return childSemestersArrayList;
     }
     
     
-    
    
-   
-    
-    
-    
-  
+    //from Stackoverflow.com
+    //http://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
+    public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+        Set<Set<T>> sets = new HashSet<Set<T>>();
+        if (originalSet.isEmpty()) {
+        	sets.add(new HashSet<T>());
+        	return sets;
+        }
+        List<T> list = new ArrayList<T>(originalSet);
+        T head = list.get(0);
+        Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+        for (Set<T> set : powerSet(rest)) {
+        	Set<T> newSet = new HashSet<T>();
+        	newSet.add(head);
+        	newSet.addAll(set);
+        	sets.add(newSet);
+        	sets.add(set);
+        }		
+        return sets;
+    }
     
     /*
-     * this method returns true if for a given semester schedule, the 
-     * student would have compl
-     * 
-     *  public boolean alreadyTaken(Course givenSection)
-    {
-    	return true;
-    }
-     * 
+     * takes a given power set and removes from it constituent sets that have the exact size
+     * returns the filtered power set
      */
-   
+    public static <T> Set<Set<T>> filterPowerSetExactSize(int exactSize, Set<Set<T>> originalPowerSet)
+    {
+    	for (Set<T> set : originalPowerSet)
+    	{
+    		if (set.size() != exactSize)
+    		{
+    			originalPowerSet.remove(set);
+    		}
+    	}	
+    	return originalPowerSet;
+    }
+    
+    /*
+     * takes a given power set and removes from it constituent sets that have size > MAX_SIZE
+     * returns the filtered power set
+     */
+    public static <T> Set<Set<T>> filterPowerSetMaxSize(int maxSize, Set<Set<T>> originalPowerSet)
+    {
+    	for (Set<T> set : originalPowerSet)
+    	{
+    		if (set.size() > maxSize)
+    		{
+    			originalPowerSet.remove(set);
+    		}
+    	}	
+    	return originalPowerSet;
+    }
+    
     
     
     
