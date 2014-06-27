@@ -420,8 +420,7 @@ public class FrontEnd extends JFrame {
 				// remove whitespace
 				for (int i = 0; i < dataLine.length; i++) {
 					coursesPlanned += Integer.parseInt(dataLine[i]);
-					if (Integer.parseInt(dataLine[i]) < 0
-							|| Integer.parseInt(dataLine[i]) > 10) {
+					if (Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) > 10 || Integer.parseInt(dataLine[i]) == 0) {
 						invalidInt = true;
 					}
 				}
