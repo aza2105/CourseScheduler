@@ -70,7 +70,7 @@ public class Utility {
 		// Calculate the value regarding length of day and average gap time
 		dayLengthVal = dayLengthVal(section);
 
-		// Sum total utilities for the given semestser
+		// Sum total utilities for the given semester
 		totalUtility = tempUtil + dayLengthVal;
 				
 		return totalUtility;
@@ -85,6 +85,7 @@ public class Utility {
 		double dayTimingVal = 0;
 		long lengthOfDay = 0; //in minutes
 		double lengthOfDayVal = 0;
+		boolean nullTiming = false;
 		
 		// Create date format in 24 hour time, hours and minutes
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -102,56 +103,66 @@ public class Utility {
 		
 		// Determine earliest start time and latest end time
 		for(int i = 0; i < section.size(); i++){
-			if(section.get(i).getStart().before(tempEarliest)){
-				tempEarliest = section.get(i).getStart();
+			if(section.get(i).getStart() != null && section.get(i).getEnd() !=null ){
+				if(section.get(i).getStart().before(tempEarliest)){
+					tempEarliest = section.get(i).getStart();
+				}
+				if(section.get(i).getEnd().after(tempLatest)){
+					tempLatest = section.get(i).getEnd();
+				}
 			}
-			if(section.get(i).getEnd().after(tempLatest)){
-				tempLatest = section.get(i).getEnd();
+			else{
+				nullTiming = true;
 			}
 		}
 
 		// Calculate the total day length (latest end time - earliest start time)
-		lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
-		lengthOfDay = lengthOfDay/60; // Day length in hours
-		lengthOfDayVal = lengthOfDay/3; // Constant 3
-		
-		// Order the sections chronologically 
-		ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
-		
-		for(int i = 0; i < section.size(); i++){
-			String tempStart = sdf.format(section.get(i).getStart());
-			String tempEnd = sdf.format(section.get(i).getEnd());
-			dateList.add(tempStart);
-			dateList.add(tempEnd);
-		}
-		// Sort the list chronologically
-		Collections.sort(dateList);	
-		
-		// Create an ArrayList of ordered dates of the size of dateList
-		ArrayList <Date> orderedDates = new ArrayList <Date> (dateList.size());
-		for(int i = 0; i < dateList.size(); i++){
-			try {
-				orderedDates.add(sdf.parse(dateList.get(i)));
-			} catch (ParseException e) {
-				System.out.println("Parse Exception in Utility");
-				System.exit(1);
+		if(!nullTiming){
+			lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
+			lengthOfDay = lengthOfDay/60; // Day length in hours
+			lengthOfDayVal = lengthOfDay/3; // Constant 3
+			
+			// Order the sections chronologically 
+			ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
+			
+			for(int i = 0; i < section.size(); i++){
+				String tempStart = sdf.format(section.get(i).getStart());
+				String tempEnd = sdf.format(section.get(i).getEnd());
+				dateList.add(tempStart);
+				dateList.add(tempEnd);
 			}
+			// Sort the list chronologically
+			Collections.sort(dateList);	
+			
+			// Create an ArrayList of ordered dates of the size of dateList
+			ArrayList <Date> orderedDates = new ArrayList <Date> (dateList.size());
+			for(int i = 0; i < dateList.size(); i++){
+				try {
+					orderedDates.add(sdf.parse(dateList.get(i)));
+				} catch (ParseException e) {
+					System.out.println("Parse Exception in Utility");
+					System.exit(1);
+				}
+			}
+			
+			// Determine the total gap time
+			for(int i = 0; i < orderedDates.size() - 1; i++){
+				gapTime = gapTime + (orderedDates.get(i + 1).getTime() - orderedDates.get(i).getTime());
+			}
+	
+			gapTime = gapTime/100000; //gap time in minutes
+			avgGapTime = gapTime/(section.size()-1); // average gap time in minutes
+			
+			// Normalize avgGapVal with a constant - 12
+			avgGapVal = avgGapTime / 12;
+			
+			// Determine total value for timing considerations (length of day and average gap time)
+			dayTimingVal = (avgGapVal + lengthOfDayVal);
 		}
-		
-		// Determine the total gap time
-		for(int i = 0; i < orderedDates.size() - 1; i++){
-			gapTime = gapTime + (orderedDates.get(i + 1).getTime() - orderedDates.get(i).getTime());
+		// null timing so don't provide any value
+		else if(nullTiming){
+			dayTimingVal = 0;
 		}
-
-		gapTime = gapTime/100000; //gap time in minutes
-		avgGapTime = gapTime/(section.size()-1); // average gap time in minutes
-		
-		// Normalize avgGapVal with a constant - 12
-		avgGapVal = avgGapTime / 12;
-		
-		// Determine total value for timing considerations (length of day and average gap time)
-		dayTimingVal = (avgGapVal + lengthOfDayVal);
-		
 		return dayTimingVal;
 	}
 }
