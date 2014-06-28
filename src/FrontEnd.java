@@ -105,8 +105,8 @@ public class FrontEnd extends JFrame {
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
-		final DefaultListModel<String> listModel = new DefaultListModel<String>();
-		final JList<String> list = new JList<String>(listModel);
+		final DefaultListModel listModel = new DefaultListModel();
+		final JList list = new JList(listModel);
 		list.setBounds(488, 41, 129, 172);
 		contentPane.add(list);
 		
@@ -506,7 +506,7 @@ public class FrontEnd extends JFrame {
 	}
 
 	// Updates the total courses field (out of 10)
-	public void updateCourseQuantity(DefaultListModel<String> listModel,
+	public void updateCourseQuantity(DefaultListModel listModel,
 			JTextField textField_1, JTextField textField_2,
 			JButton btnCreateSchedule) {
 		int coursesTaken = 0;
