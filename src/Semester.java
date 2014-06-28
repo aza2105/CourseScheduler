@@ -34,7 +34,11 @@ public class Semester implements Comparable<Semester>
      */
     private int semesterID; //0 or 1 depending on fall or spring
     private int semesterYear;
+    
+    // SECTIONS is the current semester courses being taken at this node
     private Set<Section> sections;
+
+    
     
     private Semester parentSemester; //previous semester aka parent in the tree  
    
@@ -42,6 +46,7 @@ public class Semester implements Comparable<Semester>
     private Semester firstChildSemester;
 	private Semester nextSiblingSemester;
     
+	private Set<Course> nextSemesterInheritedCourses;
     private ArrayList<Semester> childSemesters;
     private Set<Course> inheritedCourses;
     private Set<Section> poolOfCoursesForChildSemesters;
@@ -396,20 +401,31 @@ public class Semester implements Comparable<Semester>
     		
     		
     		
-    		
+
+    		Set childsInheritance = new HashSet<Course>(this.nextSemesterInheritedCourses);
+    		childsInheritance.addAll( aPossibleSet );
     		childSemestersArrayList
-    				.add(
-    						
+    				.add(  						
     						new Semester(depth+1, nextSemesterID, nextSemesterYear, aPossibleSet, this, 
-    									Sets.union(sectionsToCourses(aPossibleSet), inheritedCourses ).copyInto(childSemesterInheritedCourses),
-    									(childUtility + utility ))
+//    								Sets.union( this.nextSemesterInheritedCourses, aPossibleSet ),
+    								childsInheritance,
+    								childUtility + utility )
     					);
+
+			//				Sets.union(sectionsToCourses(aPossibleSet), inheritedCourses ).copyInto(childSemesterInheritedCourses),
+
     	}
     	
     	return childSemestersArrayList;
     }
     
-    
+
+    // return a set of courses defined to match this semester's courses taken
+    public Set<Course> getCourses( ) {
+    	return sectionsToCourses( this.sections );
+    }
+
+
     // convert a set of sections to a set of courses
     private static Set<Course> sectionsToCourses( Set<Section> givenSet ) {
     	
