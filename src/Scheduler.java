@@ -113,6 +113,28 @@ public class Scheduler
 		if ( !(coursePool == null) ) {
 			// assuming first sem to be fall 2014
 			directoryOfClasses.add(0, coursePool); 
+	
+			HashSet<Section> testSet = new HashSet<Section>(coursePool);
+
+			HashSet<HashSet<Section>> bigTest;
+			//bigTest = new HashSet<HashSet<Section>>();
+			bigTest = new HashSet<HashSet<Section>>();
+			for( Section s1 : testSet ) {
+				for ( Section s2: testSet ) {
+					for ( Section s3: testSet ) {
+						for ( Section s4: testSet ) {
+						//	System.out.println( s1.toString()+" "+ s2.toString()+" "+ s3.toString()+" "+ s4.toString());
+							HashSet<Section> newSet = new HashSet<Section>();
+							newSet.add( s1 );
+							newSet.add( s2 );
+							newSet.add( s3 );
+							newSet.add( s4 );
+							bigTest.add( newSet );
+						}
+					}
+				}
+			}
+			
 			i++;
 						
 	    	if (xSeason == 0)
@@ -133,6 +155,8 @@ public class Scheduler
 		// generate directories of classes
 		for ( ; i<maxDepth; i++ ) {
 
+			System.out.println( "getting class sections for depth "+i);
+			
 			// get a set of 
 			HashSet<Section> poolOfCoursesForChildSemesters = new HashSet<Section>();
 			
@@ -140,9 +164,14 @@ public class Scheduler
 //Section(Course c, String days, String start, String end, String pLast, String pFirst, String pMiddle ) {
 
 			for ( Course c : courses.values() ) {
+
+//				System.out.println("checking a course");
 				if ( c.probOffered( String.valueOf(xSeason), String.valueOf(xYear) ) ) {
 					poolOfCoursesForChildSemesters.add( new Section( c, null, null, null, null, null, null ));
 				}								
+				else {
+//					System.out.println( "Failed! with "+ c.probOffered( String.valueOf(xSeason), String.valueOf(xYear)));
+				}
 			}
 			
 			directoryOfClasses.add( poolOfCoursesForChildSemesters );
@@ -173,6 +202,8 @@ public class Scheduler
 //					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
     		
 			
+
+		
 		
 	}
 
@@ -187,7 +218,8 @@ public class Scheduler
 //			return null;
 		}
 		//instantiate the root semester
-		Semester sem = new Semester(0, -1, -1, directoryOfClasses.get(0), null, rootInheritedCourses, 0);
+		Semester sem = new Semester(0, 0, 2014, null, null, rootInheritedCourses, 0);
+//				directoryOfClasses.get(0), null, rootInheritedCourses, 0);
 		
 		
 		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
@@ -198,7 +230,7 @@ public class Scheduler
 		while (true)
 		{
 
-//			System.out.println( "Frontier contains "+frontier.toString()  );
+			System.out.println( "Frontier contains "+frontier.size()+" elements"  );
 			if (frontier.isEmpty())
 			{
 				optimalSemesterList = null; //returning failure
@@ -228,10 +260,20 @@ public class Scheduler
 				{
 					//sem.
 					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
+
+					if ( childrenSem.size() == 0 ) {
+						System.out.println( "No children returned, they were expected!");
+					}
+					else {
+						System.out.println( "size of childrenSem is "+childrenSem.size());
+					}
+					
 					for (Semester childSem : childrenSem)
 					{
-//						if (!explored.contains(childSem) && !frontier.contains(childSem))
-							frontier.add(childSem);
+//						System.out.println( ".");
+						//						if (!explored.contains(childSem) && !frontier.contains(childSem))
+//						System.out.println( childSem.toString() );
+						frontier.add(childSem);
 					}
 				}		
 			}
