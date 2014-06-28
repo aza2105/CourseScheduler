@@ -70,6 +70,12 @@ public class Section {
     	
     }
     
+    public String getDaySchedule() {
+    	
+    	return daySchedule;
+    	
+    }
+    
  // Returns day or night class (0 - day, 1 - night)
     public double getDayNight(){
     	return dayNight;

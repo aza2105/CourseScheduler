@@ -86,7 +86,7 @@ public class Utility {
 			System.out.println(minutes);*/
 			
 			// Sum the components to compute total utility
-			tempUtil = tempUtil + nuggetVal + dayNightVal;
+			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
 		}
 		
 		dayLength = lengthOfDay(section);
