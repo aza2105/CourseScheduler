@@ -507,6 +507,17 @@ public class Semester implements Comparable<Semester>
     */
     
     
-    
+    public static void main(String[] args)
+    {
+    	Set s1 = Sets.newHashSet("a", "b", "c");
+    	
+    	Iterator iterator = s1.iterator();
+    	while (iterator.hasNext())
+    	{
+    		String string = (String)iterator.next();
+    		System.out.println(string);
+    	}
+    	
+    }
     
 }
