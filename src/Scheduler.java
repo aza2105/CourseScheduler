@@ -2,6 +2,10 @@ import java.util.*;
 
 public class Scheduler 
 {
+	
+	
+	
+	
 	/*
 	 *	function UNIFORM-COST-SEARCH(problem) returns a solution, or failure
 	 *		node <- a node with STATE = problem.INITIAL-STATE, PATH-COST = 0
@@ -26,14 +30,25 @@ public class Scheduler
 	private static LinkedList<Semester> uniformCostSearch()
 	{
 		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
+		Set<Course> inheritedCourses = new HashSet();
+		Set<Course> sections = new HashSet();
 		
-		//Semester rootSemester = generateRootSemester(new Preferences(), new Requirements() etc..);
-		//rootSemester.pathCost = 0;
-		
-		//PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
+		//instantiate the root semester
+		Semester sem = new Semester(0, -1, -1, sections, null, inheritedCourses, 0);
 		
 		
+		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
+		Set<Semester> explored = new HashSet<Semester>();
 		
+		while (true)
+		{
+			if (frontier.isEmpty())
+				return null; //returning failure
+			else
+			{
+				
+			}
+		}
 		
 		return optimalSemesterList;
 		
@@ -48,7 +63,10 @@ public class Scheduler
 	private int semesters;
 	
 	// hash map for getting course information and generating potential schedules
-	private HashMap<String,Course> courses;
+	private static HashMap<String,Course> courses;
+
+	
+
 
 	// set of valid candidates
 	private Set<Section> coursePool;	
@@ -101,6 +119,19 @@ public class Scheduler
 
 		// 
 		
+	}
+	
+	/*
+	 * METHODS
+	 */
+	public HashMap<String, Course> getCourses()
+	{
+		return courses;
+	}
+
+	public void setCourses(HashMap<String, Course> courses)
+	{
+		this.courses = courses;
 	}
 	
 /*	public static String depthFirstSearch(Node theNode, int depth)
