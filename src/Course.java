@@ -192,6 +192,25 @@ public class Course {
 		return requiredUtility;
 	}
 
-//	Parser.reqs.
+	
+	public boolean probOffered( String season, String year ) {
+		if ( season.equals( 1 ) ) {
+			season = "fall";
+		}
+		else {
+			season = "spring";
+		}
+		System.out.println( "Term: "+season+" "+year);
+
+		if ( !this.offerings.containsKey( season ) ) {
+			return false;
+		}
+		if ( ( this.offerings.get( season ) / this.totalOfferings ) > 0.4 ) {
+			return true;			
+		}
+		return false;
+	}
+
+	//	Parser.reqs.
 	
 }

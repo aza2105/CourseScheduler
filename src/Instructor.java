@@ -81,7 +81,10 @@ public class Instructor
 
 	
 	public static Instructor findInstructor( String first, String middle, String last ) {
-		
+
+		if ( instructorList == null ) {
+			return null;
+		}
 		for( Instructor i : instructorList ) {
 			
 			if ( i.getLastName().equalsIgnoreCase( last ) ) {

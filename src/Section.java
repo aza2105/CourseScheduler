@@ -32,9 +32,13 @@ public class Section {
     		System.out.println("Parse Exception Error");
     		System.exit(1);
     	}
-    	
-    	inst = Instructor.findInstructor( pFirst, pMiddle, pLast );
-    	
+
+    	if ( ( pFirst != null ) && ( pLast != null ) ) {
+    		inst = Instructor.findInstructor( pFirst, pMiddle, pLast );
+    	}
+    	else {
+    		inst = null;
+    	}
     }
 
 /*    public Section(String t, String n, char a) {
