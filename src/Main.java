@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 
 public class Main {
@@ -55,5 +56,20 @@ public class Main {
 		HistoricalData.parseUserInput("historical.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
+		
+		//Utility test
+		/*
+        ArrayList<Section> sectionList = new ArrayList<Section>();
+        sectionList.add(new Section(new Course("Course 1", "COMS 4701"), "MWF", "0800", "1159", "Friedman", "Samuel1", "C"));
+        sectionList.add(new Section(new Course("Course 2", "COMS 4702"), "TR", "1201", "1300", "Friedman2", "Samuel2", "C"));
+        sectionList.add(new Section(new Course("Course 3", "COMS 4703"), "MF", "1400", "1500", "Friedman3", "Samuel3", "C"));
+        sectionList.add(new Section(new Course("Course 4", "COMS 4704"), "MF", "1800", "1900", "Friedman4", "Samuel4", "C"));
+        sectionList.add(new Section(new Course("Course 5", "COMS 4705"), "MW", "1900", "2000", "Friedman5", "Samuel5", "C"));
+        sectionList.add(new Section(new Course("Course 6", "COMS 4706"), "TRF", "2200", "2330", "Friedman6", "Samuel6", "C"));
+
+        Utility util = new Utility(null, Preferences.prefs);
+        System.out.println(util.getUtility(sectionList, Preferences.prefs));
+        */
+        
 	}	
 }
