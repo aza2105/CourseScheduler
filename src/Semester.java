@@ -74,11 +74,12 @@ public class Semester implements Comparable<Semester>
     /*
      * CONSTRUCTORS
      */ 
-    public Semester(int depth, int semesterID, int semesterYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+    public Semester(int depth, int sID, int sYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
     {
+    	combinationSets = new HashSet<Set<Section>>();
     	this.depth = depth;
-    	this.semesterID = semesterID;
-    	this.semesterYear = semesterYear;
+    	this.semesterID = sID;
+    	this.semesterYear = sYear;
     	this.sections = sections;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
@@ -90,7 +91,9 @@ public class Semester implements Comparable<Semester>
     	 * and then add all previous semester courses
     	 */
     	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
-    	childSemesterInheritedCourses.addAll(sectionsToCourses( this.sections )); 
+    	if ( sections != null ) {
+    		childSemesterInheritedCourses.addAll(sectionsToCourses( this.sections )); 
+    	}
     	childSemesterInheritedCourses.addAll(this.inheritedCourses);
     	
     	/*
@@ -98,8 +101,12 @@ public class Semester implements Comparable<Semester>
     	 * aka sections from set of possible courses for child semester
     	 */
     	poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
-    	poolOfCoursesForChildSemesters.removeAll(inheritedCourses);
-    	poolOfCoursesForChildSemesters.removeAll(sections);	
+    	if ( inheritedCourses != null ) {
+    		poolOfCoursesForChildSemesters.removeAll(inheritedCourses);
+    	}
+    	if ( sections != null ) {
+    	   	poolOfCoursesForChildSemesters.removeAll(sections);	   
+    	}
     }
     
     /*
@@ -358,11 +365,17 @@ public class Semester implements Comparable<Semester>
     	
     	ArrayList<Semester> childrenSemesterArrayList = new ArrayList<Semester>();
     	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
-    	
+
+    	System.out.println( "Generated " + allPossibleSetsOfCoursesForNextSemester.size() + " possible scheds");
     	//instantiate the child semester objects
     	for (Set<Section> aPossibleSet : allPossibleSetsOfCoursesForNextSemester )
     	{
 
+    		for( Section s : aPossibleSet ) {
+    			System.out.println( s.getParent().toString() );
+    		}
+    		System.out.println();
+    		
     		// First, check that the proposed semester schedule is valid, that is,
     		//  it will be possible to meet our requirements with the courses
     		//  remaining after this one
@@ -415,16 +428,21 @@ public class Semester implements Comparable<Semester>
 	{
 		ArrayList<Section> inputArrayList = new ArrayList<Section>(inputSet);
 		int n = inputSet.size();
+			
 		combinationSets.clear();
+		
 		//Set<Course> outputSet = new HashSet<Course>();
 		
 	    // A temporary array to store all combinations one by one
 	    //int data[] = new int[r];
-		ArrayList<Section> data = new ArrayList<Section>(); 
-		
+		ArrayList<Section>(r) data;
+		data = new ArrayList<Section>(); 
+	
+		System.out.println( data.size() +" "+r);
 		
 	    // Print all combination using temporary array 'data[]'
 	    //combinationUtil(arr, data, 0, n-1, 0, r);
+//		System.out.println( "Running combUtil with inputArrayList of size "+inputArrayList.size()+" 0 "+(n-1)+" 0 "+r);
 		combinationUtil(inputArrayList, data, 0, n-1, 0, r);
 		
 		if (!combinationSets.isEmpty())
@@ -461,9 +479,18 @@ public class Semester implements Comparable<Semester>
 	    // at remaining positions
 	    for (int i = start; i <= end && end - i + 1 >= r-index; i++)
 	    {
-	        //data[index] = arr[i];
+
+//	    	System.out.println( "i="+i);
+	    	//data[index] = arr[i];
+//	    	 ) {
+	    	System.out.println( data.size() );
 	    	data.set(index, inputArrayList.get(i));
-	        combinationUtil(inputArrayList, data, i+1, end, index+1, r);
+//	    	}
+//	    	else {
+//	    		data.add( inputArrayList.get(i));
+//	    		System.out.println("Adding ")
+	    		//	    	}
+	    	combinationUtil(inputArrayList, data, i+1, end, index+1, r);
 	    }
 	}
 
@@ -487,6 +514,10 @@ public class Semester implements Comparable<Semester>
 
     // convert a set of sections to a set of courses
     private static Set<Course> sectionsToCourses( Set<Section> givenSet ) {
+    	
+    	if ( givenSet == null ) {
+    		return null;
+    	}
     	
     	Set<Course> retVal = new HashSet<Course>();
     	
