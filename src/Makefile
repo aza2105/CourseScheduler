@@ -1,6 +1,6 @@
 JC = javac
 JFLAGS = -g
-JAR = -cp .:../*
+JAR = -cp .:*
 
 .SUFFIXES: .java .class
 

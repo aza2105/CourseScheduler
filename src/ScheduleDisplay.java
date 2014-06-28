@@ -29,6 +29,7 @@ public class ScheduleDisplay extends JFrame {
     	
     	
     	if (!System.getProperty("os.name").equals("Mac OS X") ) {
+    		System.out.println("Hi SAM");
 	    	Image resize = icon.getImage();
 	    	BufferedImage buff = new BufferedImage(resize.getWidth(null), resize.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 	    	Graphics g = buff.createGraphics();
