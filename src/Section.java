@@ -21,8 +21,7 @@ public class Section {
 //    	this.startTime = start;
 //    	this.endTime = end;
 
-    	SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     	start = new StringBuilder(start).insert(start.length()-2, ":").toString();
     	end = new StringBuilder(end).insert(end.length()-2, ":").toString();
 
@@ -51,7 +50,12 @@ public class Section {
     
     // Return the String value ("gold", "silver") for nugget
     public String getNuggetValue(){
-    	return inst.getNugget();
+    	if(inst != null){
+    		return inst.getNugget();
+    	}
+    	else{
+    		return "";
+    	}
     }
 
     public Date getStart() {

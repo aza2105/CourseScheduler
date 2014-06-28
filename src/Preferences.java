@@ -13,10 +13,12 @@ public class Preferences {
 	int [] numCoursesPerSem;
 	int dayNight; // 0 is day, 1 is night, 2 is don't care
 	ArrayList <String> coursesTaken;
+	int firstSeason;
+	int firstYear;
 	
 	public enum PossPrefs
 	 {
-	     COURSE, SEMESTER, DAYNIGHT;
+	     COURSE, SEMESTER, DAYNIGHT, SEASON, YEAR;
 	 }
 	
 	// Constructor to initialize user preference variables.
@@ -43,10 +45,12 @@ public class Preferences {
 	}
 	
 	// Preferences constructor when provided with user input
-	public Preferences(int [] numCoursesPerSem, int dayNight, ArrayList <String> coursesTaken){
+	public Preferences(int [] numCoursesPerSem, int dayNight, ArrayList <String> coursesTaken, int firstSeason, int firstYear){
 		this.numCoursesPerSem = numCoursesPerSem;
 		this.dayNight = dayNight;
 		this.coursesTaken = coursesTaken;
+		this.firstSeason = firstSeason;
+		this.firstYear = firstYear;
 	}
 	
 	// Return the entire array of courses per semester index
@@ -69,12 +73,22 @@ public class Preferences {
 		return coursesTaken;
 	}
 	
+	public int getFirstSeason(){
+		return firstSeason;
+	}
+	
+	public int getFirstYear(){
+		return firstYear;
+	}
+	
 	// Method to parse the user input/parameters
 	public static void parseUserInput(String [] userInput){
 		ArrayList <String> coursesTaken;
 		coursesTaken = new ArrayList<String>();
 		int [] numCoursesPerSem = new int[10];
 		int dayNight = 0;
+		int firstY = 0;
+		int firstS = 0;
 		
 		// If the length of the input is 1, the parameter should be the preferences file location.
 		if (userInput.length == 1){
@@ -97,11 +111,18 @@ public class Preferences {
 							break;
 						case DAYNIGHT:
 							dayNight = Integer.parseInt(dataLine[1]);
+							break;
+						case SEASON:
+							firstS = Integer.parseInt(dataLine[1]);
+							break;
+						case YEAR:
+							firstY = Integer.parseInt(dataLine[1]);
+							break;
 					}
 				}
 				
 				// Create the preferences object based off of the user input.
-				prefs = new Preferences(numCoursesPerSem, dayNight, coursesTaken);
+				prefs = new Preferences(numCoursesPerSem, dayNight, coursesTaken, firstS, firstY);
 				br.close();
 				
 				// Catch the exceptions and print the corresponding results.
