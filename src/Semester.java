@@ -13,7 +13,7 @@ import com.google.common.collect.Sets;
  * for Fall 2014 would be a different Semester instance.
  */
 
-public class Semester //implements Comparable<Semester>
+public class Semester implements Comparable<Semester>
 {	
 	/*
 	 * CONSTANTS
@@ -391,7 +391,7 @@ public class Semester //implements Comparable<Semester>
 
     		// find the utility....
     		ArrayList<Section> utilityCheckList = new ArrayList<Section>( aPossibleSet );
-    		double childUtility = Utility.getUtility( utilityCheckList, Preferences.prefs );
+    		double childUtility = Utility.getUtility( utilityCheckList );
     		
     		
     		
@@ -439,12 +439,16 @@ public class Semester //implements Comparable<Semester>
     }
 
 	
-/*    @Override
-	public double compareTo(Semester s)
+    @Override
+	public int compareTo(Semester s)
 	{
-    	return this.utility - s.getPathCost();
+    	if ( this.utility < s.getPathCost() ) {
+    		return -1;
+    	}
+    	return 1;
+//    	return this.utility - s.getPathCost();
 	}
-*/
+
     public double getPathCost() {
     	return this.utility;
 }
