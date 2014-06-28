@@ -297,6 +297,18 @@ public class Semester implements Comparable<Semester>
     	return semesterString;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //successor method to generate child semesters of a given semester
     public ArrayList<Semester> generateChildSemesters()
     {
@@ -426,7 +438,8 @@ public class Semester implements Comparable<Semester>
     // http://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
 	public static boolean outputCombination(Set<Section> inputSet, int r)
 	{
-		ArrayList<Section> inputArrayList = new ArrayList<Section>(inputSet);
+		//ArrayList<Section> inputArrayList = new ArrayList<Section>(inputSet);
+		Section[] inputArray = inputSet.toArray(new Section[0]);
 		int n = inputSet.size();
 			
 		combinationSets.clear();
@@ -435,15 +448,16 @@ public class Semester implements Comparable<Semester>
 		
 	    // A temporary array to store all combinations one by one
 	    //int data[] = new int[r];
-		ArrayList<Section>(r) data;
-		data = new ArrayList<Section>(); 
-	
-		System.out.println( data.size() +" "+r);
+		//ArrayList<Section>(r) data;
+		//data = new ArrayList<Section>(); 
+		Section[] data = new Section[r]; 
+		
+		System.out.println( data.length +" "+r);
 		
 	    // Print all combination using temporary array 'data[]'
 	    //combinationUtil(arr, data, 0, n-1, 0, r);
 //		System.out.println( "Running combUtil with inputArrayList of size "+inputArrayList.size()+" 0 "+(n-1)+" 0 "+r);
-		combinationUtil(inputArrayList, data, 0, n-1, 0, r);
+		combinationUtil(inputArray, data, 0, n-1, 0, r);
 		
 		if (!combinationSets.isEmpty())
 			return true;
@@ -456,7 +470,7 @@ public class Semester implements Comparable<Semester>
 	   start & end ---> Staring and Ending indexes in inputArrayList
 	   index  ---> Current index in data
 	   r ---> Size of a combination to be printed */
-	public static void combinationUtil(ArrayList<Section> inputArrayList, ArrayList<Section> data,
+	public static void combinationUtil(Section[] inputArray, Section[] data,
 										int start, int end, int index, int r)
 	{
 		
@@ -467,7 +481,7 @@ public class Semester implements Comparable<Semester>
 	        for (int j = 0; j < r; j++)
 	        {
 	        	//System.out.print(data[j]);
-	        	   anOutputSet.add(data.get(j));
+	        	   anOutputSet.add(data[j]);
 	        }
 	        combinationSets.add(anOutputSet);
 	        return;
@@ -483,19 +497,26 @@ public class Semester implements Comparable<Semester>
 //	    	System.out.println( "i="+i);
 	    	//data[index] = arr[i];
 //	    	 ) {
-	    	System.out.println( data.size() );
-	    	data.set(index, inputArrayList.get(i));
+	    	System.out.println( data.length );
+	    	data[index] = inputArray[i];
+	    	
+	    	
+	    	//data.set(index, inputArrayList.get(i));
 //	    	}
 //	    	else {
 //	    		data.add( inputArrayList.get(i));
 //	    		System.out.println("Adding ")
 	    		//	    	}
-	    	combinationUtil(inputArrayList, data, i+1, end, index+1, r);
+	    	combinationUtil(inputArray, data, i+1, end, index+1, r);
 	    }
 	}
 
     
 
+	
+	
+	
+	
 	
 	
 	
