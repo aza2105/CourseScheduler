@@ -8,18 +8,12 @@ import java.util.List;
 
 public class Utility {
 
-	static double totalUtility;
-	Requirements reqs;
-	Preferences prefs;
-	
-	public Utility(Requirements r, Preferences p){
-		reqs = r;
-		prefs = p;
-		totalUtility = 0;
+	public Utility(){
+		
 	}
 	
 	// Return the utility value of a semester full of section objects (lower return is better)
-	public static double getUtility(ArrayList <Section> section, Preferences prefs){
+	public static double getUtility(ArrayList <Section> section){
 		/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
 		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
 		 * 3 - Class Timing Preferences (30 - Day, 100 - Night, 0 - DC), # Courses to Take
@@ -30,6 +24,8 @@ public class Utility {
 		 * Day Night - (WN-IN = 0, WN-ID = 10, WD-ID = 0, WD-IN = 6)
 		 */
 		
+		// Initialize the starting final utility value
+		double totalUtility = 0;
 		// Initialize the starting utility value to 0
 		double tempUtil = 0;
 		// Initial value for day/night class preferences
@@ -101,9 +97,12 @@ public class Utility {
 	
 	public static double dayLengthVal(ArrayList <Section> section){
 		//find earliest class
-		int [] chronOrder;
-		double dayLengthVal = 0;
+		long gapTime = 0;
+		long avgGapTime = 0;
+		double avgGapVal = 0;
+		double dayTimingVal = 0;
 		long lengthOfDay = 0; //in minutes
+		double lengthOfDayVal = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date tempEarliest = new Date();
 		Date tempLatest = new Date();
@@ -122,23 +121,45 @@ public class Utility {
 				tempLatest = section.get(i).getEnd();
 			}
 		}
-		
-		// Calculate the total day length (in minutes)
-		lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;
+
+		// Calculate the total day length
+		lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
+		lengthOfDay = lengthOfDay/60; // Day length in hours
+		lengthOfDayVal = lengthOfDay/3; // Constant
 		
 		// Order the sections chronologically 
-		List <String> dateList = new ArrayList <String> (section.size());
-		//SimpleDateFormat format=new SimpleDateFormat ("HHmm");
-		for(int i = 0; i < dateList.size(); i++){
-			String tempDate = sdf.format(section.get(i).getStart());
-			dateList.add(tempDate);
+		ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
+		
+		for(int i = 0; i < section.size(); i++){
+			String tempStart = sdf.format(section.get(i).getStart());
+			String tempEnd = sdf.format(section.get(i).getEnd());
+			dateList.add(tempStart);
+			dateList.add(tempEnd);
 		}
-		Collections.sort(dateList);		
+
+		Collections.sort(dateList);	
+		
+		ArrayList <Date> orderedDates = new ArrayList <Date> (dateList.size());
 		for(int i = 0; i < dateList.size(); i++){
-			System.out.println(dateList.get(i));
+			try {
+				orderedDates.add(sdf.parse(dateList.get(i)));
+			} catch (ParseException e) {
+				System.out.println("Parse Exception in Utility");
+				System.exit(1);
+			}
 		}
-	
-		return dayLengthVal;
+		
+		for(int i = 0; i < orderedDates.size() - 1; i++){
+			gapTime = gapTime + (orderedDates.get(i + 1).getTime() - orderedDates.get(i).getTime());
+		}
+
+		gapTime = gapTime/100000; //gap time in minutes
+		avgGapTime = gapTime/(section.size()-1); // average gap time in minutes
+		
+		avgGapVal = avgGapTime / 12;
+		
+		dayTimingVal = (avgGapVal + lengthOfDayVal);
+		return dayTimingVal;
 	}
 	
 }
