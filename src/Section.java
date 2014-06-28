@@ -58,6 +58,10 @@ public class Section {
     	}
     }
 
+    public Course getParent() {
+    	return parent;
+    }
+    
     public Date getStart() {
     
     	return startTime;
