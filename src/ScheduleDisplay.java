@@ -19,69 +19,28 @@ public class ScheduleDisplay extends JFrame {
 	private static int VERTOFF = 150;
 	private static int MAXWIDTH = 1000;
 	private static int MAXHEIGHT = 1000;
-	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					
-					
-					LinkedList<Course> schedule = new LinkedList<Course>();
-					schedule.add(new Course("Class One", "COMS 4701"));
-					schedule.add(new Course("Class Two", "COMS 4702"));
-					schedule.add(new Course("Class Three", "COMS 4703"));
-					schedule.add(new Course("Class Four", "COMS 4704"));
-					Set<Course> set1 = new HashSet<Course>(schedule);
-					Semester first = new Semester(0,0,2014,set1,null,set1);
-					
-					LinkedList<Course> schedule2 = new LinkedList<Course>();
-					schedule2.add(new Course("Class Five", "COMS 4705"));
-					schedule2.add(new Course("Class Six", "COMS 4706"));
-					schedule2.add(new Course("Class Seven", "COMS 4707"));
-					schedule2.add(new Course("Class Eight", "COMS 4708"));
-					schedule2.add(new Course("Class Five", "COMS 4705"));
-					schedule2.add(new Course("Class Six", "COMS 4706"));
-					schedule2.add(new Course("Class Seven", "COMS 4707"));
-					schedule2.add(new Course("Class Eight", "COMS 4708"));
-					Set<Course> set2 = new HashSet<Course>(schedule2);
-					Semester second = new Semester(0,1,2015,set2,null,set1);
-					
-					LinkedList<Course> schedule3 = new LinkedList<Course>();
-					schedule3.add(new Course("Class Nine", "COMS 4709"));
-					schedule3.add(new Course("Class Ten", "COMS 4710"));
-					Set<Course> set3 = new HashSet<Course>(schedule3);
-					Semester third = new Semester(0,0,2015,set3,null,set1);
-					
-					LinkedList<Semester> mysemesters = new LinkedList<Semester>();
-					mysemesters.add(first);
-					mysemesters.add(second);
-					mysemesters.add(third);
-	
-					
-					if (mysemesters.size() < 6)
-						OFFSET = WIDTH / mysemesters.size();
-					else
-						OFFSET = MAXWIDTH / mysemesters.size();
-					
-					VERTOFF = HEIGHT / (8);
-					
-					ScheduleDisplay frame = new ScheduleDisplay(mysemesters);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private ImageIcon icon;
 
-    public ScheduleDisplay(LinkedList<Semester> semesters) {
+	
+    public ScheduleDisplay() {
     	
-    	ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/../images/cap.png");
+    	icon = new ImageIcon(System.getProperty("user.dir") + "/../images/cap.png");
     	
-    	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	this.setSize(HEIGHT, WIDTH);
     	getContentPane().setLayout(null);
     	
+    }
+    
+    public void giveSchedule(LinkedList<Semester> semesters, int i) {
+    	
+		if (semesters.size() < 6)
+			OFFSET = WIDTH / semesters.size();
+		else
+			OFFSET = MAXWIDTH / semesters.size();
+		
+		VERTOFF = HEIGHT / (8);
+		
     	JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     	tabbedPane.setBounds(0, 0, HEIGHT, WIDTH);
     	getContentPane().add(tabbedPane);
@@ -94,13 +53,7 @@ public class ScheduleDisplay extends JFrame {
     	JScrollPane myscroll = new JScrollPane(firstschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
     			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     	tabbedPane.addTab("Schedule 1", icon, myscroll, null);
-    	/*
-    	JScrollBar scrollBar = new JScrollBar();
-    	scrollBar.setUnitIncrement(50);
-    	scrollBar.setBounds(758, 6, 15, 574);
-    	
-    	firstschedule.add(scrollBar);
-    	*/
+
     	drawSchedule(semesters, firstschedule);
     	
     	JPanel secondschedule = new JPanel();
@@ -114,6 +67,8 @@ public class ScheduleDisplay extends JFrame {
     	
     	JPanel fifthschedule = new JPanel();
     	tabbedPane.addTab("Schedule 5", icon, fifthschedule, null);
+    	
+    	
     }
     
     public void drawSchedule(LinkedList<Semester> semesters, JPanel panel) {
@@ -145,11 +100,11 @@ public class ScheduleDisplay extends JFrame {
     		panel.setVisible(true);
     		*/
     		
-    		Set<Course> sections = new HashSet<Course>(semesters.get(i).getSections());
+    		Set<Section> sections = new HashSet<Section>(semesters.get(i).getSections());
     		
     		int j = 1;
-    		for(Course c : sections) {
-    			JLabel course = new JLabel(c.getID());
+    		for(Section c : sections) {
+    			JLabel course = new JLabel(c.getParent().getID());
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);

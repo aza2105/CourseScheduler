@@ -32,7 +32,7 @@ public class Main {
 	
 	// Main method
 	public static void main(String[] args) {
-		timTest();
+		
 		// Starts the GUI Front of FrontEnd
 		FrontEnd frame = new FrontEnd();
 		frame.setVisible(true);
@@ -74,6 +74,8 @@ public class Main {
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 		
+		timTest();
+		
 		//Utility test
         /*ArrayList<Section> sectionList = new ArrayList<Section>();
         sectionList.add(new Section(new Course("Course 1", "COMS 4701"), "MWF", "2200", "2330", "Friedman", "Samuel1", "C"));
@@ -91,50 +93,42 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+
+					Set<Course> co = new HashSet<Course>();
+					co.add(new Course("FUCK", "THIS"));
+					Instructor.parseUserInput("instructors.csv");
 					
+					LinkedList<Section> schedule = new LinkedList<Section>();
+					schedule.add(new Section (new Course("Class One", "COMS 4701"),"MWF", "2200", "2330", "Friedman", "Samuel1", "C"));
+					schedule.add(new Section (new Course("Class One", "COMS 4701"),"MWF", "2200", "2330", "Friedman", "Samuel2", "C"));
+					schedule.add(new Section (new Course("Class One", "COMS 4701"),"MWF", "2200", "2330", "Friedman", "Samuel3", "C"));
+					schedule.add(new Section (new Course("Class One", "COMS 4701"),"MWF", "2200", "2330", "Friedman", "Samuel4", "C"));
+					Set<Section> set1 = new HashSet<Section>(schedule);
+					Semester first = new Semester(0,0,2014,set1,null,co,0);
 					
-					/*LinkedList<Course> schedule = new LinkedList<Course>();
-					schedule.add(new Course("Class One", "COMS 4701"));
-					schedule.add(new Course("Class Two", "COMS 4702"));
-					schedule.add(new Course("Class Three", "COMS 4703"));
-					schedule.add(new Course("Class Four", "COMS 4704"));
-					Set<Course> set1 = new HashSet<Course>(schedule);
-					Semester first = new Semester(0,0,2014,set1,null,set1);
-					
-					LinkedList<Course> schedule2 = new LinkedList<Course>();
-					schedule2.add(new Course("Class Five", "COMS 4705"));
-					schedule2.add(new Course("Class Six", "COMS 4706"));
-					schedule2.add(new Course("Class Seven", "COMS 4707"));
-					schedule2.add(new Course("Class Eight", "COMS 4708"));
-					schedule2.add(new Course("Class Five", "COMS 4705"));
-					schedule2.add(new Course("Class Six", "COMS 4706"));
-					schedule2.add(new Course("Class Seven", "COMS 4707"));
-					schedule2.add(new Course("Class Eight", "COMS 4708"));
-					Set<Course> set2 = new HashSet<Course>(schedule2);
-					Semester second = new Semester(0,1,2015,set2,null,set1);
-					
-					LinkedList<Course> schedule3 = new LinkedList<Course>();
-					schedule3.add(new Course("Class Nine", "COMS 4709"));
-					schedule3.add(new Course("Class Ten", "COMS 4710"));
-					Set<Course> set3 = new HashSet<Course>(schedule3);
-					Semester third = new Semester(0,0,2015,set3,null,set1);
+					LinkedList<Section> schedule2 = new LinkedList<Section>();
+					schedule2.add(new Section (new Course("Class Five", "COMS 4705"),"MWF", "2200", "2330", "Friedman", "Samuel5", "C"));
+					schedule2.add(new Section (new Course("Class Six", "COMS 4706"),"MWF", "2200", "2330", "Friedman", "Samuel6", "C"));
+					schedule2.add(new Section (new Course("Class Seven", "COMS 4707"),"MWF", "2200", "2330", "Friedman", "Samuel7", "C"));
+					schedule2.add(new Section (new Course("Class Eight", "COMS 4708"),"MWF", "2200", "2330", "Friedman", "Samuel8", "C"));
+					schedule2.add(new Section (new Course("Class Five", "COMS 4705"),"MWF", "2200", "2330", "Friedman", "Samuel9", "C"));
+					schedule2.add(new Section (new Course("Class Six", "COMS 4706"),"MWF", "2200", "2330", "Friedman", "Samuel10", "C"));
+					schedule2.add(new Section (new Course("Class Seven", "COMS 4707"),"MWF", "2200", "2330", "Friedman", "Samuel21", "C"));
+					Set<Section> set2 = new HashSet<Section>(schedule2);
+					Semester second = new Semester(0,1,2015,set2,null,co,0);
 					
 					LinkedList<Semester> mysemesters = new LinkedList<Semester>();
 					mysemesters.add(first);
 					mysemesters.add(second);
-					mysemesters.add(third);
-	
+					mysemesters.add(second);
+					mysemesters.add(first);
+					mysemesters.add(second);
+					mysemesters.add(first);
+					ScheduleDisplay frame = new ScheduleDisplay();
+					frame.giveSchedule(mysemesters, 1);
+					frame.setVisible(true);
 					
-					if (mysemesters.size() < 6)
-						OFFSET = WIDTH / mysemesters.size();
-					else
-						OFFSET = MAXWIDTH / mysemesters.size();
-					
-					VERTOFF = HEIGHT / (8);*/
-					
-					// What Scheduler will need to call!
-					//ScheduleDisplay frame = new ScheduleDisplay(mysemesters);
-					//frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

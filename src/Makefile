@@ -8,18 +8,23 @@ JAR = -cp .:../*
 	$(JC) $(JFLAGS) $(JAR) $*.java
 
 CLASSES = \
-	  Parser.java \
-	  Requirements.java \
-	  Rule.java    \
-	  Section.java \
-	  Utility.java	\
-	  Instructor.java \
-	  Preferences.java \
-	  Semester.java	\
 	  Course.java \
 	  CourseReview.java \
-	  Track.java \
-	  Scheduler.java
+	  FrontEnd.java \
+	  HistoricalData.java \
+	  Instructor.java \
+	  Main.java \
+	  Node.java \
+	  Parser.java \
+	  Preferences.java \
+	  Requirements.java \
+	  Rule.java \
+	  ScheduleDisplay.java \
+	  Scheduler.java \
+	  Section.java	\
+	  Semester.java \
+	  Track.java	\
+	  Utility.java	
 
 default: classes
 

@@ -1,6 +1,5 @@
 import java.util.*;
 
-
 import com.google.common.collect.Collections2; 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -98,7 +97,8 @@ public class Semester implements Comparable<Semester>
     {
     	return depth;
     }
-    
+   
+    // in theory never ever used
     public void setDepth(int depth)
     {
     	this.depth = depth;
