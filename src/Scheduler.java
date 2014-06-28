@@ -43,13 +43,13 @@ public class Scheduler
 	private int maxDepth;
 
 	// List of Sets representing course offerings per term in the future
-	public static ArrayList<HashSet<Section>> directoryOfClasses;
+	protected static ArrayList<Set<Section>> directoryOfClasses;
 	
 	// hash map for getting course information and generating potential schedules
 	private HashMap<String,Course> courses;
 
 	// set of valid candidates
-	private HashSet<Section> coursePool = new HashSet<Section>();	
+	private Set<Section> coursePool = new HashSet<Section>();	
 
 	// default constructor
 	public Scheduler() 
@@ -101,7 +101,7 @@ public class Scheduler
 //			System.out.println( s.getParent().toString() );
 //		}
 		
-		directoryOfClasses = new ArrayList<HashSet<Section>>();
+		directoryOfClasses = new ArrayList<Set<Section>>();
 
 		int i = 0;
 
