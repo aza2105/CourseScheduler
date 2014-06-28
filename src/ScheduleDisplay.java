@@ -11,7 +11,6 @@ import javax.swing.border.*;
 
 public class ScheduleDisplay extends JFrame {
 	
-	private ArrayList<JLabel> labels;
 	private static final int HEIGHT = 900;
 	private static final int WIDTH = 650;
 	private final int X_START = 60;
@@ -25,8 +24,10 @@ public class ScheduleDisplay extends JFrame {
 	
     public ScheduleDisplay() {
     	
+    	//import cap icon
     	icon = new ImageIcon(System.getProperty("user.dir") + "/../images/cap.png");
     	
+    	//set basic frame properties
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	this.setSize(HEIGHT, WIDTH);
     	getContentPane().setLayout(null);
@@ -35,40 +36,94 @@ public class ScheduleDisplay extends JFrame {
     
     public void giveSchedule(LinkedList<Semester> semesters, int i) {
     	
-		if (semesters.size() < 6)
+    	if (i < 1 || i > 5) { //if i is not within acceptable range
+    		System.out.println("Error! Passing invalid value for integer. [1-5] inclusive.");
+    		System.exit(1);
+    	}
+    	
+    	//adjust how you scale horizontally based on the total number of semesters you have
+		if (semesters.size() < 6) {
 			OFFSET = WIDTH / semesters.size();
-		else
+		}
+		else {
 			OFFSET = MAXWIDTH / semesters.size();
+		}
 		
 		VERTOFF = HEIGHT / (8);
 		
+		//setup the tabbedPane to hold all 5 of the schedules
     	JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
     	tabbedPane.setBounds(0, 0, HEIGHT, WIDTH);
     	getContentPane().add(tabbedPane);
     	
-    	JPanel firstschedule = new JPanel();
-    	firstschedule.setPreferredSize(new Dimension(200*semesters.size(),1200));
-    	//tabbedPane.addTab("Schedule 1", icon, firstschedule, null);
-    	firstschedule.setLayout(null);
     	
-    	JScrollPane myscroll = new JScrollPane(firstschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-    			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    	tabbedPane.addTab("Schedule 1", icon, myscroll, null);
-
-    	drawSchedule(semesters, firstschedule);
+    	//set up and draw the first schedule panel
+    	if (i == 1) {
+    		JPanel firstschedule = new JPanel();
+    		firstschedule.setPreferredSize(new Dimension(175*semesters.size(),1200));
+    		firstschedule.setLayout(null);
+    		//scrollPane to wrap around first panel
+    		JScrollPane firstscroll = new JScrollPane(firstschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+    				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    		tabbedPane.addTab("Schedule 1", icon, firstscroll, null);
+    		
+    		drawSchedule(semesters, firstschedule);
+    	}
     	
-    	JPanel secondschedule = new JPanel();
-    	tabbedPane.addTab("Schedule 2", icon, secondschedule, null);
+    	//set up the second schedule panel
+    	if (i == 2) {
+    		JPanel secondschedule = new JPanel();
+    		secondschedule.setPreferredSize(new Dimension(175*semesters.size(), 1200));
+    		secondschedule.setLayout(null);
+    		
+    		JScrollPane secondscroll = new JScrollPane(secondschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    		tabbedPane.addTab("Schedule 2", icon, secondscroll, null);
+    		
+    		drawSchedule(semesters, secondschedule);
+    	}
     	
-    	JPanel thirdschedule = new JPanel();
-    	tabbedPane.addTab("Schedule 3", icon, thirdschedule, null);
+    	//setup and draw the third schedule
+    	if (i == 3) {
+	    	JPanel thirdschedule = new JPanel();
+			thirdschedule.setPreferredSize(new Dimension(175*semesters.size(), 1200));
+			thirdschedule.setLayout(null);
+			
+			JScrollPane thirdscroll = new JScrollPane(thirdschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+	    			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	    	tabbedPane.addTab("Schedule 3", icon, thirdscroll, null);
+	    	
+	    	drawSchedule(semesters, thirdschedule);
+    	}
     	
+    	//setup and draw the fourth schedule
+    	if (i == 4) {
     	JPanel fourthschedule = new JPanel();
-    	tabbedPane.addTab("Schedule 4", icon, fourthschedule, null);
+    	fourthschedule.setPreferredSize(new Dimension(175*semesters.size(),1200));
+    	fourthschedule.setLayout(null);
     	
+		JScrollPane fourthscroll = new JScrollPane(fourthschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+    			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    	tabbedPane.addTab("Schedule 4", icon, fourthscroll, null);
+    	
+    	drawSchedule(semesters, fourthschedule);
+    	
+    	}
+    	
+    	//setup and draw the fifth schedule
+    	if (i == 5) {
     	JPanel fifthschedule = new JPanel();
-    	tabbedPane.addTab("Schedule 5", icon, fifthschedule, null);
+    	fifthschedule.setPreferredSize(new Dimension(175*semesters.size(),1200));
+    	fifthschedule.setLayout(null);
     	
+		JScrollPane fifthscroll = new JScrollPane(fifthschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+    			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    	tabbedPane.addTab("Schedule 5", icon, fifthscroll, null);
+    	
+    	drawSchedule(semesters, fifthschedule);
+    	}
+    	
+    	//adjust the tabs if using another OS to keep it somewhat neater
     	if (!System.getProperty("os.name").equals("Mac OS X") ) {
     		System.out.println("Hi SAM");
     		tabbedPane.setTabPlacement(JTabbedPane.LEFT);
@@ -107,19 +162,31 @@ public class ScheduleDisplay extends JFrame {
     		panel.setVisible(true);
     		*/
     		
+    		//get the course information for each semester
     		Set<Section> sections = new HashSet<Section>(semesters.get(i).getSections());
     		
-    		int j = 1;
+    		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
     			JLabel course = new JLabel(c.getParent().getID());
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);
     			panel.add(course);
+
     			j++;
+    			
     		}
+			
+    		//after all the courses have been added, print total utility below them
+			JLabel utility = new JLabel( "Utility: " + Double.toString(semesters.get(i).getUtility()) );
+			
+			utility.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
+			utility.setFont(new Font("Dialog", Font.PLAIN, 11));
+			utility.setHorizontalAlignment(SwingConstants.CENTER);
+			panel.add(utility);
+
     		
-    	}
+    	}//end for
     	
     	
     }
@@ -151,6 +218,7 @@ public class ScheduleLine extends JComponent {
 	}
 	
 }
+
 }
 
 
