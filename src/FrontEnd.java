@@ -132,8 +132,8 @@ public class FrontEnd extends JFrame {
 		btnRemove.setBounds(510, 224, 89, 23);
 		contentPane.add(btnRemove);
 		
-		JLabel lblIeOr = new JLabel("e.g. \"4,4,2\", \"2,1,1\", or \"4,2\"");
-		lblIeOr.setBounds(229, 130, 249, 14);
+		JLabel lblIeOr = new JLabel("e.g. 4,4,2 or 2,1\r\n");
+		lblIeOr.setBounds(233, 131, 249, 14);
 		contentPane.add(lblIeOr);
 		
 		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
@@ -159,7 +159,7 @@ public class FrontEnd extends JFrame {
 		
 		textField_3 = new JTextField();
 		textField_3.setText("2014");
-		textField_3.setToolTipText("Year format: XXXX");
+		textField_3.setToolTipText("Year format: XXXX\r\nInvalid input defaults to 2014");
 		textField_3.setBounds(92, 139, 86, 20);
 		contentPane.add(textField_3);
 		textField_3.setColumns(10);
@@ -247,6 +247,30 @@ public class FrontEnd extends JFrame {
 			}
 		});
 		
+		// lblTerm Mouse Listener on schedule input
+		lblTerm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// rdbtnFall Mouse Listener on schedule input
+		rdbtnFall.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// rdbtnSpring Mouse Listener on schedule input
+			rdbtnSpring.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+				}
+			});
+		
 		// textField_1 Key Listener on schedule input
 		textField_1.addKeyListener(new KeyAdapter() {
 			@Override
@@ -259,6 +283,22 @@ public class FrontEnd extends JFrame {
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// lblYear Mouse Listener
+		lblYear.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+			}
+		});
+		
+		// textField_3 Mouse Listener
+		textField_3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
 			}
 		});
@@ -375,35 +415,29 @@ public class FrontEnd extends JFrame {
 			}
 		});
 		
-		/*// Mouse Listener on create schedule button
-		btnCreateSchedule.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});*/
-		
 		// Create Schedule button
 		btnCreateSchedule.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
+				// Update the total courses quantity
 				updateCourseQuantity(listModel, textField_1, textField_2, btnCreateSchedule);
+				
 				if(btnCreateSchedule.isEnabled()){
-					
-					
 					try {
-						//String content = "This is the content to write into file";
-						//String content2 = "This is the content to write into file";
-	
+						// Use the "inputPrefs.csv" file
 						File file = new File(System.getProperty("user.dir") + "/inputPrefs.csv");
-	
 						FileWriter fw = new FileWriter(file.getAbsoluteFile());
 						BufferedWriter bw = new BufferedWriter(fw);
+						
+						// Write the courses taken to a list
 						for(int i = 0; i < listModel.size(); i++){
 							bw.write("COURSE," + listModel.get(i).toString() + "\n");
 						}
-						int dayNight = 2;
 						
+						// Default day night to "No Preference"
+						int dayNight = 2;
+						// Create the value of dayNight based on selected radio button
 						if(rdbtnDayClasses.isSelected()){
 							dayNight = 0;
 						}
@@ -413,17 +447,20 @@ public class FrontEnd extends JFrame {
 						else if(rdbtnNoPreference.isSelected()){
 							dayNight = 2;
 						}
+						// Write the daynight value to the file
 						bw.write("DAYNIGHT," + dayNight + "\n");
 						
+						// Write the planned number of courses per semester to the file
 						if(textField_1.getText() != null){
 							String tempSched = textField_1.getText();
 							tempSched = tempSched.replaceAll("\\s","");
 							String[] dataLine = tempSched.split(",");
-							for(int i = 0; i < dataLine.length - 1; i++){
-								bw.write("SEMESTER," + i +"," + dataLine[i+1] + "\n");
+							for(int i = 0; i < dataLine.length; i++){
+								bw.write("SEMESTER," + i +"," + dataLine[i] + "\n");
 							}
 						}
 						
+						// Write the season to the file (based on radio buttons)
 						int season = 0;
 						if(rdbtnFall.isSelected()){
 							season = 0;
@@ -433,36 +470,54 @@ public class FrontEnd extends JFrame {
 						}
 						bw.write("SEASON," + season + "\n");
 						
+						// Write the year to the file
 						int year = 0;
-						if(textField_3.getText() != null && isInteger(textField_3.getText())) {
+						if(textField_3.getText() != null && isInteger(textField_3.getText())){
+							// If the year is two digits, add 2000 (15 --> 2015)
 							if(textField_3.getText().length() == 2){
 								year = 2000 + Integer.parseInt(textField_3.getText());
 								textField_3.setText("20" + textField_3.getText());
 							}
+							// If the year is at least 2014, set year
 							else if(textField_3.getText().length() == 4){
-								if(year >= 2014){
+								if(Integer.parseInt(textField_3.getText()) >= 2014){
 									year = Integer.parseInt(textField_3.getText());
 								}
-							}	
+								// Otherwise, set the year to 2014
+								else{
+									year = 2014;
+									textField_3.setText("2014");
+								}
+							}
+							// Otherwise, set to 2014 (the default)
+							else{
+								year = 2014;
+								textField_3.setText("2014");
+							}
 						}
+						// Otherwise, set to 2014 (the default)
 						else{
 							year = 2014;
 							textField_3.setText("2014");
 						}
+						// Write the year information to the file
 						bw.write("YEAR," + year + "\n");
 						
+						// Close the buffered writer
 						bw.close();
 			 
-						System.out.println("Done");
+						System.out.println("Preferences file written to inputPrefs.csv");
 			 
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						System.out.println("IO Exception in FrontEnd schedule creation.");
+						System.exit(1);
 					}
 				}
 			}
 		});
 	}
 
+	// Updates the total courses field (out of 10)
 	public void updateCourseQuantity(DefaultListModel listModel,
 			JTextField textField_1, JTextField textField_2,
 			JButton btnCreateSchedule) {
