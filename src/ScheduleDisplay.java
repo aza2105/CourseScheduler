@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
@@ -25,6 +26,16 @@ public class ScheduleDisplay extends JFrame {
     public ScheduleDisplay() {
     	
     	icon = new ImageIcon(System.getProperty("user.dir") + "/../images/cap.png");
+    	
+    	
+    	if (!System.getProperty("os.name").equals("Mac OS X") ) {
+	    	Image resize = icon.getImage();
+	    	BufferedImage buff = new BufferedImage(resize.getWidth(null), resize.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+	    	Graphics g = buff.createGraphics();
+	    	g.drawImage(resize,0,0,10,10,null);
+	    	
+	    	icon = new ImageIcon(buff);
+    	}
     	
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	this.setSize(HEIGHT, WIDTH);
