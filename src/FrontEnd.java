@@ -31,6 +31,7 @@ public class FrontEnd extends JFrame {
 	private JTextField textField;
 	private JTextField textField_1;
 	private JTextField textField_2;
+	private JTextField textField_3;
 
 	/**
 	 * Launch the application.
@@ -54,7 +55,7 @@ public class FrontEnd extends JFrame {
 	public FrontEnd() {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 658, 300);
+		setBounds(100, 100, 658, 336);
 		contentPane = new JPanel();
 		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -64,16 +65,16 @@ public class FrontEnd extends JFrame {
 		final JButton btnCreateSchedule = new JButton("Create Schedule");
 		btnCreateSchedule.setEnabled(false);
 		btnCreateSchedule.setForeground(Color.BLACK);
-		btnCreateSchedule.setBounds(149, 181, 289, 66);
+		btnCreateSchedule.setBounds(149, 224, 270, 66);
 		contentPane.add(btnCreateSchedule);
 		
 		JLabel lblLabel = new JLabel("Courses Taken:");
-		lblLabel.setBounds(10, 11, 101, 25);
+		lblLabel.setBounds(10, 11, 135, 25);
 		contentPane.add(lblLabel);
 		
 		textField = new JTextField();
 		textField.setToolTipText("e.g. \"COMS W4701\"");
-		textField.setBounds(121, 13, 86, 20);
+		textField.setBounds(149, 13, 106, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
@@ -84,7 +85,7 @@ public class FrontEnd extends JFrame {
 		JButton btnAddCourse = new JButton("Add course");
 		btnAddCourse.setToolTipText("e.g. \"COMS W4701\"");
 		
-		btnAddCourse.setBounds(210, 12, 109, 23);
+		btnAddCourse.setBounds(265, 6, 150, 35);
 		contentPane.add(btnAddCourse);
 		
 		JLabel lblTimingPreferences = new JLabel("Timing Preferences:");
@@ -131,17 +132,17 @@ public class FrontEnd extends JFrame {
 		btnRemove.setBounds(510, 224, 89, 23);
 		contentPane.add(btnRemove);
 		
-		JLabel lblIeOr = new JLabel("e.g. \"4, 4, 2\", \"2, 2, 3, 3\", or \"4,2\"");
-		lblIeOr.setBounds(188, 130, 227, 14);
+		JLabel lblIeOr = new JLabel("e.g. \"4,4,2\", \"2,1,1\", or \"4,2\"");
+		lblIeOr.setBounds(229, 130, 249, 14);
 		contentPane.add(lblIeOr);
 		
 		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
-		lblTotalCoursesPlanned.setBounds(10, 207, 150, 14);
+		lblTotalCoursesPlanned.setBounds(10, 250, 150, 14);
 		contentPane.add(lblTotalCoursesPlanned);
 		
 		textField_2 = new JTextField();
 		textField_2.setEnabled(false);
-		textField_2.setBounds(10, 227, 65, 20);
+		textField_2.setBounds(10, 270, 65, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
 		textField_2.setText("0 / 10");
@@ -150,6 +151,36 @@ public class FrontEnd extends JFrame {
 		lblInvalidCourse.setForeground(Color.RED);
 		lblInvalidCourse.setBounds(329, 16, 109, 14);
 		contentPane.add(lblInvalidCourse);
+		
+		JLabel lblYear = new JLabel("Year");
+		lblYear.setToolTipText("Year to begin scheduling (e.g. \"2014\")");
+		lblYear.setBounds(10, 142, 65, 14);
+		contentPane.add(lblYear);
+		
+		textField_3 = new JTextField();
+		textField_3.setText("2014");
+		textField_3.setToolTipText("Year format: XXXX");
+		textField_3.setBounds(92, 139, 86, 20);
+		contentPane.add(textField_3);
+		textField_3.setColumns(10);
+		
+		JLabel lblTerm = new JLabel("Term");
+		lblTerm.setToolTipText("Term to begin scheduling for the given year");
+		lblTerm.setBounds(10, 179, 79, 14);
+		contentPane.add(lblTerm);
+		
+		final JRadioButton rdbtnFall = new JRadioButton("Fall");
+		rdbtnFall.setSelected(true);
+		rdbtnFall.setBounds(92, 175, 79, 23);
+		contentPane.add(rdbtnFall);
+		
+		final JRadioButton rdbtnSpring = new JRadioButton("Spring");
+		rdbtnSpring.setBounds(172, 175, 109, 23);
+		contentPane.add(rdbtnSpring);
+		
+		final ButtonGroup bg2 = new ButtonGroup();
+		bg2.add(rdbtnFall);
+		bg2.add(rdbtnSpring);
 		
 		// Add course button (on mouse click)
 		btnAddCourse.addMouseListener(new MouseAdapter() {
@@ -392,6 +423,34 @@ public class FrontEnd extends JFrame {
 								bw.write("SEMESTER," + i +"," + dataLine[i+1] + "\n");
 							}
 						}
+						
+						int season = 0;
+						if(rdbtnFall.isSelected()){
+							season = 0;
+						}
+						else if(rdbtnSpring.isSelected()){
+							season = 1;
+						}
+						bw.write("SEASON," + season + "\n");
+						
+						int year = 0;
+						if(textField_3.getText() != null && isInteger(textField_3.getText())) {
+							if(textField_3.getText().length() == 2){
+								year = 2000 + Integer.parseInt(textField_3.getText());
+								textField_3.setText("20" + textField_3.getText());
+							}
+							else if(textField_3.getText().length() == 4){
+								if(year >= 2014){
+									year = Integer.parseInt(textField_3.getText());
+								}
+							}	
+						}
+						else{
+							year = 2014;
+							textField_3.setText("2014");
+						}
+						bw.write("YEAR," + year + "\n");
+						
 						bw.close();
 			 
 						System.out.println("Done");
@@ -445,5 +504,15 @@ public class FrontEnd extends JFrame {
 		}
 		textField_2.setText(Integer.toString(coursesTaken + coursesPlanned)
 				+ " / 10");
+	}
+
+	public static boolean isInteger(String s) {
+	    try { 
+	        Integer.parseInt(s); 
+	    } catch(NumberFormatException e) { 
+	        return false; 
+	    }
+	    // only got here if we didn't return false
+	    return true;
 	}
 }
