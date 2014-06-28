@@ -58,6 +58,10 @@ public class Section {
     	}
     }
 
+    public Course getParent() {
+    	return parent;
+    }
+    
     public Date getStart() {
     
     	return startTime;
@@ -67,6 +71,12 @@ public class Section {
     public Date getEnd() {
     	
     	return endTime;
+    	
+    }
+    
+    public String getDaySchedule() {
+    	
+    	return daySchedule;
     	
     }
     

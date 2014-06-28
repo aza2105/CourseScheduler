@@ -81,6 +81,17 @@ public class Preferences {
 		return firstYear;
 	}
 	
+	public int getTotalCourses(){
+		int totalCourses = 0;
+		for(int i = 0; i < numCoursesPerSem.length; i++){
+			if(numCoursesPerSem[i] > 0){
+				totalCourses = totalCourses + numCoursesPerSem[i];
+			}
+		}
+		totalCourses = totalCourses + coursesTaken.size();
+		return totalCourses;
+	}
+	
 	// Method to parse the user input/parameters
 	public static void parseUserInput(String [] userInput){
 		ArrayList <String> coursesTaken;

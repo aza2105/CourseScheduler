@@ -1,7 +1,10 @@
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class Utility {
 
@@ -66,15 +69,15 @@ public class Utility {
 
 			// getDayNight() provides probability that a course is a night course			
 			// If user prefers day courses
-			if(prefs.dayNight == 0){
+			if(Preferences.prefs.getDayNight() == 0){
 				dayNightVal = 10 * section.get(i).getDayNight();
 			}
 			// user prefers night courses
-			else if(prefs.dayNight == 0){
+			else if(Preferences.prefs.getDayNight() == 0){
 				dayNightVal = 8 * section.get(i).getDayNight();
 			}
 			else{
-				nuggetVal = 0;
+				dayNightVal = 0;
 			}
 			
 			// This is incorrect (currently calculating length of a course)
@@ -86,22 +89,21 @@ public class Utility {
 			System.out.println(minutes);*/
 			
 			// Sum the components to compute total utility
-			tempUtil = tempUtil + nuggetVal + dayNightVal;
+			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
 		}
 		
-		dayLength = lengthOfDay(section);
-		
-		if(dayLength > 500){
-			dayLengthVal = 5;
-		}
-		
+		dayLengthVal = dayLengthVal(section);
+
 		totalUtility = tempUtil + dayLengthVal;
 				
 		return totalUtility;
 	}
 	
-	public static long lengthOfDay(ArrayList <Section> section){
+	public static double dayLengthVal(ArrayList <Section> section){
 		//find earliest class
+		int [] chronOrder;
+		double dayLengthVal = 0;
+		long lengthOfDay = 0; //in minutes
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		Date tempEarliest = new Date();
 		Date tempLatest = new Date();
@@ -121,9 +123,22 @@ public class Utility {
 			}
 		}
 		
-		long minutes = (tempLatest.getTime() - tempEarliest.getTime())/60000;
+		// Calculate the total day length (in minutes)
+		lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;
 		
-		return minutes;
+		// Order the sections chronologically 
+		List <String> dateList = new ArrayList <String> (section.size());
+		//SimpleDateFormat format=new SimpleDateFormat ("HHmm");
+		for(int i = 0; i < dateList.size(); i++){
+			String tempDate = sdf.format(section.get(i).getStart());
+			dateList.add(tempDate);
+		}
+		Collections.sort(dateList);		
+		for(int i = 0; i < dateList.size(); i++){
+			System.out.println(dateList.get(i));
+		}
+	
+		return dayLengthVal;
 	}
 	
 }
