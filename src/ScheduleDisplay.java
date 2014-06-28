@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.io.*;
 import java.util.*;
 
@@ -15,7 +16,9 @@ public class ScheduleDisplay extends JFrame {
 	private final int X_START = 60;
 	private final int Y_START = 50;
 	private static int OFFSET = 200;
-	private static int HORZOFF = 150;
+	private static int VERTOFF = 150;
+	private static int MAXWIDTH = 1000;
+	private static int MAXHEIGHT = 1000;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -53,11 +56,14 @@ public class ScheduleDisplay extends JFrame {
 					mysemesters.add(first);
 					mysemesters.add(second);
 					mysemesters.add(third);
-					mysemesters.add(second);
-					mysemesters.add(third);
+	
 					
-					OFFSET = WIDTH / mysemesters.size();
-					HORZOFF = HEIGHT / (8);
+					if (mysemesters.size() < 6)
+						OFFSET = WIDTH / mysemesters.size();
+					else
+						OFFSET = MAXWIDTH / mysemesters.size();
+					
+					VERTOFF = HEIGHT / (8);
 					
 					ScheduleDisplay frame = new ScheduleDisplay(mysemesters);
 					frame.setVisible(true);
@@ -81,11 +87,12 @@ public class ScheduleDisplay extends JFrame {
     	getContentPane().add(tabbedPane);
     	
     	JPanel firstschedule = new JPanel();
-    	firstschedule.setPreferredSize(new Dimension(1200,1200));
+    	firstschedule.setPreferredSize(new Dimension(200*semesters.size(),1200));
     	//tabbedPane.addTab("Schedule 1", icon, firstschedule, null);
     	firstschedule.setLayout(null);
     	
-    	JScrollPane myscroll = new JScrollPane(firstschedule);
+    	JScrollPane myscroll = new JScrollPane(firstschedule, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+    			ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     	tabbedPane.addTab("Schedule 1", icon, myscroll, null);
     	/*
     	JScrollBar scrollBar = new JScrollBar();
@@ -122,18 +129,30 @@ public class ScheduleDisplay extends JFrame {
     			term = "SPRING";
     		
     		JLabel label = new JLabel(term + "  " + Integer.toString(semesters.get(i).getSemesterYear()) );
-    		label.setBounds(X_START + i*OFFSET, Y_START, 100, 40);
-    		label.setBorder(BorderFactory.createLineBorder(Color.black));
+    		label.setBounds(X_START + i*OFFSET - 20, Y_START, 120, 40);
+    		label.setHorizontalAlignment( SwingConstants.CENTER );
+    		label.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+    		label.setFont(new Font("Courier", Font.BOLD, 14));
     		mylabels.add(label);
     		panel.add(label);
+    		
+    		/*
+    		ScheduleLine line = new ScheduleLine(X_START + i*OFFSET + 100,Y_START,1000,Y_START);
+    		panel.add(line, new Dimension(X_START + i*OFFSET + 100,Y_START));
+    		line.repaint();
+    		panel.repaint();
+    		line.setVisible(true);
+    		panel.setVisible(true);
+    		*/
     		
     		Set<Course> sections = new HashSet<Course>(semesters.get(i).getSections());
     		
     		int j = 1;
     		for(Course c : sections) {
-    			
     			JLabel course = new JLabel(c.getID());
-    			course.setBounds(X_START + i*OFFSET, Y_START + j*HORZOFF, 90, 45);
+    			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
+    			course.setFont(new Font("Dialog", Font.PLAIN, 11));
+    			course.setHorizontalAlignment(SwingConstants.CENTER);
     			panel.add(course);
     			j++;
     		}
@@ -142,4 +161,34 @@ public class ScheduleDisplay extends JFrame {
     	
     	
     }
+    
+
+public class ScheduleLine extends JComponent {
+	
+	private double x;
+	private double y;
+	private double x2;
+	private double y2;
+	
+	public ScheduleLine(double x, double y, double x2, double y2) {
+		
+		this.x = x;
+		this.y = y;
+		this.x2 = x2;
+		this.y2 = y2;
+		
+		
+	}
+	
+	public void paintComponent(Graphics g) {
+		
+		System.out.println("Into PAINT");
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.BLACK);
+		g2.drawLine((int)x,(int)y,(int)x2,(int)y2);
+	}
+	
 }
+}
+
+
