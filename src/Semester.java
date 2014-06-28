@@ -1,6 +1,7 @@
 import java.util.*;
 
-import com.google.common.collect.Collections2;
+
+import com.google.common.collect.Collections2; 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -12,7 +13,7 @@ import com.google.common.collect.Sets;
  * for Fall 2014 would be a different Semester instance.
  */
 
-public class Semester implements Comparable<Semester>
+public class Semester //implements Comparable<Semester>
 {	
 	/*
 	 * CONSTANTS
@@ -33,7 +34,7 @@ public class Semester implements Comparable<Semester>
      */
     private int semesterID; //0 or 1 depending on fall or spring
     private int semesterYear;
-    private Set<Course> sections;
+    private Set<Section> sections;
     
     private Semester parentSemester; //previous semester aka parent in the tree  
    
@@ -43,16 +44,15 @@ public class Semester implements Comparable<Semester>
     
     private ArrayList<Semester> childSemesters;
     private Set<Course> inheritedCourses;
-    private Set<Course> poolOfCoursesForChildSemesters;
+    private Set<Section> poolOfCoursesForChildSemesters;
     private double utility;  
-    private int pathCost; //anti-utility
-	private Preferences preferencesObj;
+//	private Preferences preferencesObj;
     
     
     /*
      * CONSTRUCTORS
      */ 
-    public Semester(int depth, int semesterID, int semesterYear, Set<Course> sections, Semester parentSemester, Set<Course> inheritedCourses) 
+    public Semester(int depth, int semesterID, int semesterYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
     {
     	this.depth = depth;
     	this.semesterID = semesterID;
@@ -60,11 +60,16 @@ public class Semester implements Comparable<Semester>
     	this.sections = sections;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
+    	this.utility = inheritedPathCost;
+
+    	
+    	
+    	
     	
     	//populate next semester's inherited sections
     	Set<Course> nextSemesterInheritedCourses = new HashSet<Course>();
     	//add current semester's courses
-    	nextSemesterInheritedCourses.addAll(this.sections);
+    	nextSemesterInheritedCourses.addAll(sectionsToCourses( this.sections ));
     	//add all previous semester courses
     	nextSemesterInheritedCourses.addAll(this.inheritedCourses);
     }
@@ -103,16 +108,16 @@ public class Semester implements Comparable<Semester>
     	this.semesterYear = semesterYear;
     }
    
-    public Set<Course> getSections() 
+    public Set<Section> getSections() 
     {
     	return sections;
     }
     
     //not sure if we need this
-    public void setSections(Set<Course> newSections)
-    {
-    	sections = newSections;
-    }
+//    public void setSections(Set<Course> newSections)
+//    {
+//    	sections = newSections;
+//    }
     
     public Semester getParentSemester()
     {
@@ -155,12 +160,12 @@ public class Semester implements Comparable<Semester>
     	this.inheritedCourses = inheritedCourses;
     }
        
-    public Set<Course> getPoolOfCoursesForChildSemesters()
+    public Set<Section> getPoolOfCoursesForChildSemesters()
     {
     	return poolOfCoursesForChildSemesters;	
     }
     
-    public void setPoolOfCoursesForChildSemesters(Set<Course> allCourses)
+    public void setPoolOfCoursesForChildSemesters(Set<Section> allCourses)
     {
     	//subtract all inherited courses as well as current semester courses 
     	//aka sections from set of all courses 
@@ -175,14 +180,18 @@ public class Semester implements Comparable<Semester>
     }
     
     
+    /* utility handled by Utility
+     
+     
     /*sets the utility of the semester plus the utility of any ancestors all the way up to the root*/
+/*
     public void setUtility(Requirements reqs, Preferences prefs)
     {
     	/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
 		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
 		 * 3 - Class Timing Preferences (30 - Day, 100 - Night, 0 - DC), # Courses to Take
 		 */
-		
+	/*	
 		// Initialize the starting utility value to 0
 		double tempUtil = 0;
 		// Initial value for the requirement of a course
@@ -193,7 +202,8 @@ public class Semester implements Comparable<Semester>
 		// Successively check and add the value of each section's utility to the total utility
 		// of the semester
 		//for(int i = 0; i < sections.size(); i++){
-		
+
+	
 		//fix polymorphism issue
 		for (Course s : sections)
 		{
@@ -215,7 +225,7 @@ public class Semester implements Comparable<Semester>
 				nuggetVal = 40;
 			}
 			*/
-			
+			/*
 			// Compute the utility for requirement points
 			requiredVal = s.getRequired() * 75;
 			
@@ -237,27 +247,8 @@ public class Semester implements Comparable<Semester>
 				
 		this.utility = tempUtil;
     }
-   
-    public Preferences getPreferencesObj() 
-    {
-		return preferencesObj;
-	}
-
-	public void setPreferencesObj(Preferences preferencesObj) 
-	{
-		this.preferencesObj = preferencesObj;
-	}
-    
-	public int getPathCost()
-	{
-		return pathCost;
-	}
-
-	public void setPathCost(int pathCost)
-	{
-		this.pathCost = pathCost;
-	}
-
+*/  
+     
     //returns semester name as a string
     public String getSemesterName()
     {
@@ -280,7 +271,7 @@ public class Semester implements Comparable<Semester>
     {
     	String semesterString = getSemesterName();
     	
-    	for(Course s:sections)
+    	for(Section s:sections)
     	{
     		semesterString += "," + s;
     	}
@@ -322,7 +313,8 @@ public class Semester implements Comparable<Semester>
     	 * generation = depth - 1
     	 * if user has not specified the num courses per sem,then sizeOfNextSemesterSections = 0 
     	 */
-    	int sizeOfChildSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
+    	int sizeOfChildSemesterSections = Preferences.prefs.getNumCoursesPerSem(depth);
+//    	int sizeOfChildSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
     	
     	/*
     	Iterator iterator = poolOfCoursesForChildSemesters.iterator();
@@ -339,7 +331,7 @@ public class Semester implements Comparable<Semester>
     	 * we also only filter using this exact size filter if user has provided us a preference, otherwise only filter
     	 * those sets with size greater than MAX_SIZE, since they are invalid configurations and can be safely pruned
     	 */
-    	Set<Set<Course>> allPossibleSetsOfCoursesForNextSemester = new HashSet<Set<Course>>();
+    	Set<Set<Section>> allPossibleSetsOfCoursesForNextSemester = new HashSet<Set<Section>>();
     	if (sizeOfChildSemesterSections > 0 && sizeOfChildSemesterSections <= 10)
     	{
     		
@@ -372,18 +364,63 @@ public class Semester implements Comparable<Semester>
     	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
     	
     	//instantiate the child semester objects
-    	for (Set<Course> aValidSet : allPossibleSetsOfCoursesForNextSemester)
+    	for (Set<Section> aPossibleSet : allPossibleSetsOfCoursesForNextSemester )
     	{
+
+    		// if it's valid to begin with...
+    		// 	public int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
+
+    		// add the courses we're considering to our inherited courses in a LL
+    		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
+    		
+    		for ( Section s : aPossibleSet ) {
+    			validityCheckList.add( s.getParent() );
+    		}
+    		
+    		// if the rules not met by these courses is greater than the total number
+    		//  of courses we can choose in subsequent semesters, we cannot complete
+    		//  the degree as requested and will not create the child node.
+
+    		if ( Requirements.rulesUnmet( validityCheckList ) > 
+    			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
+    			
+    			// We can never end up valid
+    			continue;    			
+    		}
+
+
+    		// find the utility....
+    		ArrayList<Section> utilityCheckList = new ArrayList<Section>( aPossibleSet );
+    		double childUtility = Utility.getUtility( utilityCheckList, Preferences.prefs );
+    		
+    		
+    		
+    		
+    		
     		childSemestersArrayList
     				.add(
-    						new Semester(depth+1, nextSemesterID, nextSemesterYear, aValidSet, this, 
-    									Sets.union(sections, inheritedCourses).copyInto(childSemesterInheritedCourses)
-    									)
+    						
+    						new Semester(depth+1, nextSemesterID, nextSemesterYear, aPossibleSet, this, 
+    									Sets.union(sectionsToCourses(aPossibleSet), inheritedCourses ).copyInto(childSemesterInheritedCourses),
+    									(childUtility + utility ))
     					);
     	}
     	
     	return childSemestersArrayList;
     }
+    
+    
+    // convert a set of sections to a set of courses
+    private static Set<Course> sectionsToCourses( Set<Section> givenSet ) {
+    	
+    	Set<Course> retVal = new HashSet<Course>();
+    	
+    	for ( Section s : givenSet ) {
+    		retVal.add( s.getParent() );
+    	}
+    	
+    	return retVal;
+    }    
     
     /*
      * takes a given power set and removes from it constituent sets that have the exact size
@@ -402,13 +439,16 @@ public class Semester implements Comparable<Semester>
     }
 
 	
-    @Override
-	public int compareTo(Semester s)
+/*    @Override
+	public double compareTo(Semester s)
 	{
-    	return this.pathCost - s.getPathCost();
+    	return this.utility - s.getPathCost();
 	}
+*/
+    public double getPathCost() {
+    	return this.utility;
+}
 
-    
     /*
      * takes a given power set and removes from it constituent sets that have size > MAX_SIZE
      * returns the filtered power set
