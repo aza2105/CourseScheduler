@@ -73,10 +73,12 @@ public class Preferences {
 		return coursesTaken;
 	}
 	
+	// 0 for fall, 1 for spring
 	public int getFirstSeason(){
 		return firstSeason;
 	}
 	
+	// first year of the semester to schedule
 	public int getFirstYear(){
 		return firstYear;
 	}
@@ -104,7 +106,7 @@ public class Preferences {
 	}
 	
 	// Method to parse the user input/parameters
-	public static void parseUserInput(String [] userInput){
+	public static void parseUserInput(String userInput){
 		ArrayList <String> coursesTaken;
 		coursesTaken = new ArrayList<String>();
 		int [] numCoursesPerSem = new int[10];
@@ -115,52 +117,50 @@ public class Preferences {
 		int firstY = 2014;
 		int firstS = 0;
 		
-		// If the length of the input is 1, the parameter should be the preferences file location.
-		if (userInput.length == 1){
-			String fileLocation = userInput[0];
-			String line = null;
+		String fileLocation = userInput;
+		String line = null;
+		
+		// Open a buffered/file reader to read the input file.
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + fileLocation));
 			
-			// Open a buffered/file reader to read the input file.
-			try {
-				BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + fileLocation));
-				
-				// Read to the end of the file
-				while((line = br.readLine()) != null) {
-					String[] dataLine = line.split(",");
-					switch(PossPrefs.valueOf(dataLine[0])){
-						case COURSE:
-							coursesTaken.add(dataLine[1]);
-							break;
-						case SEMESTER:
-							numCoursesPerSem[Integer.parseInt(dataLine[1])] = Integer.parseInt(dataLine[2]);
-							break;
-						case DAYNIGHT:
-							dayNight = Integer.parseInt(dataLine[1]);
-							break;
-						case SEASON:
-							firstS = Integer.parseInt(dataLine[1]);
-							break;
-						case YEAR:
-							firstY = Integer.parseInt(dataLine[1]);
-							break;
-					}
+			// Read to the end of the file
+			while((line = br.readLine()) != null) {
+				String[] dataLine = line.split(",");
+				switch(PossPrefs.valueOf(dataLine[0])){
+					case COURSE:
+						coursesTaken.add(dataLine[1]);
+						break;
+					case SEMESTER:
+						numCoursesPerSem[Integer.parseInt(dataLine[1])] = Integer.parseInt(dataLine[2]);
+						break;
+					case DAYNIGHT:
+						dayNight = Integer.parseInt(dataLine[1]);
+						break;
+					case SEASON:
+						firstS = Integer.parseInt(dataLine[1]);
+						break;
+					case YEAR:
+						firstY = Integer.parseInt(dataLine[1]);
+						break;
 				}
-				
-				// Create the preferences object based off of the user input.
-				prefs = new Preferences(numCoursesPerSem, dayNight, coursesTaken, firstS, firstY);
-				br.close();
-				
-				// Catch the exceptions and print the corresponding results.
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found. Exiting program.");
-				System.exit(1);
-			} catch (IOException e) {
-				System.out.println("IO Exception. Exiting program.");
-				System.exit(1);
-			} catch (IllegalArgumentException e) {
-			      System.out.println("Invalid input file! Exiting program.");
-			      System.exit(1);
 			}
-		}
+			
+			// Create the preferences object based off of the user input.
+			prefs = new Preferences(numCoursesPerSem, dayNight, coursesTaken, firstS, firstY);
+			br.close();
+			System.out.println("Preferences data inputted to Preferences.java.");
+			
+			// Catch the exceptions and print the corresponding results.
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found. Exiting program.");
+			System.exit(1);
+		} catch (IOException e) {
+			System.out.println("IO Exception. Exiting program.");
+			System.exit(1);
+		} catch (IllegalArgumentException e) {
+		      System.out.println("Invalid input file! Exiting program.");
+		      System.exit(1);
+		}	
 	}
 }

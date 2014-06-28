@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -34,22 +35,6 @@ public class FrontEnd extends JFrame {
 	private JTextField textField_3;
 
 	/**
-	 * Launch the application.
-	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					FrontEnd frame = new FrontEnd();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
-
-	/**
 	 * Create the frame.
 	 */
 	public FrontEnd() {
@@ -69,23 +54,23 @@ public class FrontEnd extends JFrame {
 		contentPane.add(btnCreateSchedule);
 		
 		JLabel lblLabel = new JLabel("Courses Taken:");
-		lblLabel.setBounds(10, 11, 135, 25);
+		lblLabel.setBounds(10, 11, 123, 25);
 		contentPane.add(lblLabel);
 		
 		textField = new JTextField();
 		textField.setToolTipText("e.g. \"COMS W4701\"");
-		textField.setBounds(149, 13, 106, 20);
+		textField.setBounds(135, 13, 86, 20);
 		contentPane.add(textField);
 		textField.setColumns(10);
 		
 		JLabel lblCourses = new JLabel("Courses Taken");
-		lblCourses.setBounds(509, 16, 123, 14);
+		lblCourses.setBounds(519, 16, 123, 14);
 		contentPane.add(lblCourses);
 		
 		JButton btnAddCourse = new JButton("Add course");
 		btnAddCourse.setToolTipText("e.g. \"COMS W4701\"");
 		
-		btnAddCourse.setBounds(265, 6, 150, 35);
+		btnAddCourse.setBounds(231, 6, 150, 35);
 		contentPane.add(btnAddCourse);
 		
 		JLabel lblTimingPreferences = new JLabel("Timing Preferences:");
@@ -149,7 +134,7 @@ public class FrontEnd extends JFrame {
 		
 		final JLabel lblInvalidCourse = new JLabel("");
 		lblInvalidCourse.setForeground(Color.RED);
-		lblInvalidCourse.setBounds(329, 16, 109, 14);
+		lblInvalidCourse.setBounds(391, 17, 109, 14);
 		contentPane.add(lblInvalidCourse);
 		
 		JLabel lblYear = new JLabel("Year");
@@ -507,7 +492,11 @@ public class FrontEnd extends JFrame {
 						bw.close();
 			 
 						System.out.println("Preferences file written to inputPrefs.csv");
-			 
+						// Add the preferences data to the Preferences.java class
+						Preferences.parseUserInput("inputPrefs.csv");
+						inputFileTest();
+						utilityTest();
+						
 					} catch (IOException e1) {
 						System.out.println("IO Exception in FrontEnd schedule creation.");
 						System.exit(1);
@@ -552,8 +541,6 @@ public class FrontEnd extends JFrame {
 			btnCreateSchedule.setEnabled(false);
 		}
 
-		// textField_2.setText(Integer.toString(coursesTaken) +
-		// Integer.toString(coursesPlanned));
 		if (invalidInt) {
 			coursesPlanned = 0;
 		}
@@ -569,5 +556,32 @@ public class FrontEnd extends JFrame {
 	    }
 	    // only got here if we didn't return false
 	    return true;
+	}
+	
+	// Input file test
+	public static void inputFileTest(){
+		System.out.println("COURSES ALREADY TAKEN: ");
+		for(int i = 0; i < Preferences.prefs.getCoursesTaken().size(); i++){
+			System.out.println(Preferences.prefs.getCoursesTaken().get(i));
+		}
+		for(int i = 0; i < Preferences.prefs.getNumSems(); i++){
+			System.out.println("Semester " + i + ": " + Preferences.prefs.getNumCoursesPerSem(i));
+		}
+		System.out.println("First season = " + Preferences.prefs.getFirstSeason());
+		System.out.println("First Year = " + Preferences.prefs.getFirstYear());
+		System.out.println("DayNightVal = " + Preferences.prefs.getDayNight());
+	}
+	
+	// Utility test
+	public static void utilityTest(){
+        ArrayList<Section> sectionList = new ArrayList<Section>();
+        sectionList.add(new Section(new Course("Course 1", "COMS 4701"), "MWF", "2200", "2330", "Friedman", "Samuel1", "C"));
+        sectionList.add(new Section(new Course("Course 2", "COMS 4702"), "TR", "0830", "0900", "Friedman2", "Samuel2", "C"));
+        sectionList.add(new Section(new Course("Course 3", "COMS 4703"), "MF", "1900", "2000", "Friedman3", "Samuel3", "C"));
+        sectionList.add(new Section(new Course("Course 4", "COMS 4704"), "MF", "1800", "1900", "Friedman4", "Samuel4", "C"));
+        sectionList.add(new Section(new Course("Course 5", "COMS 4705"), "MW", "1400", "1500", "Friedman5", "Samuel5", "C"));
+        sectionList.add(new Section(new Course("Course 6", "COMS 4706"), "TRF", "1000", "1100", "Friedman6", "Samuel6", "C"));
+        System.out.println("The total test utility = " + Utility.getUtility(sectionList));
+        
 	}
 }
