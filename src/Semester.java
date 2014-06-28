@@ -322,7 +322,7 @@ public class Semester implements Comparable<Semester>
     	 * generation = depth - 1
     	 * if user has not specified the num courses per sem,then sizeOfNextSemesterSections = 0 
     	 */
-    	int sizeOfNextSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
+    	int sizeOfChildSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
     	
     	/*
     	Iterator iterator = poolOfCoursesForChildSemesters.iterator();
@@ -340,10 +340,16 @@ public class Semester implements Comparable<Semester>
     	 * those sets with size greater than MAX_SIZE, since they are invalid configurations and can be safely pruned
     	 */
     	Set<Set<Course>> allPossibleSetsOfCoursesForNextSemester = new HashSet<Set<Course>>();
-    	if (sizeOfNextSemesterSections > 0 && sizeOfNextSemesterSections <= 10)
+    	if (sizeOfChildSemesterSections > 0 && sizeOfChildSemesterSections <= 10)
     	{
+    		
     		allPossibleSetsOfCoursesForNextSemester = 
-					filterPowerSetExactSize(sizeOfNextSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
+					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
+			
+    		/*
+    		allPossibleSetsOfCoursesForNextSemester = filterPowerSetExactSize(sizeOfChildSemesterSections, 
+							                          Sets.powerSet(Scheduler.getCourses() ));
+		    */
     	}
     	
     	
