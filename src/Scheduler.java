@@ -291,7 +291,7 @@ public class Scheduler
 
 		// If there are no parameters, assume the default settings for preferences/courses taken.
 		else if(args.length == 0){*/
-		Preferences prefs = new Preferences();
+//		Preferences prefs = new Preferences();
 /*		}
 		// If there is one argument, assume it is the location of input file.
 		else if(args.length == 1){
@@ -300,7 +300,8 @@ public class Scheduler
 		}
 */
 		
-//		String[] uP = new String[]{ "inputPrefs.csv" };
+//
+		String[] uP = new String[]{ "inputPrefs.csv" };
 		Preferences.parseUserInput( "inputPrefs.csv" );
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
