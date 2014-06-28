@@ -200,7 +200,7 @@ public class Course {
 		else {
 			season = "spring";
 		}
-		System.out.println( "Term: "+season+" "+year);
+//		System.out.println( "Term: "+season+" "+year);
 
 		if ( !this.offerings.containsKey( season ) ) {
 			return false;
