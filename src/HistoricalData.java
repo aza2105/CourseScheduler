@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class HistoricalData {
@@ -98,7 +99,7 @@ public class HistoricalData {
 //		knownCourseList = new Set<Section>();
 //				courseMap = new HashMap<String,Course>();
 		String line = null;
-				
+		Set<Section> knownCourseList = new HashSet<Section>();
 		String semester = "Fall";
 		int year = 2014;
 		
@@ -119,11 +120,21 @@ public class HistoricalData {
 
 						// Add the known data to the list of sections
 //					System.out.println( histCourses.get( dataLine[0] ));
-					knownCourseList.add(new Section( histCourses.get( dataLine[0]),
-							dataLine[4], dataLine[5], dataLine[6],
-							dataLine[7], dataLine[8], dataLine[9] ));
-						
+					if ( histCourses.containsKey( dataLine[0] )) {
+						knownCourseList.add(new Section( histCourses.get( dataLine[0]),
+								dataLine[4], dataLine[5], dataLine[6],
+								dataLine[7], dataLine[8], dataLine[9] ));
+					
 					}
+					else {
+
+						// TODO errors because there are not historical definitions
+						// for all of the specified electives.  fix in data collection
+						
+						//						System.out.println( "ERROR, COURSE NOT DEFINED: "+dataLine[0]);
+//						System.out.println( dataLine );
+					}
+				}
 				}
 				// Close the buffered reader
 				br.close();
