@@ -35,91 +35,7 @@ public class Scheduler
 	// keep track of the initial term
 	private int startSeason;
 	private int startYear;
-	
-	private LinkedList<Semester> uniformCostSearch()
-	{
-		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
-		Set<Course> rootInheritedCourses = new HashSet<Course>();
-		Set<Section> rootSections = new HashSet<Section>();
-		
-		//instantiate the root semester
-		Semester sem = new Semester(0, -1, -1, rootSections, null, rootInheritedCourses, 0);
-		
-		
-		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
-		Set<Semester> explored = new HashSet<Semester>();
 
-		frontier.add( sem );
-		
-		while (true)
-		{
-
-			System.out.println( "Frontier contains "+frontier.toString()  );
-			if (frontier.isEmpty())
-			{
-				optimalSemesterList = null; //returning failure
-				break;
-			}
-			else
-			{
-				sem = frontier.poll(); // chooses the lowest-cost node in frontier 
-				
-				if (succeedsGoalTest(sem))
-				{
-					optimalSemesterList.addFirst(sem);
-					
-					//backtrack up to the root to get the schedules for each semester
-					//along the path from the root to the goal semester
-					while((sem = sem.getParentSemester()) != null)
-					{
-						optimalSemesterList.addFirst(sem);
-					}
-					break;
-				}
-				
-				explored.add(sem);
-
-				// if we're not at a goal state
-				if (sem.getDepth() <= MAX_DEPTH )
-				{
-					//sem.
-					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
-					for (Semester childSem : childrenSem)
-					{
-//						if (!explored.contains(childSem) && !frontier.contains(childSem))
-							frontier.add(childSem);
-					}
-				}		
-			}
-		}
-		
-		return optimalSemesterList;
-		
-		
-	}
-	
-	private boolean succeedsGoalTest(Semester semester)
-	{
-
-		// if we've hit the max depth, we've finished the last semester
-		//   optimally and can return.
-		if ( semester.getDepth() == maxDepth ) {
-			return true;
-		}
-		
-		return false;
-/*		
-		Set<Course> coursesCompletedSoFar = new HashSet<Course>();
-		Sets.union(semester.getInheritedCourses(), semester.getCourses()).copyInto(coursesCompletedSoFar);
-		
-		if (coursesCompletedSoFar.size() == Scheduler.TOTAL_NUM_COURSES_TO_TAKE)
-			return true;
-		else
-			return false;
-*/
-	}
-	
-	
 	// number of semesters to consider
 	private int semesters;
 
@@ -127,18 +43,14 @@ public class Scheduler
 	private int maxDepth;
 
 	// List of Sets representing course offerings per term in the future
-	private ArrayList<HashSet<Section>> directoryOfClasses;
+	public static ArrayList<HashSet<Section>> directoryOfClasses;
 	
 	// hash map for getting course information and generating potential schedules
-	private static HashMap<String,Course> courses;
+	private HashMap<String,Course> courses;
 
 	// set of valid candidates
 	private HashSet<Section> coursePool = new HashSet<Section>();	
-	
-	// we'll need to initialize a Requirements object for track reqs
-	//	private Requirements trackReq;
-	// don't do this... access Parser.reqs directly
-	
+
 	// default constructor
 	public Scheduler() 
 	{ //( Requirements r ) {
@@ -185,12 +97,18 @@ public class Scheduler
 
 		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
 
-		ArrayList<HashSet<Section>> directoryOfClasses = new ArrayList<HashSet<Section>>();
+//		for ( Section s : coursePool ) {
+//			System.out.println( s.getParent().toString() );
+//		}
+		
+		directoryOfClasses = new ArrayList<HashSet<Section>>();
 
 		int i = 0;
 
 		int xYear = startYear;
 		int xSeason = startSeason;
+
+		
 		
 		if ( !(coursePool == null) ) {
 			// assuming first sem to be fall 2014
@@ -209,7 +127,9 @@ public class Scheduler
 	    	}
 			
 		}
-
+		else {
+			System.out.println( "coursePool is null");
+		}
 		// generate directories of classes
 		for ( ; i<maxDepth; i++ ) {
 
@@ -242,7 +162,12 @@ public class Scheduler
 		
 		}
 
-		
+		if ( directoryOfClasses == null ) {
+			System.out.println( "directory is null, we should have just set it");
+		}
+		else {
+			System.out.println( "constructor: dOC is not null");
+		}
 		// generate power set of courses for term xYear xSession			
 //    		allPossibleSetsOfCoursesForNextSemester = 
 //					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
@@ -250,6 +175,100 @@ public class Scheduler
 			
 		
 	}
+
+	private LinkedList<Semester> uniformCostSearch()
+	{
+		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
+		Set<Course> rootInheritedCourses = new HashSet<Course>();
+		Set<Section> rootSections = new HashSet<Section>();
+
+		if ( directoryOfClasses == null ) {
+			System.err.println( "Error: directoryOfClasses does not exist");
+//			return null;
+		}
+		//instantiate the root semester
+		Semester sem = new Semester(0, -1, -1, directoryOfClasses.get(0), null, rootInheritedCourses, 0);
+		
+		
+		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
+		Set<Semester> explored = new HashSet<Semester>();
+
+		frontier.add( sem );
+		
+		while (true)
+		{
+
+//			System.out.println( "Frontier contains "+frontier.toString()  );
+			if (frontier.isEmpty())
+			{
+				optimalSemesterList = null; //returning failure
+				break;
+			}
+			else
+			{
+				sem = frontier.poll(); // chooses the lowest-cost node in frontier 
+				
+				if (succeedsGoalTest(sem))
+				{
+					optimalSemesterList.addFirst(sem);
+					
+					//backtrack up to the root to get the schedules for each semester
+					//along the path from the root to the goal semester
+					while((sem = sem.getParentSemester()) != null)
+					{
+						optimalSemesterList.addFirst(sem);
+					}
+					break;
+				}
+				
+				explored.add(sem);
+
+				// if we're not at a goal state
+				if (sem.getDepth() <= maxDepth )
+				{
+					//sem.
+					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
+					for (Semester childSem : childrenSem)
+					{
+//						if (!explored.contains(childSem) && !frontier.contains(childSem))
+							frontier.add(childSem);
+					}
+				}		
+			}
+		}
+		
+		return optimalSemesterList;
+		
+		
+	}
+	
+	private boolean succeedsGoalTest(Semester semester)
+	{
+
+		// if we've hit the max depth, we've finished the last semester
+		//   optimally and can return.
+		if ( semester.getDepth() == maxDepth ) {
+			return true;
+		}
+		
+		return false;
+/*		
+		Set<Course> coursesCompletedSoFar = new HashSet<Course>();
+		Sets.union(semester.getInheritedCourses(), semester.getCourses()).copyInto(coursesCompletedSoFar);
+		
+		if (coursesCompletedSoFar.size() == Scheduler.TOTAL_NUM_COURSES_TO_TAKE)
+			return true;
+		else
+			return false;
+*/
+	}
+	
+	
+	
+	// we'll need to initialize a Requirements object for track reqs
+	//	private Requirements trackReq;
+	// don't do this... access Parser.reqs directly
+	
 	
 	/*
 	 * METHODS
@@ -326,7 +345,7 @@ public class Scheduler
 
 		ScheduleDisplay frame = new ScheduleDisplay();
 		
-		frame.giveSchedule( test, 1 );
+//		frame.giveSchedule( test, 1 );
 		
 	}
 	
