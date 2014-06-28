@@ -57,15 +57,15 @@ public class Semester implements Comparable<Semester>
     private Set<Section> sections;
     
     // previous semester aka parent in the tree
-    private Semester parentSemester;   
+    private Semester parentSemester;  
+    static Set<Set<Section>> combinationSets;
    
     /*
      * 
      */
     // a set to pass to our children so they can keep track of the courses
     // they have completed in their traversal from root
-	private Set<Course> nextSemesterInheritedCourses;
-	
+	private Set<Course> childrenSemestersInheritedCourses;
     private Set<Course> inheritedCourses;
     private Set<Section> poolOfCoursesForChildSemesters;
     private double utility;  
@@ -346,32 +346,17 @@ public class Semester implements Comparable<Semester>
     	if (sizeOfChildSemesterSections > 0 && sizeOfChildSemesterSections <= 10)
     	{
     		
+    		/*
     		allPossibleSetsOfCoursesForNextSemester = 
 					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
+    		*/
+    		
+    		if (Semester.outputCombination(poolOfCoursesForChildSemesters, sizeOfChildSemesterSections))
+    			allPossibleSetsOfCoursesForNextSemester = Semester.combinationSets;
 			
-    		/*
-    		allPossibleSetsOfCoursesForNextSemester = filterPowerSetExactSize(sizeOfChildSemesterSections, 
-							                          Sets.powerSet(Scheduler.getCourses() ));
-		    */
     	}
     	
-    	
-    	
-    	/*
-    	if (sizeOfNextSemesterSections == -1)
-    	{
-    		//we are done and have reached the max depth? check with Sam
-    		return null;
-    	}
-    	else
-    	{
-    		allValidSetsOfCoursesForNextSemester = 
-					filterPowerSetMaxSize(Semester.MAX_SIZE, Sets.powerSet(poolOfCoursesForChildSemesters));
-    	}
-    	*/
-    	
-  
-    	ArrayList<Semester> childSemestersArrayList = new ArrayList<Semester>();
+    	ArrayList<Semester> childrenSemesterArrayList = new ArrayList<Semester>();
     	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
     	
     	//instantiate the child semester objects
@@ -404,16 +389,14 @@ public class Semester implements Comparable<Semester>
     		ArrayList<Section> utilityCheckList = new ArrayList<Section>( aPossibleSet );
     		double childUtility = Utility.getUtility( utilityCheckList );
     		
-    		
-    		
-    		
+    		 		
     		// Prepare inherited course objects for children from this node's inherited
     		//  course object.  Add to it the current semester sections, cast to courses.
-    		Set<Course> childsInheritance = new HashSet<Course>(this.nextSemesterInheritedCourses);
+    		Set<Course> childsInheritance = new HashSet<Course>(this.childrenSemestersInheritedCourses);
     		childsInheritance.addAll( sectionsToCourses( aPossibleSet ) );
 
     		// Actually add a child
-    		childSemestersArrayList
+    		childrenSemesterArrayList
     				.add(  						
     						new Semester(depth+1, nextSemesterID, nextSemesterYear, aPossibleSet, this, 
     								childsInheritance,
@@ -423,10 +406,79 @@ public class Semester implements Comparable<Semester>
     	}
 
     	// send back an ArrayList to Scheduler
-    	return childSemestersArrayList;
+    	return childrenSemesterArrayList;
     }
     
+ // the following two methods are adapted from the following website:
+    // http://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
+	public static boolean outputCombination(Set<Section> inputSet, int r)
+	{
+		ArrayList<Section> inputArrayList = new ArrayList<Section>(inputSet);
+		int n = inputSet.size();
+		combinationSets.clear();
+		//Set<Course> outputSet = new HashSet<Course>();
+		
+	    // A temporary array to store all combinations one by one
+	    //int data[] = new int[r];
+		ArrayList<Section> data = new ArrayList<Section>(); 
+		
+		
+	    // Print all combination using temporary array 'data[]'
+	    //combinationUtil(arr, data, 0, n-1, 0, r);
+		combinationUtil(inputArrayList, data, 0, n-1, 0, r);
+		
+		if (!combinationSets.isEmpty())
+			return true;
+		else
+			return false;
+	}
+	
+	/* inputArrayList  ---> Input ArrayList
+	   data ---> Temporary ArrayList to store current combination
+	   start & end ---> Staring and Ending indexes in inputArrayList
+	   index  ---> Current index in data
+	   r ---> Size of a combination to be printed */
+	public static void combinationUtil(ArrayList<Section> inputArrayList, ArrayList<Section> data,
+										int start, int end, int index, int r)
+	{
+		
+	    // Current combination is ready to be output, output it
+	    if (index == r)
+	    {
+	    	Set<Section> anOutputSet = new HashSet<Section>();
+	        for (int j = 0; j < r; j++)
+	        {
+	        	//System.out.print(data[j]);
+	        	   anOutputSet.add(data.get(j));
+	        }
+	        combinationSets.add(anOutputSet);
+	        return;
+	    }
+	 
+	    // replace index with all possible elements. The condition
+	    // "end - i + 1 >= r - index" makes sure that including one element
+	    // at index will make a combination with remaining elements
+	    // at remaining positions
+	    for (int i = start; i <= end && end - i + 1 >= r-index; i++)
+	    {
+	        //data[index] = arr[i];
+	    	data.set(index, inputArrayList.get(i));
+	        combinationUtil(inputArrayList, data, i+1, end, index+1, r);
+	    }
+	}
 
+    
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
     // return a set of courses defined to match this semester's courses taken
     public Set<Course> getCourses( ) {
     	return sectionsToCourses( this.sections );
@@ -461,11 +513,20 @@ public class Semester implements Comparable<Semester>
     	return originalPowerSet;
     }
 
+    
+    
+    
+    
+    
+    
 	
+    
+    
+    
     @Override
 	public int compareTo(Semester s)
 	{
-    	if ( this.utility < s.getPathCost() ) {
+    	if ( this.utility < s.getPathUtility() ) {
     		return -1;
     	}
     	return 1;
@@ -474,7 +535,7 @@ public class Semester implements Comparable<Semester>
     	//    	return this.utility - s.getPathCost();
 	}
 
-    public double getPathCost() {
+    public double getPathUtility() {
     	return this.utility;
     }	
     
@@ -495,31 +556,6 @@ public class Semester implements Comparable<Semester>
     	return originalPowerSet;
     }
     */
-    
-    /*
-    //might want to use powerset from Guava instead
-    //from Stackoverflow.com
-    //http://stackoverflow.com/questions/1670862/obtaining-a-powerset-of-a-set-in-java
-    public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
-        Set<Set<T>> sets = new HashSet<Set<T>>();
-        if (originalSet.isEmpty()) {
-        	sets.add(new HashSet<T>());
-        	return sets;
-        }
-        List<T> list = new ArrayList<T>(originalSet);
-        T head = list.get(0);
-        Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
-        for (Set<T> set : powerSet(rest)) {
-        	Set<T> newSet = new HashSet<T>();
-        	newSet.add(head);
-        	newSet.addAll(set);
-        	sets.add(newSet);
-        	sets.add(set);
-        }		
-        return sets;
-    }
-    */
-    
     
     public static void main(String[] args)
     {
