@@ -12,7 +12,7 @@ import javax.swing.border.*;
 public class ScheduleDisplay extends JFrame {
 	
 	private ArrayList<JLabel> labels;
-	private static final int HEIGHT = 800;
+	private static final int HEIGHT = 900;
 	private static final int WIDTH = 650;
 	private final int X_START = 60;
 	private final int Y_START = 50;
