@@ -1,10 +1,8 @@
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 public class Utility {
 
@@ -25,8 +23,6 @@ public class Utility {
 		double tempUtil = 0;
 		// Initial value for day/night class preferences
 		double dayNightVal = 0;
-		// Initial value for length of day (in minutes)
-		long dayLength = 0;
 		// Initial value for the length of day utility
 		double dayLengthVal = 0;
 		
