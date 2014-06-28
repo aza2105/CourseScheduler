@@ -1,5 +1,5 @@
 import java.util.*;
-
+import com.google.common.collect.Collections2; 
 import com.google.common.collect.Sets;
 
 public class Scheduler 
@@ -32,7 +32,11 @@ public class Scheduler
 	private static final int MAX_DEPTH = 3;
 	private static int TOTAL_NUM_COURSES_TO_TAKE = 10;
 	
-	private static LinkedList<Semester> uniformCostSearch()
+	// keep track of the initial term
+	private int startSeason;
+	private int startYear;
+	
+	private LinkedList<Semester> uniformCostSearch()
 	{
 		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
 		Set<Course> rootInheritedCourses = new HashSet<Course>();
@@ -44,9 +48,13 @@ public class Scheduler
 		
 		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
 		Set<Semester> explored = new HashSet<Semester>();
+
+		frontier.add( sem );
 		
 		while (true)
 		{
+
+			System.out.println( "Frontier contains "+frontier.toString()  );
 			if (frontier.isEmpty())
 			{
 				optimalSemesterList = null; //returning failure
@@ -70,13 +78,15 @@ public class Scheduler
 				}
 				
 				explored.add(sem);
-				
+
+				// if we're not at a goal state
 				if (sem.getDepth() <= MAX_DEPTH )
 				{
+					//sem.
 					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
 					for (Semester childSem : childrenSem)
 					{
-						if (!explored.contains(childSem) && !frontier.contains(childSem))
+//						if (!explored.contains(childSem) && !frontier.contains(childSem))
 							frontier.add(childSem);
 					}
 				}		
@@ -88,8 +98,17 @@ public class Scheduler
 		
 	}
 	
-	private static boolean succeedsGoalTest(Semester semester)
+	private boolean succeedsGoalTest(Semester semester)
 	{
+
+		// if we've hit the max depth, we've finished the last semester
+		//   optimally and can return.
+		if ( semester.getDepth() == maxDepth ) {
+			return true;
+		}
+		
+		return false;
+/*		
 		Set<Course> coursesCompletedSoFar = new HashSet<Course>();
 		Sets.union(semester.getInheritedCourses(), semester.getCourses()).copyInto(coursesCompletedSoFar);
 		
@@ -97,17 +116,24 @@ public class Scheduler
 			return true;
 		else
 			return false;
+*/
 	}
 	
 	
 	// number of semesters to consider
 	private int semesters;
+
+	// number of total terms to generate (max depth)
+	private int maxDepth;
+
+	// List of Sets representing course offerings per term in the future
+	private ArrayList<HashSet<Section>> directoryOfClasses;
 	
 	// hash map for getting course information and generating potential schedules
 	private static HashMap<String,Course> courses;
 
 	// set of valid candidates
-	private Set<Section> coursePool;	
+	private HashSet<Section> coursePool = new HashSet<Section>();	
 	
 	// we'll need to initialize a Requirements object for track reqs
 	//	private Requirements trackReq;
@@ -120,10 +146,17 @@ public class Scheduler
 		semesters = 2;   // spring and fall
 
 		System.out.println( "Semesters: "+semesters);
-		
+
+		// get the number of semesters to consider
+		maxDepth = Preferences.prefs.getNumSems();
+		System.out.println( "MaxDepth: "+maxDepth);
 		// set the requirements object
 		//trackReq = r;
 
+		// set the term for the initial semester
+		startSeason = Preferences.prefs.getFirstSeason();
+		startYear = Preferences.prefs.getFirstYear();
+		
 		// grab a hash of all potential courses, regardless of specific
 		//   semester data
 		courses = new HashMap<String,Course>(); 
@@ -131,32 +164,90 @@ public class Scheduler
 
 		/* Course Requirement Utility setting */
 		
-		for(Map.Entry<String, Course> entry : courses.entrySet()){
-			entry.getValue().setRequired(8.00);
-			System.out.println( entry.getKey() + ": " + entry.getValue().getRequired());
-		}
+//		for(Map.Entry<String, Course> entry : courses.entrySet()){
+//			entry.getValue().setRequired(8.00);
+//			System.out.println( entry.getKey() + ": " + entry.getValue().getRequired());
+//		}
 
 		for(Rule r : Parser.reqs.getRules() ) {
-			System.out.println("RULE::"+ r.size() );
+//			System.out.println("RULE::"+ r.size() );
 			for( Course c : r.getCourseList() ) {
 				double ru; // determine the "antiutility"
 				
 				ru = Math.log(r.size() )/Math.log(2);
 				
 				
-				System.out.println(c+" "+r.size()+" "+ru);
+//				System.out.println(c+" "+r.size()+" "+ru);
 			}
-			System.out.println();
+//			System.out.println();
 		
 		}
 
 		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
 
-		
-		
-//		System.out.println( courses.get( "COMS W4701"));
+		ArrayList<HashSet<Section>> directoryOfClasses = new ArrayList<HashSet<Section>>();
 
-		// 
+		int i = 0;
+
+		int xYear = startYear;
+		int xSeason = startSeason;
+		
+		if ( !(coursePool == null) ) {
+			// assuming first sem to be fall 2014
+			directoryOfClasses.add(0, coursePool); 
+			i++;
+						
+	    	if (xSeason == 0)
+	    	{
+	    		xSeason = 1;
+	    		xYear++;
+	    	}
+	    	//else if current semester is a spring semester
+	    	else if (xSeason == 1)
+	    	{
+	    		xSeason = 0;
+	    	}
+			
+		}
+
+		// generate directories of classes
+		for ( ; i<maxDepth; i++ ) {
+
+			// get a set of 
+			HashSet<Section> poolOfCoursesForChildSemesters = new HashSet<Section>();
+			
+		    
+//Section(Course c, String days, String start, String end, String pLast, String pFirst, String pMiddle ) {
+
+			for ( Course c : courses.values() ) {
+				if ( c.probOffered( String.valueOf(xSeason), String.valueOf(xYear) ) ) {
+					poolOfCoursesForChildSemesters.add( new Section( c, null, null, null, null, null, null ));
+				}								
+			}
+			
+			directoryOfClasses.add( poolOfCoursesForChildSemesters );
+			
+	    	if (xSeason == 0)
+	    	{
+	    		xSeason = 1;
+	    		xYear++;
+	    	}
+	    	//else if current semester is a spring semester
+	    	else if (xSeason == 1)
+	    	{
+	    		xSeason = 0;
+	    	}
+
+	    	i++;
+		
+		}
+
+		
+		// generate power set of courses for term xYear xSession			
+//    		allPossibleSetsOfCoursesForNextSemester = 
+//					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
+    		
+			
 		
 	}
 	
@@ -168,6 +259,23 @@ public class Scheduler
 		return courses;
 	}
 
+    /*
+     * takes a given power set and removes from it constituent sets that have the exact size
+     * returns the filtered power set
+     */
+    public static <T> Set<Set<T>> filterPowerSetExactSize(int exactSize, Set<Set<T>> originalPowerSet)
+    {
+    	for (Set<T> set : originalPowerSet)
+    	{
+    		if (set.size() != exactSize)
+    		{
+    			originalPowerSet.remove(set);
+    		}
+    	}	
+    	return originalPowerSet;
+    }
+	
+	
 	public void setCourses(HashMap<String, Course> courses)
 	{
 		this.courses = courses;
@@ -182,15 +290,18 @@ public class Scheduler
 		}
 
 		// If there are no parameters, assume the default settings for preferences/courses taken.
-		else if(args.length == 0){
-			Preferences prefs = new Preferences();
-		}
+		else if(args.length == 0){*/
+		Preferences prefs = new Preferences();
+/*		}
 		// If there is one argument, assume it is the location of input file.
 		else if(args.length == 1){
 			// Adds the preferences from the user input into a static Preferences object - 'prefs'
 			Preferences.parseUserInput(args);
 		}
 */
+		
+//		String[] uP = new String[]{ "inputPrefs.csv" };
+		Preferences.parseUserInput( "inputPrefs.csv" );
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 
@@ -208,6 +319,13 @@ public class Scheduler
 */		
 		System.out.println( "Main in Scheduler.java");
 		Scheduler s = new Scheduler();// req );
+		
+		LinkedList<Semester> test = new LinkedList<Semester>();
+		test = s.uniformCostSearch();
+
+		ScheduleDisplay frame = new ScheduleDisplay();
+		
+		frame.giveSchedule( test, 1 );
 		
 	}
 	
