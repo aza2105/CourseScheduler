@@ -4,7 +4,7 @@ public class Requirements {
 	
 	private int req6000;
 	private int creditsRequired;
-	private LinkedList<Rule> ruleList = new LinkedList<Rule>();
+	private static LinkedList<Rule> ruleList = new LinkedList<Rule>();
 
 	
 	public Requirements() {
@@ -41,7 +41,7 @@ public class Requirements {
 	}
 	
 	//TODO: Need to ensure that this captures all rules.
-	public int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
+	public static int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
 		
 		int total = 0;
 		
