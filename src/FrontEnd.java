@@ -1,5 +1,3 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
@@ -28,6 +26,7 @@ import java.awt.event.KeyEvent;
 
 public class FrontEnd extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
@@ -106,8 +105,8 @@ public class FrontEnd extends JFrame {
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
 
-		final DefaultListModel listModel = new DefaultListModel();
-		final JList list = new JList(listModel);
+		final DefaultListModel<String> listModel = new DefaultListModel<String>();
+		final JList<String> list = new JList<String>(listModel);
 		list.setBounds(488, 41, 129, 172);
 		contentPane.add(list);
 		
@@ -507,7 +506,7 @@ public class FrontEnd extends JFrame {
 	}
 
 	// Updates the total courses field (out of 10)
-	public void updateCourseQuantity(DefaultListModel listModel,
+	public void updateCourseQuantity(DefaultListModel<String> listModel,
 			JTextField textField_1, JTextField textField_2,
 			JButton btnCreateSchedule) {
 		int coursesTaken = 0;

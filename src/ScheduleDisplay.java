@@ -12,7 +12,7 @@ import javax.swing.border.*;
 public class ScheduleDisplay extends JFrame {
 	
 	private ArrayList<JLabel> labels;
-	private static final int HEIGHT = 800;
+	private static final int HEIGHT = 900;
 	private static final int WIDTH = 650;
 	private final int X_START = 60;
 	private final int Y_START = 50;
@@ -26,17 +26,6 @@ public class ScheduleDisplay extends JFrame {
     public ScheduleDisplay() {
     	
     	icon = new ImageIcon(System.getProperty("user.dir") + "/../images/cap.png");
-    	
-    	
-    	if (!System.getProperty("os.name").equals("Mac OS X") ) {
-    		System.out.println("Hi SAM");
-	    	Image resize = icon.getImage();
-	    	BufferedImage buff = new BufferedImage(resize.getWidth(null), resize.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-	    	Graphics g = buff.createGraphics();
-	    	g.drawImage(resize,0,0,10,10,null);
-	    	
-	    	icon = new ImageIcon(buff);
-    	}
     	
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	this.setSize(HEIGHT, WIDTH);
@@ -79,6 +68,12 @@ public class ScheduleDisplay extends JFrame {
     	
     	JPanel fifthschedule = new JPanel();
     	tabbedPane.addTab("Schedule 5", icon, fifthschedule, null);
+    	
+    	if (!System.getProperty("os.name").equals("Mac OS X") ) {
+    		System.out.println("Hi SAM");
+    		tabbedPane.setTabPlacement(JTabbedPane.LEFT);
+    		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    	}
     	
     	
     }
