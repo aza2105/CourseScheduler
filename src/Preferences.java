@@ -16,35 +16,13 @@ public class Preferences {
 	int firstSeason;
 	int firstYear;
 	
+	// enum to contain all possibilities for user input preferences file
 	public enum PossPrefs
 	 {
 	     COURSE, SEMESTER, DAYNIGHT, SEASON, YEAR;
-	 }
+	 }	
 	
-	// Constructor to initialize user preference variables.
-	public Preferences(){
-		// Default courses per semester is 4-4-2
-		numCoursesPerSem = new int[10];
-		numCoursesPerSem[0] =  4;
-		numCoursesPerSem[1] =  4;
-		numCoursesPerSem[2] =  2;
-		//-1 indicates look no further, we're done
-		//however, 0 indicates user did not specify preference for that semester
-		numCoursesPerSem[3] = -1;
-		numCoursesPerSem[4] = -1;
-		numCoursesPerSem[5] = -1;
-		numCoursesPerSem[6] = -1;
-		numCoursesPerSem[7] = -1;
-		numCoursesPerSem[8] = -1;
-		numCoursesPerSem[9] = -1;
-		
-		dayNight = 2; // Initially set for don't care
-		
-		// No courses have been taken
-		coursesTaken = new ArrayList<String>();
-	}
-	
-	// Preferences constructor when provided with user input
+	// Preferences constructor when provided with user input from the GUI
 	public Preferences(int [] numCoursesPerSem, int dayNight, ArrayList <String> coursesTaken, int firstSeason, int firstYear){
 		this.numCoursesPerSem = numCoursesPerSem;
 		this.dayNight = dayNight;
@@ -78,12 +56,12 @@ public class Preferences {
 		return firstSeason;
 	}
 	
-	// first year of the semester to schedule
+	// First year of the semester to schedule (e.g. 2015)
 	public int getFirstYear(){
 		return firstYear;
 	}
 	
-	// Returns the number of semesters
+	// Returns the total number of semesters-to-schedule
 	public int getNumSems(){
 		int numSems = 0;
 		for (int i = 0; i < numCoursesPerSem.length; i++){
@@ -94,6 +72,7 @@ public class Preferences {
 		return numSems;	
 	}
 	
+	// Returns the total number of courses to schedule
 	public int getTotalCourses(){
 		int totalCourses = 0;
 		for(int i = 0; i < numCoursesPerSem.length; i++){

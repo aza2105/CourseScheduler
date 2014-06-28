@@ -14,12 +14,7 @@ public class Utility {
 	
 	// Return the utility value of a semester full of section objects (lower return is better)
 	public static double getUtility(ArrayList <Section> section){
-		/* 1 - Nuggets (40 - G, 30 - S, 0), Requirements (75), Wait Time (0 - 50)
-		 * 2 - % Enrollment Change (X), Probability of Course Offering (0 - 40)
-		 * 3 - Class Timing Preferences (30 - Day, 100 - Night, 0 - DC), # Courses to Take
-		 * 
-		 * 
-		 * Required out of - (1 = 0, 2 = 1, 4 = 2, 8 = 3) - Not required = 10
+		/* Required out of - (1 = 0, 2 = 1, 4 = 2, 8 = 3) - Not required = 10
 		 * Nuggets - (G = 0, S = 2, N = 6)
 		 * Day Night - (WN-IN = 0, WN-ID = 10, WD-ID = 0, WD-IN = 6)
 		 */
@@ -76,20 +71,14 @@ public class Utility {
 				dayNightVal = 0;
 			}
 			
-			// This is incorrect (currently calculating length of a course)
-			// Determine the length of a day
-			/*long minutes = 0;
-			Date start = section.get(i).getStart();
-			Date end = section.get(i).getEnd();
-			minutes = (end.getTime() - start.getTime())/60000;
-			System.out.println(minutes);*/
-			
 			// Sum the components to compute total utility
 			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
 		}
 		
+		// Calculate the value regarding length of day and average gap time
 		dayLengthVal = dayLengthVal(section);
 
+		// Sum total utilities for the given semestser
 		totalUtility = tempUtil + dayLengthVal;
 				
 		return totalUtility;
