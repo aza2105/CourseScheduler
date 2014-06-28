@@ -93,9 +93,11 @@ public class Semester implements Comparable<Semester>
     	childSemesterInheritedCourses.addAll(sectionsToCourses( this.sections )); 
     	childSemesterInheritedCourses.addAll(this.inheritedCourses);
     	
-    	// subtract all inherited courses as well as current semester courses 
-    	// aka sections from set of possible courses for child semester
-    	Set<Section> poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
+    	/*
+    	 * subtract all inherited courses as well as current semester courses 
+    	 * aka sections from set of possible courses for child semester
+    	 */
+    	poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
     	poolOfCoursesForChildSemesters.removeAll(inheritedCourses);
     	poolOfCoursesForChildSemesters.removeAll(sections);	
     }
@@ -453,7 +455,7 @@ public class Semester implements Comparable<Semester>
     	{
     		if (set.size() != exactSize)
     		{
-    			originalPowerSet.remove(set);
+    			originalPowerSet.removeAll(set);
     		}
     	}	
     	return originalPowerSet;
