@@ -15,7 +15,6 @@ public class TestMain {
 
         test.add(new Course("NetSec", "COMS W4261", 't'));
         System.out.println(Parser.reqs.rulesUnmet(test));
-
     }
 
 }

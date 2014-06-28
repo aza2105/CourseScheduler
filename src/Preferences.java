@@ -87,7 +87,7 @@ public class Preferences {
 		coursesTaken = new ArrayList<String>();
 		int [] numCoursesPerSem = new int[10];
 		int dayNight = 0;
-		int firstY = 0;
+		int firstY = 2014;
 		int firstS = 0;
 		
 		// If the length of the input is 1, the parameter should be the preferences file location.
