@@ -95,7 +95,7 @@ public class Semester implements Comparable<Semester>
     	
     	// subtract all inherited courses as well as current semester courses 
     	// aka sections from set of possible courses for child semester
-    	Set<Course> poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
+    	Set<Section> poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
     	poolOfCoursesForChildSemesters.removeAll(inheritedCourses);
     	poolOfCoursesForChildSemesters.removeAll(sections);	
     }
