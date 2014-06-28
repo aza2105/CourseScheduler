@@ -81,6 +81,17 @@ public class Preferences {
 		return firstYear;
 	}
 	
+	// Returns the number of semesters
+	public int getNumSems(){
+		int numSems = 0;
+		for (int i = 0; i < numCoursesPerSem.length; i++){
+			if(numCoursesPerSem[i] >= 0){
+				numSems++;
+			}
+		}
+		return numSems;	
+	}
+	
 	public int getTotalCourses(){
 		int totalCourses = 0;
 		for(int i = 0; i < numCoursesPerSem.length; i++){
@@ -97,6 +108,9 @@ public class Preferences {
 		ArrayList <String> coursesTaken;
 		coursesTaken = new ArrayList<String>();
 		int [] numCoursesPerSem = new int[10];
+		for(int i = 0; i < numCoursesPerSem.length; i++){
+			numCoursesPerSem[i] = -1;
+		}
 		int dayNight = 0;
 		int firstY = 2014;
 		int firstS = 0;
