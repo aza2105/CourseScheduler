@@ -94,12 +94,12 @@ public class HistoricalData {
 
 	// Method to parse the historical data list from the csv file and store
 	// course data in an ArrayList.
-	public static Set<Section> parseKnownInput(String fileLocation, HashMap<String, Course> histCourses ){
+	public static HashSet<Section> parseKnownInput(String fileLocation, HashMap<String, Course> histCourses ){
 		// Initialize instructor list and null string.
 //		knownCourseList = new Set<Section>();
 //				courseMap = new HashMap<String,Course>();
 		String line = null;
-		Set<Section> knownCourseList = new HashSet<Section>();
+		HashSet<Section> knownCourseList = new HashSet<Section>();
 		String semester = "Fall";
 		int year = 2014;
 		
