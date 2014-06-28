@@ -1,11 +1,10 @@
 import java.util.*;
 
+import com.google.common.collect.Sets;
+
 public class Scheduler 
 {
-	
-	
-	
-	
+
 	/*
 	 *	function UNIFORM-COST-SEARCH(problem) returns a solution, or failure
 	 *		node <- a node with STATE = problem.INITIAL-STATE, PATH-COST = 0
@@ -27,14 +26,20 @@ public class Scheduler
 	 * 
 	 */
    
+	/*
+	 * CONSTANTS
+	 */
+	private static final int MAX_DEPTH = 3;
+	private static int TOTAL_NUM_COURSES_TO_TAKE = 10;
+	
 	private static LinkedList<Semester> uniformCostSearch()
 	{
 		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
-		Set<Course> inheritedCourses = new HashSet();
-		Set<Course> sections = new HashSet();
+		Set<Course> rootInheritedCourses = new HashSet<Course>();
+		Set<Section> rootSections = new HashSet<Section>();
 		
 		//instantiate the root semester
-		Semester sem = new Semester(0, -1, -1, sections, null, inheritedCourses, 0);
+		Semester sem = new Semester(0, -1, -1, rootSections, null, rootInheritedCourses, 0);
 		
 		
 		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
@@ -43,10 +48,38 @@ public class Scheduler
 		while (true)
 		{
 			if (frontier.isEmpty())
-				return null; //returning failure
+			{
+				optimalSemesterList = null; //returning failure
+				break;
+			}
 			else
 			{
+				sem = frontier.poll(); // chooses the lowest-cost node in frontier 
 				
+				if (succeedsGoalTest(sem))
+				{
+					optimalSemesterList.addFirst(sem);
+					
+					//backtrack up to the root to get the schedules for each semester
+					//along the path from the root to the goal semester
+					while((sem = sem.getParentSemester()) != null)
+					{
+						optimalSemesterList.addFirst(sem);
+					}
+					break;
+				}
+				
+				explored.add(sem);
+				
+				if (sem.getDepth() <= MAX_DEPTH )
+				{
+					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
+					for (Semester childSem : childrenSem)
+					{
+						if (!explored.contains(childSem) && !frontier.contains(childSem))
+							frontier.add(childSem);
+					}
+				}		
 			}
 		}
 		
@@ -55,8 +88,16 @@ public class Scheduler
 		
 	}
 	
-	
-	//private static Semester generateRootSemester(Preferences prefs, Requirements reqs)
+	private static boolean succeedsGoalTest(Semester semester)
+	{
+		Set<Course> coursesCompletedSoFar = new HashSet<Course>();
+		Sets.union(semester.getInheritedCourses(), semester.getCourses()).copyInto(coursesCompletedSoFar);
+		
+		if (coursesCompletedSoFar.size() == Scheduler.TOTAL_NUM_COURSES_TO_TAKE)
+			return true;
+		else
+			return false;
+	}
 	
 	
 	// number of semesters to consider
@@ -65,18 +106,16 @@ public class Scheduler
 	// hash map for getting course information and generating potential schedules
 	private static HashMap<String,Course> courses;
 
-	
-
-
 	// set of valid candidates
 	private Set<Section> coursePool;	
 	
 	// we'll need to initialize a Requirements object for track reqs
-//	private Requirements trackReq;
+	//	private Requirements trackReq;
 	// don't do this... access Parser.reqs directly
 	
 	// default constructor
-	public Scheduler() { //( Requirements r ) {
+	public Scheduler() 
+	{ //( Requirements r ) {
 		
 		semesters = 2;   // spring and fall
 
@@ -134,98 +173,7 @@ public class Scheduler
 		this.courses = courses;
 	}
 	
-/*	public static String depthFirstSearch(Node theNode, int depth)
-	{
-		String outputStr;
-
-		// create a frontier Stack
-		// Stack<Node> frontier = new Stack<Node>();
-
-		// Create an explored list
-		// LinkedList<Node> explored = new LinkedList<Node>();
-
-		// Push theNode on to the frontier
-		// frontier.push(theNode);
-
-		// check if this node is the goal node
-		if (theNode != null)
-		{
-			if (theNode.getSemester() != null)
-			{
-				// goal test on the node
-				if (theNode.isGoalNode())
-				{
-					System.out.println(theNode);
-					outputStr = theNode.getOperatorName();
-					System.out.println(outputStr);
-
-					// we've reached a goal node so trace the solution
-					while (theNode.getParentNode().getParentNode() != null)
-					{
-						theNode = theNode.getParentNode();
-						System.out.println(theNode);
-						outputStr = theNode.getOperatorName() + ", " + outputStr;
-					}
-					return outputStr;
-				}
-			}
-		}
-
-		if (depth == 0)
-		{
-			/*
-			 * here we have decremented depth until we reached the depth limit
-			 * this method returns to the previously stacked instance of the DFS
-			 * where depth was 1
-			 
-			return "FALSE";
-		}
-
-		/*
-		 * generate children of this node and add them to the list "sons" which is
-		 * the list of children nodes local to this function call 
-		 
-		ArrayList<Node> sons = new ArrayList<Node>();
-
-		/*
-		Node rightChildNode = theNode.getRightSuccessorNode();
-		sons.add(rightChildNode);
-
-		Node bottomChildNode = theNode.getBottomSuccessorNode();
-		sons.add(bottomChildNode);
-
-		Node leftChildNode = theNode.getLeftSuccessorNode();
-		sons.add(leftChildNode);
-
-		Node topChildNode = theNode.getTopSuccessorNode();
-		sons.add(topChildNode);
-		
-
-		for (Node node : sons)
-		{
-			/*
-			 * if this DFS didn't return false, that means it returned an output
-			 * string for the goal state, so return that
-			 
-			if (node != null)
-			{
-				if (!depthFirstSearch((Node) sons.get(0), depth - 1).equals(
-						"FALSE"))
-				{
-					return depthFirstSearch(sons.get(0), depth - 1);
-				}
-				/* if depth first searching on the first son did return false,
-				 * remove the first son from the array of "sons" 
-				 * and depth first search on the rest of the sons
-				 
-				// sons = (ArrayList<Node>) sons.subList(1, sons.size() - 1);
-				sons.remove(0);
-			}
-		}
-		// if we exhaust all the sons, return false (not solvable)
-		return "FAILURE: SCHEDULE THAT FULFILLS ALL REQUIREMENTS COULD NOT BE GENERATED";
-	}
-	*/
+	
 	public static void main(String[] args) {
 
 /*		if(args.length > 1){
