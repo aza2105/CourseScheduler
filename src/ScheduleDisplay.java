@@ -54,7 +54,8 @@ public class ScheduleDisplay extends JFrame {
 					mysemesters.add(second);
 					mysemesters.add(second);
 					mysemesters.add(first);
-					
+					mysemesters.add(second);
+					mysemesters.add(first);
 					ScheduleDisplay frame = new ScheduleDisplay();
 					frame.giveSchedule(mysemesters, 1);
 					frame.setVisible(true);
