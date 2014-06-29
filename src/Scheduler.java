@@ -48,6 +48,7 @@ public class Scheduler
 	// hash map for getting course information and generating potential schedules
 	private HashMap<String,Course> courses;
 
+//	for( )
 	// set of valid candidates
 	private Set<Section> coursePool = new HashSet<Section>();	
 
@@ -77,6 +78,8 @@ public class Scheduler
 				c.setRequired(ru);
 			}
 		}
+		char tc = (char)44;
+		System.out.println( (int)tc );
 
 		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
 
@@ -93,8 +96,15 @@ public class Scheduler
 	
 			ArrayList<Section> test = new ArrayList<Section>(coursePool);
 
-			ArrayList<Section> blah = new ArrayList<Section>();
-			allCombination(test,0,4,blah);
+//			ArrayList<Section> blah = new ArrayList<Section>();
+			
+			char[] keys = new char[50];
+			for ( int x=32; x<82; x++ ) {
+				keys[x-32] = (char)x;
+			}
+			
+			char[] blah = new char[4];
+			allCombination(keys,0,4,blah,0);
 			
 			for ( ArrayList<Section> ss: holder ) {
 				for ( Section sc : ss ) {
@@ -291,7 +301,7 @@ public class Scheduler
 
 	private static ArrayList<ArrayList<Section>>holder = new ArrayList<ArrayList<Section>>();
 //	ArrayList<Section>toAdd = new ArrayList<Section>();
-	void allCombination(ArrayList<Section> S, int start, int r, ArrayList<Section> toAdd) {
+	void allCombinationOld(ArrayList<Section> S, int start, int r, ArrayList<Section> toAdd) {
 		int length = S.size();
 
 //		System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
@@ -313,10 +323,39 @@ public class Scheduler
 		} else {
 		    for (int k = start; k < length - r + 1; k++) {
 		    	toAdd.add( S.get(k) );
-		    	allCombination(S, k + 1, r - 1, toAdd);// 
+		    	allCombinationOld(S, k + 1, r - 1, toAdd);// 
 //			holder.add(S.get(k));
 		    }
 		}
+	}
+	
+	
+	void allCombination(char[] S, int start, int r, char[] toAdd, int toAddIndex ) {
+	int length = S.length;
+
+	System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
+
+	
+	if (r == 1) {
+	    for (int i = start; i < length; i++) {
+	    	char[] buff = new char[4];
+	    	buff = toAdd;
+	    	buff[3] = S[i];
+	    	for ( int x=0; x<4; x++ ) {
+	    		System.out.print(buff[x]);
+	    	}
+	    	System.out.println();
+//	    	System.out.println(output + S[i]);
+	    }
+	} else {
+	    for (int k = start; k < length - r + 1; k++) {
+	    	toAdd[toAddIndex++] = S[k];
+//	    	toAddIndex++;
+	    	
+	    	allCombination(S, k + 1, r - 1, toAdd, toAddIndex );
+				//output + S[k]);
+	    }
+	}
 	}
 /*	void allCombination(char[] S, int start, int r, String output) {
 		int length = S.length;
