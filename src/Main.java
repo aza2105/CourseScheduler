@@ -1,13 +1,15 @@
 import java.awt.EventQueue;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.Set;
 
 public class Main {
 	
 	// Main method
 	public static void main(String[] args) {
-		
+				
 		// Adds the instructor csv data into a static ArrayList of instructors - 'instructorList'
 		Instructor.parseUserInput("instructors.csv");
 		

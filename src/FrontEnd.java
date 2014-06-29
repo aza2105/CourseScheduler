@@ -100,7 +100,7 @@ public class FrontEnd extends JFrame {
 		contentPane.add(lblCoursesPerFuture);
 		
 		textField_1 = new JTextField();
-		textField_1.setToolTipText("");
+		textField_1.setToolTipText("Maximum of 5 courses per semester");
 		textField_1.setBounds(233, 106, 86, 20);
 		contentPane.add(textField_1);
 		textField_1.setColumns(10);
