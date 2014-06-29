@@ -91,6 +91,18 @@ public class Scheduler
 			// assuming first sem to be fall 2014
 			directoryOfClasses.add(0, coursePool); 
 	
+			ArrayList<Section> test = new ArrayList<Section>(coursePool);
+
+			ArrayList<Section> blah = new ArrayList<Section>();
+			allCombination(test,0,4,blah);
+			
+			for ( ArrayList<Section> ss: holder ) {
+				for ( Section sc : ss ) {
+					System.out.print( sc.toString() );
+				}
+				System.out.println();
+			}
+			
 			HashSet<Section> testSet = new HashSet<Section>(coursePool);
 
 			HashSet<HashSet<Section>> bigTest;
@@ -196,6 +208,8 @@ public class Scheduler
 				// if we're not at a goal state
 				if (sem.getDepth() <= maxDepth )
 				{
+
+					if ( 1 == 2 ) {
 					//sem.
 					ArrayList<Semester> childrenSem = sem.generateChildSemesters();
 
@@ -210,7 +224,7 @@ public class Scheduler
 					{
 						frontier.add(childSem);
 					}
-				}		
+				}		}
 			}
 		}
 		
@@ -273,7 +287,49 @@ public class Scheduler
 		this.courses = courses;
 	}
 	
-	
+//	call it as allCombination(S.toCharArray(),0,r,"");
+
+	private static ArrayList<ArrayList<Section>>holder = new ArrayList<ArrayList<Section>>();
+//	ArrayList<Section>toAdd = new ArrayList<Section>();
+	void allCombination(ArrayList<Section> S, int start, int r, ArrayList<Section> toAdd) {
+		int length = S.size();
+
+//		System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
+		
+		if (r == 1) {
+		    for (int i = start; i < length; i++) {
+		    //	System.out.println(output + S.get(i));
+		    	ArrayList<Section> buff = new ArrayList<Section>(toAdd);
+		    	buff.add( S.get(i));
+//		    	holder.add(S.get(i));
+		    	holder.add(buff);
+	//
+	//	    	for ( Section s : toAdd ) {
+	//	    		System.out.print( s.toString() );
+	//	    	}
+//		    	System.out.println( toAdd.size() );
+		    	toAdd.clear();
+		    }
+		} else {
+		    for (int k = start; k < length - r + 1; k++) {
+		    	toAdd.add( S.get(k) );
+		    	allCombination(S, k + 1, r - 1, toAdd);// 
+//			holder.add(S.get(k));
+		    }
+		}
+	}
+/*	void allCombination(char[] S, int start, int r, String output) {
+		int length = S.length;
+		if (r == 1) {
+		    for (int i = start; i < length; i++) {
+			System.out.println(output + S[i]);
+		    }
+		} else {
+		    for (int k = start; k < length - r + 1; k++) {
+			allCombination(S, k + 1, r - 1, output + S[k]);
+		    }
+		}
+*/	
 	public static void main(String[] args) {
 
 		String[] uP = new String[]{ "inputPrefs.csv" };
