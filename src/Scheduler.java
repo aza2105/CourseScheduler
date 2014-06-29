@@ -57,13 +57,8 @@ public class Scheduler
 		
 		semesters = 2;   // spring and fall
 
-		System.out.println( "Semesters: "+semesters);
-
 		// get the number of semesters to consider
 		maxDepth = Preferences.prefs.getNumSems();
-		System.out.println( "MaxDepth: "+maxDepth);
-		// set the requirements object
-		//trackReq = r;
 
 		// set the term for the initial semester
 		startSeason = Preferences.prefs.getFirstSeason();
@@ -75,40 +70,22 @@ public class Scheduler
 		courses = HistoricalData.parseUserInput( "historical.csv" );
 
 		/* Course Requirement Utility setting */
-		
-//		for(Map.Entry<String, Course> entry : courses.entrySet()){
-//			entry.getValue().setRequired(8.00);
-//			System.out.println( entry.getKey() + ": " + entry.getValue().getRequired());
-//		}
-
 		for(Rule r : Parser.reqs.getRules() ) {
-//			System.out.println("RULE::"+ r.size() );
 			for( Course c : r.getCourseList() ) {
-				double ru; // determine the "antiutility"
-				
+				double ru; // determine the "antiutility"				
 				ru = Math.log(r.size() )/Math.log(2);
-				
-				
-//				System.out.println(c+" "+r.size()+" "+ru);
+				c.setRequired(ru);
 			}
-//			System.out.println();
-		
 		}
 
 		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
 
-//		for ( Section s : coursePool ) {
-//			System.out.println( s.getParent().toString() );
-//		}
-		
 		directoryOfClasses = new ArrayList<Set<Section>>();
 
 		int i = 0;
 
 		int xYear = startYear;
 		int xSeason = startSeason;
-
-		
 		
 		if ( !(coursePool == null) ) {
 			// assuming first sem to be fall 2014
@@ -117,24 +94,6 @@ public class Scheduler
 			HashSet<Section> testSet = new HashSet<Section>(coursePool);
 
 			HashSet<HashSet<Section>> bigTest;
-			//bigTest = new HashSet<HashSet<Section>>();
-			bigTest = new HashSet<HashSet<Section>>();
-			for( Section s1 : testSet ) {
-				for ( Section s2: testSet ) {
-					for ( Section s3: testSet ) {
-						for ( Section s4: testSet ) {
-						//	System.out.println( s1.toString()+" "+ s2.toString()+" "+ s3.toString()+" "+ s4.toString());
-							HashSet<Section> newSet = new HashSet<Section>();
-							newSet.add( s1 );
-							newSet.add( s2 );
-							newSet.add( s3 );
-							newSet.add( s4 );
-							bigTest.add( newSet );
-						}
-					}
-				}
-			}
-			
 			i++;
 						
 	    	if (xSeason == 0)
@@ -150,7 +109,8 @@ public class Scheduler
 			
 		}
 		else {
-			System.out.println( "coursePool is null");
+			System.err.println( "coursePool is null");
+			System.exit(1);
 		}
 		// generate directories of classes
 		for ( ; i<maxDepth; i++ ) {
@@ -159,19 +119,12 @@ public class Scheduler
 			
 			// get a set of 
 			HashSet<Section> poolOfCoursesForChildSemesters = new HashSet<Section>();
-			
-		    
-//Section(Course c, String days, String start, String end, String pLast, String pFirst, String pMiddle ) {
 
 			for ( Course c : courses.values() ) {
 
-//				System.out.println("checking a course");
 				if ( c.probOffered( String.valueOf(xSeason), String.valueOf(xYear) ) ) {
 					poolOfCoursesForChildSemesters.add( new Section( c, null, null, null, null, null, null ));
 				}								
-				else {
-//					System.out.println( "Failed! with "+ c.probOffered( String.valueOf(xSeason), String.valueOf(xYear)));
-				}
 			}
 			
 			directoryOfClasses.add( poolOfCoursesForChildSemesters );
@@ -189,21 +142,7 @@ public class Scheduler
 
 	    	i++;
 		
-		}
-
-		if ( directoryOfClasses == null ) {
-			System.out.println( "directory is null, we should have just set it");
-		}
-		else {
-			System.out.println( "constructor: dOC is not null");
-		}
-		// generate power set of courses for term xYear xSession			
-//    		allPossibleSetsOfCoursesForNextSemester = 
-//					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
-    		
-			
-
-		
+		}		
 		
 	}
 
@@ -215,11 +154,10 @@ public class Scheduler
 
 		if ( directoryOfClasses == null ) {
 			System.err.println( "Error: directoryOfClasses does not exist");
-//			return null;
+			System.exit(1);
 		}
 		//instantiate the root semester
 		Semester sem = new Semester(0, 0, 2014, null, null, rootInheritedCourses, 0);
-//				directoryOfClasses.get(0), null, rootInheritedCourses, 0);
 		
 		
 		PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
@@ -270,9 +208,6 @@ public class Scheduler
 					
 					for (Semester childSem : childrenSem)
 					{
-//						System.out.println( ".");
-						//						if (!explored.contains(childSem) && !frontier.contains(childSem))
-//						System.out.println( childSem.toString() );
 						frontier.add(childSem);
 					}
 				}		
@@ -306,10 +241,6 @@ public class Scheduler
 	}
 	
 	
-	
-	// we'll need to initialize a Requirements object for track reqs
-	//	private Requirements trackReq;
-	// don't do this... access Parser.reqs directly
 	
 	
 	/*
@@ -345,40 +276,11 @@ public class Scheduler
 	
 	public static void main(String[] args) {
 
-/*		if(args.length > 1){
-			System.out.println("Too many parameters. Please only include preferences file.");
-			System.exit(1);
-		}
-
-		// If there are no parameters, assume the default settings for preferences/courses taken.
-		else if(args.length == 0){*/
-//		Preferences prefs = new Preferences();
-/*		}
-		// If there is one argument, assume it is the location of input file.
-		else if(args.length == 1){
-			// Adds the preferences from the user input into a static Preferences object - 'prefs'
-			Preferences.parseUserInput(args);
-		}
-*/
-		
-//
 		String[] uP = new String[]{ "inputPrefs.csv" };
 		Preferences.parseUserInput( "inputPrefs.csv" );
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
 
-		
-		
-//		Requirements req = Parser.reqs;
-		
-/*		for(Rule r : Parser.reqs.getRules() ) {
-			Integer sz = new Integer( r.size() );
-//			if ( sz ) {
-			System.out.println("RULE::"+ r.size() );
-			r.printRule();
-//			}
-		}
-*/		
 		System.out.println( "Main in Scheduler.java");
 		Scheduler s = new Scheduler();// req );
 		
