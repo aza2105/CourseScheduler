@@ -22,7 +22,7 @@ public class Main {
 		FrontEnd frame = new FrontEnd();
 		frame.setVisible(true);
 		
-		timTest();
+		//timTest();
 	}	
 	
 	public static void timTest(){

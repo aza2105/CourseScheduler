@@ -49,7 +49,7 @@ public class FrontEnd extends JFrame {
 		final JButton btnCreateSchedule = new JButton("Create Schedule");
 		btnCreateSchedule.setEnabled(false);
 		btnCreateSchedule.setForeground(Color.BLACK);
-		btnCreateSchedule.setBounds(149, 224, 270, 66);
+		btnCreateSchedule.setBounds(161, 224, 270, 66);
 		contentPane.add(btnCreateSchedule);
 		
 		JLabel lblLabel = new JLabel("Courses Taken:");
@@ -121,12 +121,12 @@ public class FrontEnd extends JFrame {
 		contentPane.add(lblIeOr);
 		
 		JLabel lblTotalCoursesPlanned = new JLabel("Total Courses");
-		lblTotalCoursesPlanned.setBounds(10, 250, 150, 14);
+		lblTotalCoursesPlanned.setBounds(10, 250, 139, 14);
 		contentPane.add(lblTotalCoursesPlanned);
 		
 		textField_2 = new JTextField();
 		textField_2.setEnabled(false);
-		textField_2.setBounds(10, 270, 65, 20);
+		textField_2.setBounds(10, 270, 72, 20);
 		contentPane.add(textField_2);
 		textField_2.setColumns(10);
 		textField_2.setText("0 / 10");
@@ -138,7 +138,7 @@ public class FrontEnd extends JFrame {
 		
 		JLabel lblYear = new JLabel("Year");
 		lblYear.setToolTipText("Year to begin scheduling (e.g. \"2014\")");
-		lblYear.setBounds(10, 142, 65, 14);
+		lblYear.setBounds(10, 142, 72, 14);
 		contentPane.add(lblYear);
 		
 		textField_3 = new JTextField();
@@ -517,14 +517,17 @@ public class FrontEnd extends JFrame {
 		coursesTaken = listModel.size();
 
 		String line = textField_1.getText();
+		// remove whitespace
 		line = line.replaceAll("\\s", "");
 		if (line != null) {
 			String[] dataLine = line.split(",");
 			try {
-				// remove whitespace
 				for (int i = 0; i < dataLine.length; i++) {
 					coursesPlanned += Integer.parseInt(dataLine[i]);
 					if (Integer.parseInt(dataLine[i]) < 0 || Integer.parseInt(dataLine[i]) == 0) {
+						invalidInt = true;
+					}
+					else if(Integer.parseInt(dataLine[i]) > 5){
 						invalidInt = true;
 					}
 				}
@@ -547,13 +550,14 @@ public class FrontEnd extends JFrame {
 				+ " / 10");
 	}
 
+	// Check if a string is an integer using exception handling
 	public static boolean isInteger(String s) {
 	    try { 
 	        Integer.parseInt(s); 
 	    } catch(NumberFormatException e) { 
 	        return false; 
 	    }
-	    // only got here if we didn't return false
+	    // No catch, therefore true
 	    return true;
 	}
 	
@@ -581,6 +585,5 @@ public class FrontEnd extends JFrame {
         sectionList.add(new Section(new Course("Course 5", "COMS 4705"), "MW", "1400", "1500", "Friedman5", "Samuel5", "C"));
         sectionList.add(new Section(new Course("Course 6", "COMS 4706"), "TRF", "1000", "1100", "Friedman6", "Samuel6", "C"));
         System.out.println("The total test utility = " + Utility.getUtility(sectionList));
-        
 	}
 }
