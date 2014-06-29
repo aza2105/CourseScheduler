@@ -1,6 +1,11 @@
 import java.util.*;
 import com.google.common.collect.Collections2; 
 import com.google.common.collect.Sets;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Scheduler 
 {
@@ -98,15 +103,35 @@ public class Scheduler
 
 //			ArrayList<Section> blah = new ArrayList<Section>();
 			
-			char[] keys = new char[50];
-			for ( int x=32; x<82; x++ ) {
+			char[] keys = new char[100];
+			for ( int x=32; x<132; x++ ) {
 				keys[x-32] = (char)x;
+				
 			}
 	
-			String blahString = new String();
-			char[] blah = new char[4];
+			// Use the "inputPrefs.csv" file
+
+//			BufferedWriter bw;
+
+			try {
+				File file = new File(System.getProperty("user.dir") + "/keyStore.txt");
+				FileWriter fw = new FileWriter(file.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+			
+			// Write the courses taken to a list
+//			for(int i = 0; i < listModel.size(); i++){
+				bw.write("COURSE");	
+				String blahString = new String();
+				char[] blah = new char[4];
+				allCombinationTest( keys, 0, 6, blahString, bw );
+//				bw.close();
+			}
+			catch ( IOException e ){
+				System.err.println( "Bananas. and e");
+				System.exit(1);
+			}
+			
 //			allCombination(keys,0,4,blah);
-			allCombinationTest( keys, 0, 4, blahString );
 			for ( ArrayList<Section> ss: holder ) {
 				for ( Section sc : ss ) {
 					System.out.print( sc.toString() );
@@ -330,6 +355,8 @@ public class Scheduler
 		}
 	}
 
+	ArrayList<String> keyStore = new ArrayList<String>();
+	
 	static int toAddIndex = 0;
 	
 	void allCombination(char[] S, int start, int r, char[] toAdd ) {
@@ -343,10 +370,10 @@ public class Scheduler
 				char[] buff = new char[4];
 				buff = toAdd;
 				buff[3] = S[i];
-				for ( int x=0; x<4; x++ ) {
-					System.out.print(buff[x]);
-				}
-				System.out.println();
+//				for ( int x=0; x<4; x++ ) {
+//					System.out.print(buff[x]);
+//				}
+//				System.out.println();
 //	    		System.out.println(output + S[i]);
 			}
 		toAddIndex--;	
@@ -363,18 +390,28 @@ public class Scheduler
 	    }
 	}
 	}
-	void allCombinationTest(char[] S, int start, int r, String output) {
+	void allCombinationTest(char[] S, int start, int r, String output, BufferedWriter bw ) {
 		int length = S.length;
 		if (r == 1) {
 		    for (int i = start; i < length; i++) {
-			System.out.println(output + S[i]);
+//		    	keyStore.add(output + S[i]);
+		    	try {
+		    		bw.write( output + S[i] +"\n" );	
+		    	}
+		    	catch ( IOException e ) {
+		    		System.err.println( "Ba. na. na.");
+		    		System.exit(1);
+		    	}
 		    }
 		} else {
 		    for (int k = start; k < length - r + 1; k++) {
-			allCombinationTest(S, k + 1, r - 1, output + S[k]);
+			allCombinationTest(S, k + 1, r - 1, output + S[k], bw);
 		    }
 		}
 	}
+
+	
+	
 	public static void main(String[] args) {
 
 		String[] uP = new String[]{ "inputPrefs.csv" };
