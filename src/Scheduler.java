@@ -102,10 +102,11 @@ public class Scheduler
 			for ( int x=32; x<82; x++ ) {
 				keys[x-32] = (char)x;
 			}
-			
+	
+			String blahString = new String();
 			char[] blah = new char[4];
-			allCombination(keys,0,4,blah,0);
-			
+//			allCombination(keys,0,4,blah);
+			allCombinationTest( keys, 0, 4, blahString );
 			for ( ArrayList<Section> ss: holder ) {
 				for ( Section sc : ss ) {
 					System.out.print( sc.toString() );
@@ -328,36 +329,41 @@ public class Scheduler
 		    }
 		}
 	}
-	
-	
-	void allCombination(char[] S, int start, int r, char[] toAdd, int toAddIndex ) {
-	int length = S.length;
 
-	System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
+	static int toAddIndex = 0;
+	
+	void allCombination(char[] S, int start, int r, char[] toAdd ) {
+		int length = S.length;
+
+		System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
 
 	
-	if (r == 1) {
-	    for (int i = start; i < length; i++) {
-	    	char[] buff = new char[4];
-	    	buff = toAdd;
-	    	buff[3] = S[i];
-	    	for ( int x=0; x<4; x++ ) {
-	    		System.out.print(buff[x]);
-	    	}
-	    	System.out.println();
-//	    	System.out.println(output + S[i]);
-	    }
-	} else {
-	    for (int k = start; k < length - r + 1; k++) {
-	    	toAdd[toAddIndex++] = S[k];
-//	    	toAddIndex++;
+		if (r == 1) {
+			for (int i = start; i < length; i++) {
+				char[] buff = new char[4];
+				buff = toAdd;
+				buff[3] = S[i];
+				for ( int x=0; x<4; x++ ) {
+					System.out.print(buff[x]);
+				}
+				System.out.println();
+//	    		System.out.println(output + S[i]);
+			}
+		toAddIndex--;	
+		} else {
+			for (int k = start; k < length - r + 1; k++) {
+
+				System.out.println( "k="+k+" s[k]="+S[k]+" length="+length+" toAI="+toAddIndex);
+				toAdd[toAddIndex] = S[k];
+				toAddIndex++;
+	    	//	    	toAddIndex++;
 	    	
-	    	allCombination(S, k + 1, r - 1, toAdd, toAddIndex );
+				allCombination(S, k + 1, r - 1, toAdd );
 				//output + S[k]);
 	    }
 	}
 	}
-/*	void allCombination(char[] S, int start, int r, String output) {
+	void allCombinationTest(char[] S, int start, int r, String output) {
 		int length = S.length;
 		if (r == 1) {
 		    for (int i = start; i < length; i++) {
@@ -365,10 +371,10 @@ public class Scheduler
 		    }
 		} else {
 		    for (int k = start; k < length - r + 1; k++) {
-			allCombination(S, k + 1, r - 1, output + S[k]);
+			allCombinationTest(S, k + 1, r - 1, output + S[k]);
 		    }
 		}
-*/	
+	}
 	public static void main(String[] args) {
 
 		String[] uP = new String[]{ "inputPrefs.csv" };
