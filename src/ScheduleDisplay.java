@@ -170,7 +170,7 @@ public class ScheduleDisplay extends JFrame {
     		
     		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
-    			JLabel course = new JLabel(c.getParent().getID());
+    			JLabel course = new JLabel(c.getParent().getID() + "\n" + "HELLO WORLD");
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);
