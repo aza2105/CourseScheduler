@@ -41,6 +41,12 @@ public class ScheduleDisplay extends JFrame {
     		System.exit(1);
     	}
     	
+    	for(Semester s : semesters) {
+    		
+    		if (s == null)
+    			semesters.remove(s);
+    	}
+    	
     	//adjust how you scale horizontally based on the total number of semesters you have
     	/* NOT NEEDED SINCE SIZE IS CONSTRICTED TO 5 AT THE MOMENT
 		if (semesters.size() < 6) {
@@ -138,6 +144,8 @@ public class ScheduleDisplay extends JFrame {
     
     public void drawSchedule(LinkedList<Semester> semesters, JPanel panel) {
     	
+    	
+    	
     	ArrayList<JLabel> mylabels = new ArrayList<JLabel>();
     	
     	for(int i = 0; i < semesters.size(); i++) {
@@ -170,7 +178,7 @@ public class ScheduleDisplay extends JFrame {
     		
     		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
-    			JLabel course = new JLabel(c.getParent().getID() + "\n" + "HELLO WORLD");
+    			JLabel course = new JLabel(c.getParent().getID() );
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);
