@@ -495,7 +495,7 @@ public class FrontEnd extends JFrame {
 						Preferences.parseUserInput("inputPrefs.csv");
 						inputFileTest();
 						utilityTest();
-						
+						Main.timTest();
 					} catch (IOException e1) {
 						System.out.println("IO Exception in FrontEnd schedule creation.");
 						System.exit(1);
@@ -573,6 +573,8 @@ public class FrontEnd extends JFrame {
 		System.out.println("First season = " + Preferences.prefs.getFirstSeason());
 		System.out.println("First Year = " + Preferences.prefs.getFirstYear());
 		System.out.println("DayNightVal = " + Preferences.prefs.getDayNight());
+		System.out.println("Get Total Courses = " + Preferences.prefs.getTotalCourses());
+		System.out.println("GetNumSems = " + Preferences.prefs.getNumSems());
 	}
 	
 	// Utility test
