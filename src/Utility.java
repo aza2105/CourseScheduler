@@ -69,8 +69,20 @@ public class Utility {
 //			System.out.println( section.get(i).toString()+"  n:"+nuggetVal+" d:"+dayNightVal+"r:"+requiredVal);
 		}
 		
+		// Need to add day of course
 		// Calculate the value regarding length of day and average gap time
-		dayLengthVal = dayLengthVal(section);
+		// make string array of each letter for day of week
+		String [] days = new String[5];
+		days[0] = "M";
+		days[1] = "T";
+		days[2] = "W";
+		days[3] = "R";
+		days[4] = "F";
+		//for each day of week, send the day of week (check in function)
+		for(int i = 0; i < days.length; i++){
+			dayLengthVal += dayLengthVal(section, days[i]);
+		}
+		
 
 		// Sum total utilities for the given semester
 		totalUtility = tempUtil + dayLengthVal * 20;
@@ -79,7 +91,7 @@ public class Utility {
 	}
 	
 	// Return the value regarding the length of day and average gap time
-	public static double dayLengthVal(ArrayList <Section> section){
+	public static double dayLengthVal(ArrayList <Section> section, String day){
 		//find earliest class
 		long gapTime = 0;
 		long avgGapTime = 0;
@@ -105,7 +117,8 @@ public class Utility {
 		
 		// Determine earliest start time and latest end time
 		for(int i = 0; i < section.size(); i++){
-			if(section.get(i).getStart() != null && section.get(i).getEnd() !=null ){
+			// Check if the proper day is present
+			if(section.get(i).getStart() != null && section.get(i).getEnd() !=null && section.get(i).getDaySchedule().contains(day)){
 				if(section.get(i).getStart().before(tempEarliest)){
 					tempEarliest = section.get(i).getStart();
 				}
@@ -125,13 +138,16 @@ public class Utility {
 			lengthOfDayVal = lengthOfDay/3; // Constant 3
 			
 			// Order the sections chronologically 
-			ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
+			//ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
+			ArrayList <String> dateList = new ArrayList <String> ();
 			
 			for(int i = 0; i < section.size(); i++){
+				if(section.get(i).getDaySchedule().contains(day)){
 				String tempStart = sdf.format(section.get(i).getStart());
 				String tempEnd = sdf.format(section.get(i).getEnd());
 				dateList.add(tempStart);
 				dateList.add(tempEnd);
+				}
 			}
 			// Sort the list chronologically
 			Collections.sort(dateList);	
