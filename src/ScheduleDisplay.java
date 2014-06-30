@@ -42,12 +42,15 @@ public class ScheduleDisplay extends JFrame {
     	}
     	
     	//adjust how you scale horizontally based on the total number of semesters you have
+    	/* NOT NEEDED SINCE SIZE IS CONSTRICTED TO 5 AT THE MOMENT
 		if (semesters.size() < 6) {
 			OFFSET = WIDTH / semesters.size();
 		}
 		else {
 			OFFSET = MAXWIDTH / semesters.size();
-		}
+		}*/
+    	
+    	OFFSET = WIDTH / semesters.size();
 		
 		VERTOFF = HEIGHT / (8);
 		
