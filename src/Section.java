@@ -12,7 +12,7 @@ public class Section {
     private Instructor inst;
     private double dayNight;
 
-    private Course parent;
+    protected Course parent;
     
     public Section(Course c, String days, String start, String end, String pLast, String pFirst, String pMiddle ) {
     	
@@ -21,6 +21,7 @@ public class Section {
 //    	this.startTime = start;
 //    	this.endTime = end;
 
+    	if ( start != null ) {
     	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     	start = new StringBuilder(start).insert(start.length()-2, ":").toString();
     	end = new StringBuilder(end).insert(end.length()-2, ":").toString();
@@ -32,7 +33,7 @@ public class Section {
     		System.out.println("Parse Exception Error");
     		System.exit(1);
     	}
-
+    	}
     	if ( ( pFirst != null ) && ( pLast != null ) ) {
     		inst = Instructor.findInstructor( pFirst, pMiddle, pLast );
     	}
@@ -48,8 +49,8 @@ public class Section {
     } */
     
     public String toString() {
-    	
-    	return super.toString();
+    	return parent.toString();
+//    	return super.toString();
     }
     
     // Return the String value ("gold", "silver") for nugget
@@ -90,6 +91,7 @@ public class Section {
     }
 
     public double getRequired(){
+    	System.out.println( "returning "+parent.getRequired()+" for RU");
     	return parent.getRequired();
     }
     

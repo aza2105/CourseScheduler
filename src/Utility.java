@@ -32,7 +32,7 @@ public class Utility {
 			// Convert nugget String to a value
 			if(section.get(i).getNuggetValue() != null){
 				if((section.get(i).getNuggetValue()).equals("none")){
-					nuggetVal = 6;
+					nuggetVal = 10;
 				}
 				else if((section.get(i).getNuggetValue()).equals("gold")){
 					nuggetVal = 0;
@@ -48,30 +48,32 @@ public class Utility {
 			// Initial value for the requirement of a course
 			double requiredVal = 0;
 			// Compute the utility for requirement points
-			requiredVal = section.get(i).getRequired() * 2;
+			requiredVal = section.get(i).getParent().getRequired() * 20;
 
 			// getDayNight() provides probability that a course is a night course			
 			// If user prefers day courses
 			if(Preferences.prefs.getDayNight() == 0){
-				dayNightVal = 10 * section.get(i).getDayNight();
-			}
-			// user prefers night courses
-			else if(Preferences.prefs.getDayNight() == 0){
 				dayNightVal = 8 * section.get(i).getDayNight();
 			}
-			else{
-				dayNightVal = 0;
+			// user prefers night courses
+			else if(Preferences.prefs.getDayNight() == 1){
+				dayNightVal = 1 * section.get(i).getDayNight();
 			}
-			
+			else{
+				dayNightVal = 10;
+			}
+	
 			// Sum the components to compute total utility
 			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
+
+//			System.out.println( section.get(i).toString()+"  n:"+nuggetVal+" d:"+dayNightVal+"r:"+requiredVal);
 		}
 		
 		// Calculate the value regarding length of day and average gap time
 		dayLengthVal = dayLengthVal(section);
 
 		// Sum total utilities for the given semester
-		totalUtility = tempUtil + dayLengthVal;
+		totalUtility = tempUtil + dayLengthVal * 20;
 				
 		return totalUtility;
 	}
@@ -117,7 +119,7 @@ public class Utility {
 		}
 
 		// Calculate the total day length (latest end time - earliest start time)
-		if(!nullTiming){
+		if(!nullTiming && section.size() > 1 ){
 			lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
 			lengthOfDay = lengthOfDay/60; // Day length in hours
 			lengthOfDayVal = lengthOfDay/3; // Constant 3
@@ -161,7 +163,7 @@ public class Utility {
 		}
 		// null timing so don't provide any value
 		else if(nullTiming){
-			dayTimingVal = 0;
+			dayTimingVal = 10;
 		}
 		return dayTimingVal;
 	}

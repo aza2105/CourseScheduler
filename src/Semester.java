@@ -52,6 +52,9 @@ public class Semester implements Comparable<Semester>
      */
     private int semesterID; 
     private int semesterYear;
+
+    private int nextSemesterID;
+    private int nextSemesterYear;
     
     // sections refers to the current semester courses being taken at this node
     private Set<Section> sections;
@@ -59,7 +62,9 @@ public class Semester implements Comparable<Semester>
     // previous semester aka parent in the tree
     private Semester parentSemester;  
     static Set<Set<Section>> combinationSets;
-   
+
+    private Integer id;
+    private static Integer nodeID = 0;
     /*
      * 
      */
@@ -74,17 +79,33 @@ public class Semester implements Comparable<Semester>
     /*
      * CONSTRUCTORS
      */ 
-    public Semester(int depth, int sID, int sYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+    public Semester(int depth, int sID, int sYear, Set<Section> sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
     {
     	combinationSets = new HashSet<Set<Section>>();
     	this.depth = depth;
     	this.semesterID = sID;
     	this.semesterYear = sYear;
-    	this.sections = sections;
+    	this.sections = sect;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
     	this.utility = inheritedPathCost;
-  	
+
+    	this.id = nodeID;
+    	nodeID++;
+    	
+    	//if current semester is a fall semester
+    	if (semesterID == 0)
+    	{
+    		nextSemesterID = 1;
+    		nextSemesterYear = semesterYear + 1;
+    	}
+    	//else if current semester is a spring semester
+    	else if (semesterID == 1)
+    	{
+    		nextSemesterID = 0;
+    		nextSemesterYear = semesterYear;
+    	}
+
     	/*
     	 * populate next semester's inherited sections:
     	 * add current semester's courses,
@@ -100,6 +121,7 @@ public class Semester implements Comparable<Semester>
     	 * subtract all inherited courses as well as current semester courses 
     	 * aka sections from set of possible courses for child semester
     	 */
+/*
     	poolOfCoursesForChildSemesters = Scheduler.directoryOfClasses.get(depth); 	
     	if ( inheritedCourses != null ) {
     		poolOfCoursesForChildSemesters.removeAll(inheritedCourses);
@@ -107,6 +129,7 @@ public class Semester implements Comparable<Semester>
     	if ( sections != null ) {
     	   	poolOfCoursesForChildSemesters.removeAll(sections);	   
     	}
+*/
     }
     
     /*
@@ -289,10 +312,14 @@ public class Semester implements Comparable<Semester>
     {
     	String semesterString = getSemesterName();
     	
-    	for(Section s:sections)
-    	{
-    		semesterString += "," + s;
+    	if ( sections != null ) {
+    		for(Section s:sections)
+    		{
+    			semesterString += "," + s;
+    		}
     	}
+    	
+    	semesterString += " at depth "+depth;
     	
     	return semesterString;
     }
@@ -303,8 +330,73 @@ public class Semester implements Comparable<Semester>
     
     
     
-    
-    
+    // add a new child 
+    //   we have already determined its validity but not its utility
+    public Semester addChild( String sectionCode ) {
+
+    	Set<Section> childSections = new HashSet<Section>();
+
+//    	System.out.print( " new sem: ");
+    	// convert the section code to an array of sections
+    	for ( char cindex : sectionCode.toCharArray() ) {
+    		childSections.add( Scheduler.getSection( cindex, depth ) );
+ //   		System.out.print( cindex );
+    	}
+/*    	
+    	for ( Section s : childSections ) {
+    		System.out.print( s.toString() );
+    	}
+    	System.out.println();
+ */   	
+    	// have any of these new courses been taken before?
+    	for ( Course c : sectionsToCourses( childSections )) {
+    		if ( inheritedCourses.contains( c ) ) {
+    			return null;
+    		}
+    	}
+    	
+    	// determine the utility of the child
+		ArrayList<Section> utilityCheckList = new ArrayList<Section>( childSections );
+		double childUtility = Utility.getUtility( utilityCheckList );
+
+		
+		// add the courses we're considering to our inherited courses in a LL
+		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
+		for ( Section s : childSections ) {
+			validityCheckList.add( s.getParent() );
+		}
+		
+		// if the rules not met by these courses is greater than the total number
+		//  of courses we can choose in subsequent semesters, we cannot complete
+		//  the degree as requested and will not create the child node.
+
+		if ( Requirements.rulesUnmet( validityCheckList ) > 
+			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
+//			System.out.println ( "Impossible, pruning.");
+			// We can never end up valid
+			return null;		
+		}
+
+		// add the child's inheritance by combining this node's inheritance with 
+		//   the sections it added
+		Set<Course> childsInheritance = new HashSet<Course>();
+		if ( this.childrenSemestersInheritedCourses != null ) {
+			childsInheritance.addAll( this.childrenSemestersInheritedCourses );
+		}
+		childsInheritance.addAll( sectionsToCourses( childSections ) );
+
+		// generate the child
+		Semester newChild = new Semester( depth + 1, nextSemesterID, nextSemesterYear,
+				childSections, this, childsInheritance, utility + childUtility );
+
+//	    public Semester(int depth, int sID, int sYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+
+		
+		System.out.println( "Added a new child at depth "+(depth+1)+" with section string "+sectionCode+", cost="+(childUtility+utility));
+		// return child to Scheduler for queueing
+		return newChild;
+    	
+    }
     
     
     
@@ -484,6 +576,11 @@ public class Semester implements Comparable<Semester>
 	        	   anOutputSet.add(data[j]);
 	        }
 	        combinationSets.add(anOutputSet);
+//	        System.out.println( "Added an output set: ");
+	        for( Section s : anOutputSet ) {
+//	        	System.out.print( s.toString() + " ");
+	        }
+//	        System.out.println();
 	        return;
 	    }
 	 
@@ -497,7 +594,7 @@ public class Semester implements Comparable<Semester>
 //	    	System.out.println( "i="+i);
 	    	//data[index] = arr[i];
 //	    	 ) {
-	    	System.out.println( data.length );
+//	    	System.out.println( data.length );
 	    	data[index] = inputArray[i];
 	    	
 	    	
@@ -608,7 +705,7 @@ public class Semester implements Comparable<Semester>
     	return originalPowerSet;
     }
     */
-    
+
     public static void main(String[] args)
     {
     	Set s1 = Sets.newHashSet("a", "b", "c");
@@ -623,3 +720,4 @@ public class Semester implements Comparable<Semester>
     }
     
 }
+

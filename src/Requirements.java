@@ -63,7 +63,7 @@ public class Requirements {
 		int total = 0;
 
 		for( Rule rl : ruleList ) { //Does this reset the rules to false every time you query?
-			rl.resetStatus();
+			rl.resetStatus();				// Yes.
 		}
 		
 		for(int i = 0; i < completed.size(); i++) {

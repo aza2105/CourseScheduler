@@ -26,7 +26,7 @@ public class Course {
 
 	// a utility value based on "how required" a course is.
 	// courses that are not options have a high level, electives are lower
-	private double requiredUtility;
+	private double requiredUtility=10;
 
 	private Integer totalOfferings;
 	private HashMap<String,Integer> offerings;
@@ -42,7 +42,7 @@ public class Course {
 		this.title = title;
 		setID(courseID);
 		this.offered = offered;
-		requiredUtility = 0;
+//		requiredUtility = 0;
 	}
 	
 	public Course(String title, String courseID, char offered, int credits) {
@@ -72,7 +72,7 @@ public class Course {
 			this.offerings.put( "night", 1 );
 		}
 		
-		this.requiredUtility = 10;
+//		requiredUtility = 10;
 		
 //		this.put( "section", section );
 		this.credits = credits;
@@ -156,8 +156,9 @@ public class Course {
 
 	public String toString() {
 
-		return title + ": " + courseID + " for " + credits + " credit hours"
-				+ "\n";
+		return courseID;
+//		return title + ": " + courseID + " for " + credits + " credit hours"
+//				+ "\n";
 	}
 
 	public boolean equals(Object c) {
@@ -195,17 +196,25 @@ public class Course {
 	
 	public boolean probOffered( String season, String year ) {
 		if ( season.equals( 1 ) ) {
-			season = "fall";
+			season = "Fall";
 		}
 		else {
-			season = "spring";
+			season = "Spring";
 		}
+
 //		System.out.println( "Term: "+season+" "+year);
 
+//		System.out.print( "Checking probability offered for "+this.toString()+": term is "+season+" "+year);
+		
 		if ( !this.offerings.containsKey( season ) ) {
+//			System.out.println(":FALSE!");
 			return false;
 		}
-		if ( ( this.offerings.get( season ) / this.totalOfferings ) > 0.4 ) {
+
+//		System.out.println( " ratio: "+this.offerings.get(season)+"/"+this.totalOfferings);
+		
+		if ( ( this.offerings.get( season ) / this.totalOfferings ) > 0 ) {
+//			System.out.println(":TRUE!");
 			return true;			
 		}
 		return false;
