@@ -45,14 +45,14 @@ public class Main {
 					LinkedList<Section> schedule2 = new LinkedList<Section>();
 					schedule2.add(new Section (new Course("Network Security", "COMS 4180"),"R", "1010", "1240", "Friedman", "Samuel5", "C"));
 					schedule2.add(new Section (new Course("Intro to Intrusion Detection", "COMS 6185"),"T", "1610", "1800", "Friedman", "Samuel6", "C"));
-					schedule2.add(new Section (new Course("Class Seven", "COMS 4707"),"MWF", "2200", "2330", "Friedman", "Samuel7", "C"));
-					schedule2.add(new Section (new Course("Class Eight", "COMS 4708"),"MWF", "2200", "2330", "Friedman", "Samuel8", "C"));
+					schedule2.add(new Section (new Course("Machine Learning for Data Sci", "COMS 4721"),"MW", "0740", "0855", "Friedman", "Samuel7", "C"));
+					schedule2.add(new Section (new Course("Programming Languages and Translators", "COMS 4115"),"MW", "1440", "1555", "Friedman", "Samuel8", "C"));
 					Set<Section> set2 = new HashSet<Section>(schedule2);
 					Semester second = new Semester(0,1,2015,set2,null,co,0);
 					
 					LinkedList<Section> schedule3 = new LinkedList<Section>();
-					schedule3.add(new Section (new Course("Class Six", "COMS 4706"),"MWF", "2200", "2330", "Friedman", "Samuel10", "C"));
-					schedule3.add(new Section (new Course("Class Seven", "COMS 4707"),"MWF", "2200", "2330", "Friedman", "Samuel21", "C"));
+					schedule3.add(new Section (new Course("Topics in Computer Science", "COMS 4995"),"MWF", "2200", "2330", "Friedman", "Samuel10", "C"));
+					schedule3.add(new Section (new Course("Topics in Computer Science II", "COMS 6998"),"R", "1610", "1800", "Friedman", "Samuel21", "C"));
 					Set<Section> set3 = new HashSet<Section>(schedule3);
 					Semester third = new Semester(0,0,2015,set3,null,co,0);
 					

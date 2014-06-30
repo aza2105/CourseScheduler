@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -493,9 +494,17 @@ public class FrontEnd extends JFrame {
 						System.out.println("Preferences file written to inputPrefs.csv");
 						// Add the preferences data to the Preferences.java class
 						Preferences.parseUserInput("inputPrefs.csv");
-						inputFileTest();
-						utilityTest();
-						Main.timTest();
+						Scheduler s = new Scheduler();// req );
+						
+						LinkedList<Semester> test = new LinkedList<Semester>();
+						test = s.uniformCostSearch();
+						test.remove(0);
+						ScheduleDisplay frame2 = new ScheduleDisplay();
+						frame2.giveSchedule(test, 1);
+						frame2.setVisible(true);
+						//inputFileTest();
+						//utilityTest();
+						//Main.timTest();
 					} catch (IOException e1) {
 						System.out.println("IO Exception in FrontEnd schedule creation.");
 						System.exit(1);
