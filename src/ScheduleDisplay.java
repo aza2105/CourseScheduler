@@ -170,7 +170,7 @@ public class ScheduleDisplay extends JFrame {
     		
     		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
-    			JLabel course = new JLabel(c.getParent().getID());
+    			JLabel course = new JLabel(c.getParent().getID() + "\n" + "HELLO WORLD");
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);
@@ -181,7 +181,7 @@ public class ScheduleDisplay extends JFrame {
     		}
 			
     		//after all the courses have been added, print total utility below them
-			JLabel utility = new JLabel( "Utility: " + Double.toString(semesters.get(i).getUtility()) );
+			JLabel utility = new JLabel( "Utility: " + Double.toString(Utility.getUtility( new ArrayList<Section>(semesters.get(i).getSections())) ));
 			
 			utility.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
 			utility.setFont(new Font("Dialog", Font.PLAIN, 11));
