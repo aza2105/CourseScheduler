@@ -80,7 +80,7 @@ public class Preferences {
 				totalCourses = totalCourses + numCoursesPerSem[i];
 			}
 		}
-		totalCourses = totalCourses + coursesTaken.size();
+		//totalCourses = totalCourses + coursesTaken.size();
 		return totalCourses;
 	}
 	
