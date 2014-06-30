@@ -142,6 +142,11 @@ public class Course {
 		String t = s.substring(0,4) + s.substring(s.length() - 4, s.length());
 		internalID = t;
 	}
+	
+	public String getTitle() {
+		
+		return title;
+	}
 
 	public int getCredits() {
 

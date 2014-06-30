@@ -41,12 +41,6 @@ public class ScheduleDisplay extends JFrame {
     		System.exit(1);
     	}
     	
-    	for(Semester s : semesters) {
-    		
-    		if (s == null)
-    			semesters.remove(s);
-    	}
-    	
     	//adjust how you scale horizontally based on the total number of semesters you have
     	/* NOT NEEDED SINCE SIZE IS CONSTRICTED TO 5 AT THE MOMENT
 		if (semesters.size() < 6) {
@@ -156,7 +150,7 @@ public class ScheduleDisplay extends JFrame {
     		else
     			term = "SPRING";
     		
-    		JLabel label = new JLabel(term + "  " + Integer.toString(semesters.get(i).getSemesterYear()) );
+    		JLabel label = new JLabel(term + "  " + Integer.toString(semesters.get(i).getSemesterYear() ) );
     		label.setBounds(X_START + i*OFFSET - 20, Y_START, 120, 40);
     		label.setHorizontalAlignment( SwingConstants.CENTER );
     		label.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -178,8 +172,8 @@ public class ScheduleDisplay extends JFrame {
     		
     		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
-    			JLabel course = new JLabel(c.getParent().getID() );
-    			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 45);
+    			JLabel course = new JLabel("<html>" + c.getParent().getID() + " " + c.getParent().getTitle() + "</html>" );
+    			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 100);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
     			course.setHorizontalAlignment(SwingConstants.CENTER);
     			panel.add(course);
