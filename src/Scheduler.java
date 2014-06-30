@@ -33,7 +33,7 @@ public class Scheduler
 	 * CONSTANTS
 	 */
 	private static final int MAX_DEPTH = 3;
-	private static final int MAX_VALIDS = 2000;
+	private static final int MAX_VALIDS = 40;
 	private static int TOTAL_NUM_COURSES_TO_TAKE = 10;
 	
 	
@@ -350,7 +350,7 @@ public class Scheduler
 //				System.out.println( frontier.peek() );
 
 				activeSemester = frontier.poll(); // chooses the lowest-cost node in frontier 
-//				System.out.println( "selected "+activeSemester+" from queue");
+				System.out.println( "selected "+activeSemester+" from queue");
 				
 				
 				if (succeedsGoalTest(activeSemester))
@@ -374,6 +374,7 @@ public class Scheduler
 				if (activeSemester.getDepth() <= maxDepth )
 				{
 
+					System.out.println( "Finding parentingValids at "+activeSemester.getDepth());
 					String[] parentingValids = validSectionCodes.get( activeSemester.getDepth() );
 
 //					System.out.println( "Expanding a semester at depth "+ activeSemester.getDepth());
@@ -382,6 +383,8 @@ public class Scheduler
 					int j=0;
 					while ( parentingValids[j] != null  ) {
 
+//						System.out.println( parentingValids[j] );
+						
 						Semester childSem = activeSemester.addChild( parentingValids[j++] );
 						if ( childSem != null ) {
 //						System.out.println( "Added a new node to frontier: "+childSem);
@@ -395,6 +398,7 @@ public class Scheduler
 */						
 						}
 					}
+					System.out.println( j );
 				}
 			}
 		}
@@ -589,13 +593,15 @@ public class Scheduler
 
 	public boolean checkValidity( String cString ) {
 
+		
 //		System.out.println( "Checking validity of "+cString);
 
 		// let semester handle schedules in progress
-//		if ( currentDepth > 0 ) { return true; }
+		if ( currentDepth > 0 ) { return true; }
 		
 		// add the courses we're considering to our inherited courses in a LL
 		LinkedList<Course> validityCheckList = new LinkedList<Course>();// inheritedCourses );
+//		System.out.println( " Evaluating a new rule:");
 		for ( char c : cString.toCharArray() ) {
 //if ( currentDepth > 0 ) {
 //	System.out.println( " Adding section denoted by _"+c+"_ at depth "+currentDepth+" to validity check," + getSection( c, currentDepth));

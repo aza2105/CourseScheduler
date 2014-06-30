@@ -362,6 +362,10 @@ public class Semester implements Comparable<Semester>
 		
 		// add the courses we're considering to our inherited courses in a LL
 		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
+
+//		validityCheckList.add( )
+	
+	/*	
 		for ( Section s : childSections ) {
 			validityCheckList.add( s.getParent() );
 		}
@@ -370,13 +374,14 @@ public class Semester implements Comparable<Semester>
 		//  of courses we can choose in subsequent semesters, we cannot complete
 		//  the degree as requested and will not create the child node.
 
+		
 		if ( Requirements.rulesUnmet( validityCheckList ) > 
 			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
-//			System.out.println ( "Impossible, pruning.");
+//			System.out.println ( "Impossible, pruning. unmet="+Requirements.rulesUnmet( validityCheckList )+" total: "+Preferences.prefs.getTotalCourses()+" "+validityCheckList.size() );
 			// We can never end up valid
 			return null;		
 		}
-
+*/
 		// add the child's inheritance by combining this node's inheritance with 
 		//   the sections it added
 		Set<Course> childsInheritance = new HashSet<Course>();
