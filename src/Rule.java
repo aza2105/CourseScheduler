@@ -37,6 +37,10 @@ public class Rule {
 		
 		rule = list;
 	}
+
+	public void resetStatus() {
+		fulfilled = false;
+	}
 	
 	public void removeCourse(Course c) {
 		

@@ -44,6 +44,10 @@ public class Requirements {
 	public static int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
 		
 		int total = 0;
+
+		for( Rule rl : ruleList ) {
+			rl.resetStatus();
+		}
 		
 		for(int i = 0; i < completed.size(); i++) {
 			for(int j = 0; j < ruleList.size(); j++) {
