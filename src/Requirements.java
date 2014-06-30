@@ -39,13 +39,30 @@ public class Requirements {
 			r.printRule();
 		}
 	}
+	//Will return how many rules are left to fulfill of a certain TYPE
+	//String type should be passed as Rule.ELECTIVE, Rule.TRACK, or Rule.REQUIREMENT
+	//This will allow you to give weight to schedules that fill more Requirements first
+	public static int rulesLeft(String type) {
+		
+		//Not sure where you want to call the reset value within this function (or if you need to)
+		int count = 0;
+		
+		for(int i = 0; i < ruleList.size(); i++) {
+			
+			if (ruleList.get(i).getFulfilled() == false && ruleList.get(i).getRuleType().equals(type)) {
+				count ++;
+			}
+		}
+		
+		return count;
+	}
 	
 	//TODO: Need to ensure that this captures all rules.
 	public static int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
 		
 		int total = 0;
 
-		for( Rule rl : ruleList ) {
+		for( Rule rl : ruleList ) { //Does this reset the rules to false every time you query?
 			rl.resetStatus();
 		}
 		
