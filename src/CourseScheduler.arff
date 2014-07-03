@@ -1,15 +1,15 @@
 % 1. Title: Course Schedule Information
 % 
-% 2. Sources:
+% 2. Sources: Sam Friedman, Tim Waterman, Martin Wren (data created based on personal preferences)
 % 
    
 %   Variables used:  
-% requirement 
+% requirement (Assume 4 courses per semester)
 % nuggets (0-8 = pts where gold = 2, silver = 1)
-% avgGapTime (between 0 and 4) - currently wrong
+% avgGapTime (between 0 and 4)
 % lengthOfDay (total length of day from start of first class to end of last class)
 % dayNight (0,1,2,3 0 = day/day, 1 = night/night, 2 = mismatch, 3= no preference)
-% label (0 = good, 1 = bad)
+% label (0 = bad, 1 = good)
 
 @RELATION courseschedulerdata
 
