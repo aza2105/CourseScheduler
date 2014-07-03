@@ -14,7 +14,6 @@ CLASSES = \
 	  HistoricalData.java \
 	  Instructor.java \
 	  Main.java \
-	  Node.java \
 	  Parser.java \
 	  Preferences.java \
 	  Requirements.java \
