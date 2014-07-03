@@ -9,7 +9,6 @@ JAR = -cp .:*
 
 CLASSES = \
 	  Course.java \
-	  CourseReview.java \
 	  FrontEnd.java \
 	  HistoricalData.java \
 	  Instructor.java \
