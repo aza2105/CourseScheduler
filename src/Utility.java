@@ -1,3 +1,14 @@
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Utility.java
+ * Description: This class provides the computation for utility given a 
+ * set of section objects. The total utility (in terms of cost) is based on factors 
+ * such as instructor CULPA nuggets, timing of courses in comparison to user
+ * preferences, day length, average gap time, and amount of requirements in semester.
+ */
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -5,14 +16,10 @@ import java.util.Collections;
 import java.util.Date;
 
 public class Utility {
-	
-	// Return the utility value of a semester full of section objects (lower return is better)
+
+	// Return the utility (cost) value of a semester full of section objects (lower return is better)
 	public static double getUtility(ArrayList <Section> section){
-		/* Required out of - (1 = 0, 2 = 1, 4 = 2, 8 = 3) - Not required = 10
-		 * Nuggets - (G = 0, S = 2, N = 6)
-		 * Day Night - (WN-IN = 0, WN-ID = 10, WD-ID = 0, WD-IN = 6)
-		 */
-		
+
 		// Initialize the starting final utility value
 		double totalUtility = 0;
 		// Initialize the starting utility value to 0
@@ -21,41 +28,49 @@ public class Utility {
 		double dayNightVal = 0;
 		// Initial value for the length of day utility
 		double dayLengthVal = 0;
-		// Initial value for the nugget value
+		// Initial value for the nugget value (CULPA instructor data)
 		double nuggetVal = 0;
 		// Initial value for the requirement of a course
 		double requiredVal = 0;
-		
-		// Successively check and add the value of each sections utility to the total utility
-		// of the semester
+
+		// Successively check and add the value of each sections utility/cost to the total
+		//utility of the semester
 		for(int i = 0; i < section.size(); i++){
-			
+
 			// Initial value for the nugget value for each section
-			
+
 			// Convert nugget String to a value
 			if(section.get(i).getNuggetValue() != null){
+				// If instructor does not have any nuggets
 				if((section.get(i).getNuggetValue()).equals("none")){
 					nuggetVal += 10;
 				}
+				// If instructor has a gold nugget
 				else if((section.get(i).getNuggetValue()).equals("gold")){
 					nuggetVal += 0;
 				}
+				// If instructor has a silver nugget
 				else if((section.get(i).getNuggetValue()).equals("silver")){
 					nuggetVal += 2;
 				}
+				// If instructor does not exist in CULPA data
 				else{
 					nuggetVal += 10;
 				}
 			}
-			
+
 			// Compute the utility for requirement points
+			// Multiplying by constant 20 for algorithm tuning
 			requiredVal += section.get(i).getParent().getRequired() * 20;
 
-			// getDayNight() provides probability that a course is a night course			
-			// If user prefers day courses
+			// getDayNight() provides probability that a course is a night course (0 - 1)		
+			// where 1 means that a course is definitely always offered at night.
+
+			// getDayNight() returns -1 when value is null
 			double dayNightProb = section.get(i).getDayNight();
 
-			if(dayNightProb >= 0){
+			// If the dayNightProb is valid
+			if(dayNightProb >= 0 && dayNightProb <= 1){
 				// User prefers day && most likely day
 				if(Preferences.prefs.getDayNight() == 0 && dayNightProb < 0.5){
 					dayNightVal += 2.5;
@@ -72,6 +87,7 @@ public class Utility {
 				else if(Preferences.prefs.getDayNight() == 1 && dayNightProb >= 0.5){
 					dayNightVal += 1;
 				}
+				// Otherwise, no info so add 5
 				else{
 					dayNightVal += 5;
 				}
@@ -80,33 +96,33 @@ public class Utility {
 				// Unspecified course (dayNight = -1)
 				dayNightVal += 5;
 			}
-	
-			// Sum the components to compute total utility
-			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
 
-//			System.out.println( section.get(i).toString()+"  n:"+nuggetVal+" d:"+dayNightVal+"r:"+requiredVal);
+			// Sum the components to compute total utility (not including timing)
+			tempUtil = tempUtil + nuggetVal + dayNightVal + requiredVal;
 		}
-		
-		// Need to add day of course
+
 		// Calculate the value regarding length of day and average gap time
-		// make string array of each letter for day of week
+
+		// Create string for each day of week
 		String [] days = new String[5];
 		days[0] = "M";
 		days[1] = "T";
 		days[2] = "W";
 		days[3] = "R";
 		days[4] = "F";
+
 		//for each day of week, send the day of week (check in function)
 		for(int i = 0; i < days.length; i++){
+			// Add to the stored dayLength value for each day of the weeks utility
 			dayLengthVal += dayLengthVal(section, days[i]);
 		}
-		
+
 		// Sum total utilities for the given semester
 		totalUtility = tempUtil + dayLengthVal;
-				
+
 		return totalUtility;
 	}
-	
+
 	// Return the value regarding the length of day and average gap time
 	public static double dayLengthVal(ArrayList <Section> section, String day){
 		//find earliest class
@@ -117,7 +133,7 @@ public class Utility {
 		long lengthOfDay = 0; //in minutes
 		double lengthOfDayVal = 0;
 		boolean nullTiming = false;
-		
+
 		// Create date format in 24 hour time, hours and minutes
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		// Initialize early and late dates  to the maximum values
@@ -131,7 +147,7 @@ public class Utility {
 			System.out.println("Parse Exception error in Utility.java");
 			System.exit(1);
 		}
-		
+
 		// Determine earliest start time and latest end time
 		for(int i = 0; i < section.size(); i++){
 			// Check if the proper day is present
@@ -153,22 +169,22 @@ public class Utility {
 			lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
 			lengthOfDay = lengthOfDay/60; // Day length in hours
 			lengthOfDayVal = lengthOfDay * 1.5; // Constant 1.5
-			
+
 			// Order the sections chronologically 
-			//ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
 			ArrayList <String> dateList = new ArrayList <String> ();
-			
+
+			// Add the dates to the new ArrayList for chronological ordering
 			for(int i = 0; i < section.size(); i++){
 				if(section.get(i).getDaySchedule().contains(day)){
-				String tempStart = sdf.format(section.get(i).getStart());
-				String tempEnd = sdf.format(section.get(i).getEnd());
-				dateList.add(tempStart);
-				dateList.add(tempEnd);
+					String tempStart = sdf.format(section.get(i).getStart());
+					String tempEnd = sdf.format(section.get(i).getEnd());
+					dateList.add(tempStart);
+					dateList.add(tempEnd);
 				}
 			}
 			// Sort the list chronologically
 			Collections.sort(dateList);	
-			
+
 			// Create an ArrayList of ordered dates of the size of dateList
 			ArrayList <Date> orderedDates = new ArrayList <Date> (dateList.size());
 			for(int i = 0; i < dateList.size(); i++){
@@ -179,18 +195,18 @@ public class Utility {
 					System.exit(1);
 				}
 			}
-			
+
 			// Determine the total gap time
 			for(int i = 0; i < orderedDates.size() - 1; i++){
 				gapTime = gapTime + (orderedDates.get(i + 1).getTime() - orderedDates.get(i).getTime());
 			}
-	
+
 			gapTime = gapTime/100000; //gap time in minutes
 			avgGapTime = gapTime/(section.size()-1); // average gap time in minutes
-			
+
 			// Normalize avgGapVal with a constant / 12
 			avgGapVal = avgGapTime / 12;
-			
+
 			// Determine total value for timing considerations (length of day and average gap time)
 			dayTimingVal = (avgGapVal + lengthOfDayVal);
 		}
