@@ -32,17 +32,20 @@ public class Scheduler
 	/*
 	 * CONSTANTS
 	 */
-	private static final int MAX_DEPTH = 3;
-	private static final int MAX_VALIDS = 40;
+//	private static final int MAX_DEPTH = 3;
+//	private static final int MAX_VALIDS = 5000;
+//	private static final double COST_CUTOFF = 320;
 	private static int TOTAL_NUM_COURSES_TO_TAKE = 10;
-	
+//	private static boolean random = true;
 	
 	// keep track of the initial term
 	private int startSeason;
 	private int startYear;
 
-	PriorityQueue<Semester> frontier = new PriorityQueue<Semester>();
-	
+	// frontier for uniform evaluated search
+	Stack<Semester> frontier = new Stack<Semester>();
+
+	// an active semester object
 	private Semester activeSemester;
 	
 	// number of semesters to consider
@@ -50,27 +53,29 @@ public class Scheduler
 
 	// number of total terms to generate (max depth)
 	private int maxDepth;
+	
+	// number of courses to simulate
+	private int numCourses;
 
 	private static int[] numberOfCourses;
 	
 	private static int currentTerm;
+
+	// breakpoints, number of courses at which to begin a new semester
+	//   initialized with a zero
+	public static HashSet<Integer> semesterBreakpoints = new HashSet<Integer>();
 	
 	// List of Sets representing course offerings per term in the future
 	protected static ArrayList<Set<Section>> directoryOfClasses;
 
-	private ArrayList<String[]> validSectionCodes = new ArrayList<String[]>();
-	private String[] validCourses;
-	private int validCount;
-	private int[] vCounts;
+//	private ArrayList<PriorityQueue<Semester>> sortedClasses = new ArrayList<PriorityQueue<Semester>>();
+//	private PriorityQueue<Semester> addToSorted = new PriorityQueue<Semester>();
+	
+	private ArrayList<Course> coursesToIgnore = new ArrayList<Course>();
 	
 	// Courses input as already completed
 	private Set<Course> rootInheritedCourses = new HashSet<Course>();
 	private int prevCourses = 0;
-	
-	private static ArrayList<HashMap<Character, Section>> charToSection;
-
-	private int countValid = 0;
-	private int countInvalid = 0;
 	
 	// hash map for getting course information and generating potential schedules
 	private HashMap<String,Course> courses;
@@ -86,15 +91,18 @@ public class Scheduler
 	{ 
 		semesters = 2;   // spring and fall
 		
-		charToSection = new ArrayList<HashMap<Character, Section>>();
-		
 		// get the number of semesters to consider
 		maxDepth = Preferences.prefs.getNumSems();
 
-		vCounts = new int[maxDepth];
+		numCourses = Preferences.prefs.getTotalCourses();
 		
+		// add course number breakpoints so we know when it's a new semester
+		semesterBreakpoints.add( Integer.valueOf( 0 ));
+		int lastadd = 0;
 		for ( int x=0; x<maxDepth; x++ ) {
-			System.out.println( "Classes for semester "+x+": "+ Preferences.prefs.getNumCoursesPerSem( x ));
+			semesterBreakpoints.add( Integer.valueOf( lastadd + Preferences.prefs.getNumCoursesPerSem( x )));
+			System.out.println( "added breakpoint at "+(Preferences.prefs.getNumCoursesPerSem( x )+lastadd));
+			lastadd += Preferences.prefs.getNumCoursesPerSem( x );
 		}
 
 		// set the term for the initial semester
@@ -112,11 +120,7 @@ public class Scheduler
 				if ( r.getCourseList().contains( c ) ) {
 					double ru; // determine the "antiutility"				
 					ru = Math.log(r.size() )/Math.log(2);
-				//	System.out.println( "Setting the RU of "+c+" to "+ru);
-//					reqScores.put( c, ru );
 					c.setRequired(ru);
-					
-				//	System.out.println( "See, it's "+c.getRequired() );
 				}
 			}
 		}
@@ -128,54 +132,34 @@ public class Scheduler
 			rootInheritedCourses.add( courses.get( s ));
 			prevCourses++;
 		}
-				
+
+		// Map actually offered courses to our generic Course objects
 		coursePool = HistoricalData.parseKnownInput( "known.csv", courses );
 
+		// dOC contains sets of actually offered classes per term
 		directoryOfClasses = new ArrayList<Set<Section>>();
 		
-
+		// keep track of year and semester when building
 		int xYear = startYear;
 		int xSeason = startSeason;
 		
 		if ( !(coursePool == null) ) {
+
 			// assuming first sem to be fall 2014
+			// add the known offerings to the dOC
 			directoryOfClasses.add(0, coursePool); 
 
-			numberOfCourses = new int[6];
-			numberOfCourses[0] = coursePool.size(); 
-
-			// TEMP:: assume current courses for all semesters
-//			for ( int i=1; i<maxDepth; i++ ) {
-//				directoryOfClasses.add(i, coursePool);
-//			}
-			
-			HashMap<Character,Section> tmpHash = new HashMap<Character,Section>();
-			
-			Character charKey = ' ';
-			for ( Section s : coursePool  ) {
-				tmpHash.put( charKey++, s );
-				System.out.println( "Depth 0: added "+s.getParent().toString());
-			}
-
 			currentTerm = 0;
-			charToSection.add( 0, tmpHash );
 
-			// TEMP again
-//			for ( int i=1; i<maxDepth; i++ ) {
-//				charToSection.add( i, tmpHash );
-//			}
-			
-	    	if (xSeason == 0)
-	    	{
+			// increment term logically
+			if (xSeason == 0) {
 	    		xSeason = 1;
 	    		xYear++;
 	    	}
 	    	//else if current semester is a spring semester
-	    	else if (xSeason == 1)
-	    	{
+	    	else if (xSeason == 1)  {
 	    		xSeason = 0;
-	    	}
-			
+	    	}			
 		}
 		else {
 			System.err.println( "coursePool is null");
@@ -185,50 +169,35 @@ public class Scheduler
 		// generate directories of classes
 		for ( int i=1; i<maxDepth; i++ ) {
 
-			// TEMP: want to bring this back 
-			
-			
 			System.out.println( "Generating DoC for depth "+i+ ", max "+maxDepth);
 
 			// get a set of hypothetical course section offerings from TEH FUTURES
 			HashSet<Section> poolOfCoursesForChildSemesters = new HashSet<Section>();
 
+			// for each of the courses defined, find if they will likely be 
+			//  offered for each semester we are considering
 			for ( Course c : courses.values() ) {
-
 				if ( c.probOffered( String.valueOf(xSeason), String.valueOf(xYear) ) ) {
 					poolOfCoursesForChildSemesters.add( new Section( c, null, null, null, null, null, null ));
-					System.out.println( "Depth "+i+": added "+c.toString());					
+//					System.out.println( "Depth "+i+": added "+c.toString());					
 				}								
 			}
 
-			HashMap<Character,Section> tmpHash = new HashMap<Character,Section>();
-
-			System.out.println( "Generating valid section codes for depth "+i);
-			Character charKey = ' ';
-			for ( Section s : poolOfCoursesForChildSemesters  ) {
-				tmpHash.put( charKey++, s );
-			}
-
-			charToSection.add( i, tmpHash );
-
+			// add pool of sections to the dOC
 			directoryOfClasses.add( poolOfCoursesForChildSemesters );
 			
-			System.out.println( "xSeason="+xSeason+" xYear="+xYear);
 			
-	    	if (xSeason == 0)
-	    	{
+	    	if (xSeason == 0)  	{
 	    		xSeason = 1;
 	    		xYear++;
 	    	}
 	    	//else if current semester is a spring semester
-	    	else if (xSeason == 1)
-	    	{
+	    	else if (xSeason == 1)	{
 	    		xSeason = 0;
 	    	}
-
 		}		
 
-		getValidSectionCodes();
+//		getValidSectionCodes( 0 );
 
 //		validateSectionCodes();
 //		System.exit(0);
@@ -236,123 +205,96 @@ public class Scheduler
 	}	
 		
 
-	
-	private void getValidSectionCodes() {
 
-		System.out.println(" Num Sems: "+Preferences.prefs.getNumSems());
-		
-		
-		for ( int i=0; i<maxDepth; i++) {
-
-			System.out.println( "Generating valid section code lists for term "+i);
-			currentDepth = i;
-			validCourses = new String[MAX_VALIDS];
-			validCount = 0;
-			
-			int keySize = Preferences.prefs.getNumCoursesPerSem( i );
-
-			System.out.println( "Depth "+i+": size of DoC is "+directoryOfClasses.get(i).size());
-			System.out.println( "User specifed semester size of " +keySize);
-			char[] keys = new char[directoryOfClasses.get(i).size()];
-			int nextKey = 0;
-			for ( Character cObj : charToSection.get(i).keySet() ) {
-				keys[nextKey++] = cObj.charValue();
-			}
-			// blank String buffer
-			String blahString = new String();
-
-			// test for valids
-			allCombinationTest( keys, 0, keySize, blahString );
-
-			System.out.println( "Valid: "+validCount);
-//			System.out.println( "Invalid: "+countInvalid);
-			vCounts[i] = validCount;
-			
-			validSectionCodes.add( i, validCourses );
-			validCount = 0;
-
-			
-		}
-		currentDepth = 0;
-	}
-
-	
-	private void validateSectionCodes() {
-		
-		for ( int x=0; x<maxDepth; x++ ) {
-			int siz = Preferences.prefs.getNumCoursesPerSem( x );
-			int z = 0;
-			System.out.println( "size="+siz);
-			for ( String[] s : validSectionCodes ) {
-				for ( int i=0; i<vCounts[x]-8; i++) {
-//					System.out.print( s[i]+  " ");
-	
-					if ( s[i+1] == null ) {
-						continue;
-					}
-					char[] c = s[i].toCharArray();
-
-					System.out.println( c[0]+" "+c[1]);
-					if ( c[0] == c[1] ) {
-						System.exit(1);
-					}
-					/*					z++;	
-					for( int k=0; k<siz-1; k++ ) {
-						for( int l=k+1; l<siz; l++ ) {
-							System.out.println( c[k]+" "+c[l]+"k="+k+" l="+l+" z="+z);
-							
-							if ( c[k] == c[l] ) {
-								System.out.println( "DUPLICATE: "+ 
-										getSection( c[k], x )+" "+getSection( c[l], x));
-							}	
-						}
-					} */
-				}
-			}	
-		}
-	}
-	
-	private LinkedList<Semester> uniformCostSearch()
+	// Here is where the traversal happens.  It is now DFS with an evaluation
+	//  function, not exactly uniform cost
+	public LinkedList<Semester> uniformCostSearch()
 	{
 		LinkedList<Semester> optimalSemesterList = new LinkedList<Semester>();
-		Set<Section> rootSections = new HashSet<Section>();
 
 //		System.exit(0);
 		if ( directoryOfClasses == null ) {
 			System.err.println( "Error: directoryOfClasses does not exist");
 			System.exit(1);
 		}
-		//instantiate the root semester
-		Semester sem = new Semester(0, 0, 2014, null, null, rootInheritedCourses, 0);
+
+		// instantiate the root semester, which contains any courses previously
+		//  taken, considered as one semester
+		Semester sem = new Semester(0, -1, 1, 2014, null, null, rootInheritedCourses, 0.0);
+
+		// set the root to active
 		activeSemester = sem;
-		
+
+		// maintain explored?
 		Set<Semester> explored = new HashSet<Semester>();
 
-		frontier.add( sem );
+		// add the root to the frontier
+		frontier.push( sem );
 
+		// track current depth
 		currentDepth = 0;
 		
-		System.out.println( frontier.peek() );
+//		System.out.println( frontier.peek() );
+		
+		PriorityQueue<Semester> childSem = new PriorityQueue<Semester>();
 		
 		while (true)
 		{
 
+			
 //			System.out.println( "Frontier contains "+frontier.size()+" elements"  );
 			if (frontier.isEmpty())
 			{
+				
 				optimalSemesterList = null; //returning failure
 				System.out.println( "Unable to find a valid schedule.");
+		
 				break;
 			}
-			else
-			{
+			
+//			else
+//			{
 //				System.out.print ( "Peeking: ");
 //				System.out.println( frontier.peek() );
 
-				activeSemester = frontier.poll(); // chooses the lowest-cost node in frontier 
-				System.out.println( "selected "+activeSemester+" from queue");
+//				activeSemester = frontier.poll(); // chooses the lowest-cost node in frontier 
+//				frontier.clear();
+
+				// generate the list of valids NOW.
+
+				
+//				System.out.println( "comparing "+activeSemester.getDepth() + " and "+currentDepth);
+//				System.out.println( "childSem = "+childSem);
+//				if ( childSem != null ) {
+//				if ( activeSemester.getDepth() > currentDepth ) {
+
+//					System.out.println( "Moving to a new term... ");
+
+//					activeSemester = childSem;
+//					childSem = null;
+//					activeSemester = frontier.poll();
+
+					
+					// ignore taken courses in generating valids
+//						coursesToIgnore = activeSemester.getCourses();
+					
+//					currentDepth++;
+//					getValidSectionCodes( currentDepth );
+
+	
+				
+//				}
+				
+//				System.out.println( "selected "+activeSemester+" from queue");
+//				System.out.println( validSectionCodes.get( activeSemester.getDepth())[0]);
+				
+	//			if ( validSectionCodes.get( activeSemester.getDepth()) == null ) {
+	//				System.out.println( "Don't have courses generated!");
+	//			}
 				
 				
+				// we have reached a goal state.  return a linked list of semester
+				//  objects for output and user feedback
 				if (succeedsGoalTest(activeSemester))
 				{
 					optimalSemesterList.addFirst(activeSemester);
@@ -368,40 +310,68 @@ public class Scheduler
 				}
 				
 				
-				explored.add(activeSemester);
 
 				// if we're not at a goal state
-				if (activeSemester.getDepth() <= maxDepth )
-				{
+				if (activeSemester.getDepth() <= numCourses )		{
 
-					System.out.println( "Finding parentingValids at "+activeSemester.getDepth());
-					String[] parentingValids = validSectionCodes.get( activeSemester.getDepth() );
+//					System.out.println( "Finding parentingValids at "+activeSemester.getDepth());
+//					String[] parentingValids = validSectionCodes.get( activeSemester.getDepth() );
 
 //					System.out.println( "Expanding a semester at depth "+ activeSemester.getDepth());
 //					System.out.println( activeSemester );
 					
-					int j=0;
-					while ( parentingValids[j] != null  ) {
+//					while ( parentingValids[j] != null  ) {
 
 //						System.out.println( parentingValids[j] );
 						
-						Semester childSem = activeSemester.addChild( parentingValids[j++] );
-						if ( childSem != null ) {
-//						System.out.println( "Added a new node to frontier: "+childSem);
-							frontier.add( childSem );
-/*
-							Iterator<Semester> itr = frontier.iterator();
+//					System.out.println( "Generating child "+activeSemester.attempts+" of node");
+					childSem = activeSemester.addChild();
+					// validSectionCodes.get( activeSemester.getDepth() )[activeSemester.attempts] );
+
+					System.out.println( "generated children at node "+(activeSemester.getDepth()+1));
+					
+					ArrayList<Semester>temp = new ArrayList<Semester>();
+					
+					// add new children to the frontier
+					while ( childSem.size() > 0 ) {
+//					for ( Semester cs : childSem ) {
+						Semester cs = childSem.poll();
+//						System.out.println("Pushing "+cs);
+						temp.add( cs );
+//						frontier.push( cs );
+					}
+
+					for( int i=temp.size()-1; i>=0; i-- ) {
+//						System.out.println( temp.get( i ));
+						frontier.push( temp.get(i));
+					}
+					
+					activeSemester = frontier.pop();
+					
+					
+/*					if ( childSem != null ) {
+//							System.out.println( "Added a new node to frontier: "+childSem);
+//						frontier.add( childSem );
+						
+						
+						
+						/*							Iterator<Semester> itr = frontier.iterator();
 							while ( itr.hasNext() ) {
 								Semester s = itr.next();
-								System.out.println( s );
-							}
-*/						
-						}
+									System.out.println( s );
+							}	
+*/							
+//						}	
+/*					}	
+					else {
+						System.out.println( "Returned NULL!");
 					}
-					System.out.println( j );
+*/					//					System.out.println( j );
 				}
-			}
-		}
+				
+				
+		}		
+		
 		
 		return optimalSemesterList;
 		
@@ -413,7 +383,7 @@ public class Scheduler
 
 		// if we've hit the max depth, we've finished the last semester
 		//   optimally and can return.
-		if ( semester.getDepth() == maxDepth ) {
+		if ( semester.getDepth() == numCourses ) {
 			return true;
 		}
 		
@@ -440,164 +410,37 @@ public class Scheduler
 		return courses;
 	}
 
-    /*
-     * takes a given power set and removes from it constituent sets that have the exact size
-     * returns the filtered power set
-     */
-    public static <T> Set<Set<T>> filterPowerSetExactSize(int exactSize, Set<Set<T>> originalPowerSet)
-    {
-    	for (Set<T> set : originalPowerSet)
-    	{
-    		if (set.size() != exactSize)
-    		{
-    			originalPowerSet.remove(set);
-    		}
-    	}	
-    	return originalPowerSet;
-    }
-	
 	
 	public void setCourses(HashMap<String, Course> courses)
 	{
 		this.courses = courses;
 	}
 	
-//	call it as allCombination(S.toCharArray(),0,r,"");
+	
+/*	public double checkUtility( String cString ) {
 
-	private static ArrayList<ArrayList<Section>>holder = new ArrayList<ArrayList<Section>>();
-//	ArrayList<Section>toAdd = new ArrayList<Section>();
-	void allCombinationOld(ArrayList<Section> S, int start, int r, ArrayList<Section> toAdd) {
-		int length = S.size();
+		ArrayList<Section> utilityCheckList = new ArrayList<Section>();
 
-//		System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
-		
-		if (r == 1) {
-		    for (int i = start; i < length; i++) {
-		    //	System.out.println(output + S.get(i));
-		    	ArrayList<Section> buff = new ArrayList<Section>(toAdd);
-		    	buff.add( S.get(i));
-//		    	holder.add(S.get(i));
-		    	holder.add(buff);
-	//
-	//	    	for ( Section s : toAdd ) {
-	//	    		System.out.print( s.toString() );
-	//	    	}
-//		    	System.out.println( toAdd.size() );
-		    	toAdd.clear();
-		    }
-		} else {
-		    for (int k = start; k < length - r + 1; k++) {
-		    	toAdd.add( S.get(k) );
-		    	allCombinationOld(S, k + 1, r - 1, toAdd);// 
-//			holder.add(S.get(k));
-		    }
+		for ( char c : cString.toCharArray() ) {
+			utilityCheckList.add( Scheduler.getSection( c, currentDepth ) );
+		// determine the utility of the child
 		}
-	}
-
-	ArrayList<String> keyStore = new ArrayList<String>();
-	
-	static int toAddIndex = 0;
-	
-	void allCombination(char[] S, int start, int r, char[] toAdd ) {
-		int length = S.length;
-
-		System.out.println(" start="+start+" r="+r+"length="+length);//+" sizeoftoAdd="+toAdd.size());
-
-	
-		if (r == 1) {
-			for (int i = start; i < length; i++) {
-				char[] buff = new char[4];
-				buff = toAdd;
-				buff[3] = S[i];
-//				for ( int x=0; x<4; x++ ) {
-//					System.out.print(buff[x]);
-//				}
-//				System.out.println();
-//	    		System.out.println(output + S[i]);
-			}
-		toAddIndex--;	
-		} else {
-			for (int k = start; k < length - r + 1; k++) {
-
-				System.out.println( "k="+k+" s[k]="+S[k]+" length="+length+" toAI="+toAddIndex);
-				toAdd[toAddIndex] = S[k];
-				toAddIndex++;
-	    	//	    	toAddIndex++;
-	    	
-				allCombination(S, k + 1, r - 1, toAdd );
-				//output + S[k]);
-	    }
-	}
-	}
-	void allCombinationTest(char[] S, int start, int r, String output ) {
-		int length = S.length;
-			
-		if (r == 1) {
-		    for (int i = start; i < length; i++) {
-
-//		    	System.out.println("Adding "+output+S[i]);
-		    	
-		    	if ( validCount == MAX_VALIDS-1 ) {
-		    		return;
-		    	}
-		    	/*		    	try {
-		    		bw.write( output + S[i] +"\n" );	
-		    	}
-		    	catch ( IOException e ) {
-		    		System.err.println( "Ba. na. na.");
-		    		System.exit(1);
-		    	}
-*/
-		    	
-		    	// we have a new 4 section combo, output+S[i]
-		    	
-		    	// check the validity of this combo
-		    	if ( checkValidity( output+S[i] ) ) {
-
-//		    		System.
-		    		validCourses[validCount++] = output+S[i];
-		    		
-//		    		validSectionCodes.add( currentDepth, )
-		    		// check utility as well?
-//		    		System.out.println( output+S[i]+" is valid");
-//		    		if ( activeSemester.getDepth() == 0 ) {
-		    			countValid++;
-//		    		}
-//		    		else {
-//		    			countInvalid++;
-//		    		}
-		    		//		    		Semester newSem = activeSemester.addChild( output+S[i] );
-//		    		frontier.add(activeSemester.addChild( output+S[i] ));
-		    	}
-		    	else {
-		    		//System.out.println( output+S[i]+" is NOT valid");
-//		    		countInvalid++;
-		    	}
-		    }
-		} else {
-		    for (int k = start; k < length - r + 1; k++) {
-		    	if ( validCount == MAX_VALIDS-1 ) {
-		    		return;
-		    	}
-//		    	System.out.println( "Calling aCT with "+(k+1)+" "+(r-1)+" "+output+S[k]);
-		    	allCombinationTest(S, k + 1, r - 1, output + S[k]);
-		    }
+		
+//			double childUtility = 
+		double u = Utility.getUtility( utilityCheckList ) / Preferences.prefs.getNumCoursesPerSem( currentDepth );
+		if ( Preferences.prefs.getNumCoursesPerSem( currentDepth ) < 3 ) {
+			return u/2;
 		}
+		return u;
 	}
-
-	public static Section getSection( char c, int term ) {
-		
-		return charToSection.get(term).get( Character.valueOf(c) );
-		
-	}
-
+	
 	public boolean checkValidity( String cString ) {
 
 		
 //		System.out.println( "Checking validity of "+cString);
 
 		// let semester handle schedules in progress
-		if ( currentDepth > 0 ) { return true; }
+//		if ( currentDepth > 0 ) { return true; }
 		
 		// add the courses we're considering to our inherited courses in a LL
 		LinkedList<Course> validityCheckList = new LinkedList<Course>();// inheritedCourses );
@@ -624,11 +467,11 @@ public class Scheduler
 		// if the rules not met by these courses is greater than the total number
 		//  of courses we can choose in subsequent semesters, we cannot complete
 		//  the degree as requested and will not create the child node.
-/*
-		System.out.println( "Rules Unmet: "+Requirements.rulesUnmet( validityCheckList ));
+
+/*		System.out.println( "Rules Unmet: "+Requirements.rulesUnmet( validityCheckList ));
 		System.out.println( "ValidityChecklist size: "+validityCheckList.size() );
 		System.out.println( "To go: "+(Preferences.prefs.getTotalCourses() - validityCheckList.size()));
-	*/	
+		
 		if ( Requirements.rulesUnmet( validityCheckList ) > 
 			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
 			
@@ -637,7 +480,7 @@ public class Scheduler
 			for ( Course c : validityCheckList ) {
 				System.out.print( c+" " );
 			}
-			System.out.println(); */
+			System.out.println(); 
 
 			
 			return false;
@@ -647,11 +490,11 @@ public class Scheduler
 		for ( Course c : validityCheckList ) {
 			System.out.print( c+" " );
 		}
-		System.out.println(); */
+		System.out.println(); 
 
 		return true;
 	}
-	
+	*/
 	public static void main(String[] args) {
 
 		String[] uP = new String[]{ "inputPrefs.csv" };

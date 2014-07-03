@@ -1,9 +1,5 @@
 import java.util.*;
 
-import com.google.common.collect.Collections2; 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /*
  * Semester here refers to an object containing a proposed semester schedule
@@ -52,12 +48,24 @@ public class Semester implements Comparable<Semester>
      */
     private int semesterID; 
     private int semesterYear;
-
+    private int term;
+    
     private int nextSemesterID;
     private int nextSemesterYear;
     
+    public boolean explored = false;
+    public int attempts = 0;
+    
+    private ArrayList<Semester> children;
+    
     // sections refers to the current semester courses being taken at this node
     private Set<Section> sections;
+//    private Section section;
+
+//    private Semester 
+    
+    // a semester that has the number of courses dictated for the term
+    private Semester completedSemester;
     
     // previous semester aka parent in the tree
     private Semester parentSemester;  
@@ -72,40 +80,59 @@ public class Semester implements Comparable<Semester>
     // they have completed in their traversal from root
 	private Set<Course> childrenSemestersInheritedCourses;
     private Set<Course> inheritedCourses;
-    private Set<Section> poolOfCoursesForChildSemesters;
+    private Set<Section> poolOfCoursesForChildSemesters; 
     private double utility;  
     
     
     /*
      * CONSTRUCTORS
      */ 
-    public Semester(int depth, int sID, int sYear, Set<Section> sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+    public Semester(int depth, int term, int sID, int sYear, Set<Section> sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+//    public Semester(int depth, int term, int sID, int sYear, Section sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+
     {
     	combinationSets = new HashSet<Set<Section>>();
     	this.depth = depth;
+    	this.term = term;
     	this.semesterID = sID;
     	this.semesterYear = sYear;
     	this.sections = sect;
     	this.parentSemester = parentSemester;
     	this.inheritedCourses = inheritedCourses;
     	this.utility = inheritedPathCost;
+    	this.children = new ArrayList<Semester>();
 
+/*    	System.out.println( "INHERITENCE FOR "+this);
+    	if ( sections != null ) 
+    		for ( Section s : sections )
+    			System.out.println("Inherited "+s);
+  */  	
+    
+    	
     	this.id = nodeID;
     	nodeID++;
     	
-    	//if current semester is a fall semester
-    	if (semesterID == 0)
-    	{
-    		nextSemesterID = 1;
-    		nextSemesterYear = semesterYear + 1;
+    	if ( Scheduler.semesterBreakpoints.contains( Integer.valueOf( depth ))) {
+
+    //		System.out.println( "Found semester breakpoiint!");
+    		//if current semester is a fall semester
+    		if (semesterID == 0)
+    		{
+    			nextSemesterID = 1;
+    			nextSemesterYear = semesterYear + 1;
+    		}
+    		//else if current semester is a spring semester
+    		else if (semesterID == 1)
+    		{
+    			nextSemesterID = 0;
+    			nextSemesterYear = semesterYear;
+    		}
     	}
-    	//else if current semester is a spring semester
-    	else if (semesterID == 1)
-    	{
-    		nextSemesterID = 0;
+    	else {
+    		
+    		nextSemesterID = this.semesterID;
     		nextSemesterYear = semesterYear;
     	}
-
     	/*
     	 * populate next semester's inherited sections:
     	 * add current semester's courses,
@@ -319,7 +346,7 @@ public class Semester implements Comparable<Semester>
     		}
     	}
     	
-    	semesterString += " at depth "+depth;
+    	semesterString += " at depth "+depth+" with cost "+utility;
     	
     	return semesterString;
     }
@@ -332,166 +359,78 @@ public class Semester implements Comparable<Semester>
     
     // add a new child 
     //   we have already determined its validity but not its utility
-    public Semester addChild( String sectionCode ) {
+    public PriorityQueue<Semester> addChild() {
 
-    	Set<Section> childSections = new HashSet<Section>();
+    	
+    	PriorityQueue<Semester> retVal = new PriorityQueue<Semester>();
 
-//    	System.out.print( " new sem: ");
+//		this.attempts++;
+
+//    	System.out.print( " new sem: "+sectionCode);
     	// convert the section code to an array of sections
-    	for ( char cindex : sectionCode.toCharArray() ) {
-    		childSections.add( Scheduler.getSection( cindex, depth ) );
+//    	for ( char cindex : sectionCode.toCharArray() ) {
+//    		childSections.add( Scheduler.getSection( cindex, depth ) );
  //   		System.out.print( cindex );
-    	}
+  //  	}
 /*    	
     	for ( Section s : childSections ) {
     		System.out.print( s.toString() );
     	}
     	System.out.println();
- */   	
-    	// have any of these new courses been taken before?
-    	for ( Course c : sectionsToCourses( childSections )) {
-    		if ( inheritedCourses.contains( c ) ) {
-    			return null;
+
+ *
+ *
+ */
+    	
+    	int childTerm = term;
+    	List<Section> inheritedSections = new ArrayList<Section>();
+    	if ( sections != null ) {
+    		inheritedSections.addAll( sections );
+    	}
+    	
+    	// if our next course would start a new semester, we need to know now
+    	if ( Scheduler.semesterBreakpoints.contains( Integer.valueOf( depth+1 ))
+    			|| term == -1 ) {
+
+  //  		System.out.println( "BREAKPOINT depth="+depth+" term="+term);
+    		childTerm = term + 1;
+    		inheritedSections.clear();
+    	}
+    	// find the section offerings for this term
+
+ //   	System.out.println( "Found depth to be " + depth+" child term to be "+childTerm);
+    	// build a list for holding possible children
+    	ArrayList<ArrayList<Section>> possibleSemesters = new ArrayList<ArrayList<Section>>();
+
+//    	System.out.println( Scheduler.directoryOfClasses.get( childTerm ));
+    	for ( Section candidate : Scheduler.directoryOfClasses.get( childTerm )) {
+
+     		// already defined for the current semester	
+    		if ( sections != null ) { 
+    			if ( sections.contains( candidate )) {
+    				continue;
+    			}
     		}
-    	}
-    	
-    	// determine the utility of the child
-		ArrayList<Section> utilityCheckList = new ArrayList<Section>( childSections );
-		double childUtility = Utility.getUtility( utilityCheckList );
-
-		
-		// add the courses we're considering to our inherited courses in a LL
-		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
-
-//		validityCheckList.add( )
-	
-	/*	
-		for ( Section s : childSections ) {
-			validityCheckList.add( s.getParent() );
-		}
-		
-		// if the rules not met by these courses is greater than the total number
-		//  of courses we can choose in subsequent semesters, we cannot complete
-		//  the degree as requested and will not create the child node.
-
-		
-		if ( Requirements.rulesUnmet( validityCheckList ) > 
-			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
-//			System.out.println ( "Impossible, pruning. unmet="+Requirements.rulesUnmet( validityCheckList )+" total: "+Preferences.prefs.getTotalCourses()+" "+validityCheckList.size() );
-			// We can never end up valid
-			return null;		
-		}
-*/
-		// add the child's inheritance by combining this node's inheritance with 
-		//   the sections it added
-		Set<Course> childsInheritance = new HashSet<Course>();
-		if ( this.childrenSemestersInheritedCourses != null ) {
-			childsInheritance.addAll( this.childrenSemestersInheritedCourses );
-		}
-		childsInheritance.addAll( sectionsToCourses( childSections ) );
-
-		// generate the child
-		Semester newChild = new Semester( depth + 1, nextSemesterID, nextSemesterYear,
-				childSections, this, childsInheritance, utility + childUtility );
-
-//	    public Semester(int depth, int sID, int sYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
-
-		
-		System.out.println( "Added a new child at depth "+(depth+1)+" with section string "+sectionCode+", cost="+(childUtility+utility));
-		// return child to Scheduler for queueing
-		return newChild;
-    	
-    }
-    
-    
-    
-    
-    //successor method to generate child semesters of a given semester
-    public ArrayList<Semester> generateChildSemesters()
-    {
-    	//initialize to invalid values
-    	int nextSemesterID = -1;
-    	int nextSemesterYear = -1;
-    	
-    	//if current semester is a fall semester
-    	if (semesterID == 0)
-    	{
-    		nextSemesterID = 1;
-    		nextSemesterYear = semesterYear + 1;
-    	}
-    	//else if current semester is a spring semester
-    	else if (semesterID == 1)
-    	{
-    		nextSemesterID = 0;
-    		nextSemesterYear = semesterYear;
-    	}
-    	
-    	/*
-    	 * populate next semester's sections
-    	 * we need to ensure that a course that has already been taken 
-    	 * is not scheduled again. Also, only courses that meet the 
-    	 * degree requirements should be scheduled.
-    	 */
-    	//Set<Section> nextSemesterSections = new HashSet<Section>();
-    	
-    	
-    	/*
-    	 * the size of nextSemesterSections set is determined by preferencesObj
-    	 * generation = depth - 1
-    	 * if user has not specified the num courses per sem,then sizeOfNextSemesterSections = 0 
-    	 */
-    	int sizeOfChildSemesterSections = Preferences.prefs.getNumCoursesPerSem(depth);
-//    	int sizeOfChildSemesterSections = this.preferencesObj.getNumCoursesPerSem(depth - 1);
-    	
-    	/*
-    	Iterator iterator = poolOfCoursesForChildSemesters.iterator();
-    	
-    	while (iterator.hasNext() && nextSemesterSections.size() <= sizeOfNextSemesterSections)
-    	{
-    		sections.add((Section)iterator.next());
-    	}
-		*/
-    	
-    	/*
-    	 * we first get the power set of the Set poolOfCoursesForChildSemesters and then
-    	 * filter it to get only those sets (inside the power set) with size equal to sizeOfNextSemesterSections
-    	 * we also only filter using this exact size filter if user has provided us a preference, otherwise only filter
-    	 * those sets with size greater than MAX_SIZE, since they are invalid configurations and can be safely pruned
-    	 */
-    	Set<Set<Section>> allPossibleSetsOfCoursesForNextSemester = new HashSet<Set<Section>>();
-    	if (sizeOfChildSemesterSections > 0 && sizeOfChildSemesterSections <= 10)
-    	{
     		
-    		/*
-    		allPossibleSetsOfCoursesForNextSemester = 
-					filterPowerSetExactSize(sizeOfChildSemesterSections, Sets.powerSet(poolOfCoursesForChildSemesters));
-    		*/
-    		
-    		if (Semester.outputCombination(poolOfCoursesForChildSemesters, sizeOfChildSemesterSections))
-    			allPossibleSetsOfCoursesForNextSemester = Semester.combinationSets;
-			
-    	}
-    	
-    	ArrayList<Semester> childrenSemesterArrayList = new ArrayList<Semester>();
-    	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
-
-    	System.out.println( "Generated " + allPossibleSetsOfCoursesForNextSemester.size() + " possible scheds");
-    	//instantiate the child semester objects
-    	for (Set<Section> aPossibleSet : allPossibleSetsOfCoursesForNextSemester )
-    	{
-
-    		for( Section s : aPossibleSet ) {
-    			System.out.println( s.getParent().toString() );
+    		// already defined in previous semesters
+    		if ( inheritedCourses.contains( sectionsToCourses( candidate ) )) {
+    			continue;
     		}
-    		System.out.println();
     		
-    		// First, check that the proposed semester schedule is valid, that is,
-    		//  it will be possible to meet our requirements with the courses
-    		//  remaining after this one
+    		ArrayList<Section> newPossibility = new ArrayList<Section>();
+    		if ( sections != null ) {
+    			newPossibility.addAll( sections );
+    		}
+    		newPossibility.add( candidate );
+//    		possibleSemesters.add( newPossibility );
+
+        	// determine the utility of the child
+//    		ArrayList<Section> utilityCheckList = new ArrayList<Section>( childSections );
+    		double childUtility = Utility.getUtility( newPossibility );
 
     		// add the courses we're considering to our inherited courses in a LL
     		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
-    		for ( Section s : aPossibleSet ) {
+    		for ( Section s : newPossibility ) {
     			validityCheckList.add( s.getParent() );
     		}
     		
@@ -506,132 +445,84 @@ public class Semester implements Comparable<Semester>
     			continue;    			
     		}
 
+        	Set<Section> childSections = new HashSet<Section>();
+        	
+        	if ( sections != null && term == childTerm ) {
+        		childSections.addAll( sections );
+        	}
+        	childSections.add( candidate );
 
-    		// find the utility....
-    		ArrayList<Section> utilityCheckList = new ArrayList<Section>( aPossibleSet );
-    		double childUtility = Utility.getUtility( utilityCheckList );
+        	
+        	
+        	// set up the child's inherited course list
+    		Set<Course> childsInheritance = new HashSet<Course>();
+    		if ( this.childrenSemestersInheritedCourses != null ) {
+    			childsInheritance.addAll( this.childrenSemestersInheritedCourses );
+    		}
+
+    		childsInheritance.addAll( sectionsToCourses( childSections ) );
+
+        	
+    		Semester newChild = new Semester( depth + 1, childTerm, nextSemesterID, nextSemesterYear,
+    				childSections, this, childsInheritance, utility + childUtility );
+
     		
-    		 		
-    		// Prepare inherited course objects for children from this node's inherited
-    		//  course object.  Add to it the current semester sections, cast to courses.
-    		Set<Course> childsInheritance = new HashSet<Course>(this.childrenSemestersInheritedCourses);
-    		childsInheritance.addAll( sectionsToCourses( aPossibleSet ) );
+    		retVal.add( newChild );  
+    		
+    	}    
+    	
 
-    		// Actually add a child
-    		childrenSemesterArrayList
-    				.add(  						
-    						new Semester(depth+1, nextSemesterID, nextSemesterYear, aPossibleSet, this, 
-    								childsInheritance,
-    								childUtility + utility )
-    					);
+    	return retVal;
+		
+		// add the courses we're considering to our inherited courses in a LL
+//		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
 
-    	}
+//		validityCheckList.add( )
+	
+		
+		
+		// if the rules not met by these courses is greater than the total number
+		//  of courses we can choose in subsequent semesters, we cannot complete
+		//  the degree as requested and will not create the child node.
 
-    	// send back an ArrayList to Scheduler
-    	return childrenSemesterArrayList;
+/*		if ( Requirements.rulesUnmet( validityCheckList ) > 
+			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
+			System.out.println ( "Impossible, pruning. unmet="+Requirements.rulesUnmet( validityCheckList )+" total: "+Preferences.prefs.getTotalCourses()+" "+validityCheckList.size() );
+			// We can never end up valid
+			continue;		
+		}
+*/
+		// add the child's inheritance by combining this node's inheritance with 
+		//   the sections it added
+		
+		
+/*
+		System.out.println( "Added a new child at depth "+(depth+1)+" with section string "+sectionCode+", cost="+(childUtility+utility));
+		
+		
+		// generate the child
+
+//		if ( newChild != null ) {
+		this.children.add( newChild );
+//		}
+//	    public Semester(int depth, int sID, int sYear, Set<Section> sections, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+		
+		// return child to Scheduler for queueing
+		return newChild;
+  */  	
     }
     
- // the following two methods are adapted from the following website:
-    // http://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
-	public static boolean outputCombination(Set<Section> inputSet, int r)
-	{
-		//ArrayList<Section> inputArrayList = new ArrayList<Section>(inputSet);
-		Section[] inputArray = inputSet.toArray(new Section[0]);
-		int n = inputSet.size();
-			
-		combinationSets.clear();
-		
-		//Set<Course> outputSet = new HashSet<Course>();
-		
-	    // A temporary array to store all combinations one by one
-	    //int data[] = new int[r];
-		//ArrayList<Section>(r) data;
-		//data = new ArrayList<Section>(); 
-		Section[] data = new Section[r]; 
-		
-		System.out.println( data.length +" "+r);
-		
-	    // Print all combination using temporary array 'data[]'
-	    //combinationUtil(arr, data, 0, n-1, 0, r);
-//		System.out.println( "Running combUtil with inputArrayList of size "+inputArrayList.size()+" 0 "+(n-1)+" 0 "+r);
-		combinationUtil(inputArray, data, 0, n-1, 0, r);
-		
-		if (!combinationSets.isEmpty())
-			return true;
-		else
-			return false;
-	}
-	
-	/* inputArrayList  ---> Input ArrayList
-	   data ---> Temporary ArrayList to store current combination
-	   start & end ---> Staring and Ending indexes in inputArrayList
-	   index  ---> Current index in data
-	   r ---> Size of a combination to be printed */
-	public static void combinationUtil(Section[] inputArray, Section[] data,
-										int start, int end, int index, int r)
-	{
-		
-	    // Current combination is ready to be output, output it
-	    if (index == r)
-	    {
-	    	Set<Section> anOutputSet = new HashSet<Section>();
-	        for (int j = 0; j < r; j++)
-	        {
-	        	//System.out.print(data[j]);
-	        	   anOutputSet.add(data[j]);
-	        }
-	        combinationSets.add(anOutputSet);
-//	        System.out.println( "Added an output set: ");
-	        for( Section s : anOutputSet ) {
-//	        	System.out.print( s.toString() + " ");
-	        }
-//	        System.out.println();
-	        return;
-	    }
-	 
-	    // replace index with all possible elements. The condition
-	    // "end - i + 1 >= r - index" makes sure that including one element
-	    // at index will make a combination with remaining elements
-	    // at remaining positions
-	    for (int i = start; i <= end && end - i + 1 >= r-index; i++)
-	    {
-
-//	    	System.out.println( "i="+i);
-	    	//data[index] = arr[i];
-//	    	 ) {
-//	    	System.out.println( data.length );
-	    	data[index] = inputArray[i];
-	    	
-	    	
-	    	//data.set(index, inputArrayList.get(i));
-//	    	}
-//	    	else {
-//	    		data.add( inputArrayList.get(i));
-//	    		System.out.println("Adding ")
-	    		//	    	}
-	    	combinationUtil(inputArray, data, i+1, end, index+1, r);
-	    }
-	}
-
     
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    
+    	
 	
     // return a set of courses defined to match this semester's courses taken
-    public Set<Course> getCourses( ) {
-    	return sectionsToCourses( this.sections );
+    public ArrayList<Course> getCourses( ) {
+    	ArrayList<Course> t = new ArrayList<Course>( this.inheritedCourses );
+    	if ( this.sections != null ) {
+    		t.addAll( sectionsToCourses( this.sections ));
+    	}
+    	return t;
     }
 
 
@@ -650,7 +541,18 @@ public class Semester implements Comparable<Semester>
     	
     	return retVal;
     }    
+
     
+    // convert a sections to a course
+    private static Course sectionsToCourses( Section givenSet ) {
+    	
+    	if ( givenSet == null ) {
+    		return null;
+    	}
+
+    	return givenSet.getParent();
+    }    
+
     /*
      * takes a given power set and removes from it constituent sets that have the exact size
      * returns the filtered power set
@@ -713,15 +615,6 @@ public class Semester implements Comparable<Semester>
 
     public static void main(String[] args)
     {
-    	Set s1 = Sets.newHashSet("a", "b", "c");
-    	
-    	Iterator iterator = s1.iterator();
-    	while (iterator.hasNext())
-    	{
-    		String string = (String)iterator.next();
-    		System.out.println(string);
-    	}
-    	
     }
     
 }
