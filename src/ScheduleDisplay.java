@@ -1,10 +1,13 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.Line2D;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: ScheduleDisplay.java
+ * Description: This class constructs the GUI for displaying the final schedules.
+ */
 
+import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -17,8 +20,7 @@ public class ScheduleDisplay extends JFrame {
 	private final int Y_START = 50;
 	private static int OFFSET = 200;
 	private static int VERTOFF = 150;
-	private static int MAXWIDTH = 1000;
-	private static int MAXHEIGHT = 1000;
+
 	private ImageIcon icon;
 
 	
@@ -34,6 +36,7 @@ public class ScheduleDisplay extends JFrame {
     	
     }
     
+    //must be called 5 times with i values from 1 to 5
     public void giveSchedule(LinkedList<Semester> semesters, int i) {
     	
     	if (i < 1 || i > 5) { //if i is not within acceptable range
@@ -41,15 +44,7 @@ public class ScheduleDisplay extends JFrame {
     		System.exit(1);
     	}
     	
-    	//adjust how you scale horizontally based on the total number of semesters you have
-    	/* NOT NEEDED SINCE SIZE IS CONSTRICTED TO 5 AT THE MOMENT
-		if (semesters.size() < 6) {
-			OFFSET = WIDTH / semesters.size();
-		}
-		else {
-			OFFSET = MAXWIDTH / semesters.size();
-		}*/
-    	
+    	//set the scaling on the window
     	OFFSET = WIDTH / semesters.size();
 		
 		VERTOFF = HEIGHT / (8);
@@ -136,7 +131,8 @@ public class ScheduleDisplay extends JFrame {
     	
     }
     
-    public void drawSchedule(LinkedList<Semester> semesters, JPanel panel) {
+    //internal method to draw the schedule on the panel itself
+    private void drawSchedule(LinkedList<Semester> semesters, JPanel panel) {
     	
     	
     	
@@ -158,20 +154,12 @@ public class ScheduleDisplay extends JFrame {
     		mylabels.add(label);
     		panel.add(label);
     		
-    		/*
-    		ScheduleLine line = new ScheduleLine(X_START + i*OFFSET + 100,Y_START,1000,Y_START);
-    		panel.add(line, new Dimension(X_START + i*OFFSET + 100,Y_START));
-    		line.repaint();
-    		panel.repaint();
-    		line.setVisible(true);
-    		panel.setVisible(true);
-    		*/
-    		
     		//get the course information for each semester
     		Set<Section> sections = new HashSet<Section>(semesters.get(i).getSections());
     		
     		int j = 1;//counter for calculating vertical offsets
     		for(Section c : sections) {
+    			//<html> tags cause the JLabel to wrap
     			JLabel course = new JLabel("<html>" + c.getParent().getID() + " " + c.getParent().getTitle() + "</html>" );
     			course.setBounds(X_START + i*OFFSET - 10, Y_START + j*VERTOFF, 90, 100);
     			course.setFont(new Font("Dialog", Font.PLAIN, 11));
@@ -195,34 +183,6 @@ public class ScheduleDisplay extends JFrame {
     	
     	
     }
-    
-
-public class ScheduleLine extends JComponent {
-	
-	private double x;
-	private double y;
-	private double x2;
-	private double y2;
-	
-	public ScheduleLine(double x, double y, double x2, double y2) {
-		
-		this.x = x;
-		this.y = y;
-		this.x2 = x2;
-		this.y2 = y2;
-		
-		
-	}
-	
-	public void paintComponent(Graphics g) {
-		
-		System.out.println("Into PAINT");
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setColor(Color.BLACK);
-		g2.drawLine((int)x,(int)y,(int)x2,(int)y2);
-	}
-	
-}
 
 }
 

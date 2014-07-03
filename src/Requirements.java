@@ -1,9 +1,15 @@
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Requirements.java
+ * Description: This class aggregates a list of the rules that must be fulfilled
+ */
 import java.util.*;
 
 public class Requirements {
 	
-	private int req6000;
-	private int creditsRequired;
+
 	private static LinkedList<Rule> ruleList = new LinkedList<Rule>();
 
 	
@@ -20,11 +26,6 @@ public class Requirements {
 	public int size() {
 		
 		return ruleList.size();
-	}
-	
-	public void set6000Level(int i) {
-		
-		req6000 = i;
 	}
 	
 	public void addRule(Rule r) {
@@ -57,13 +58,11 @@ public class Requirements {
 		return count;
 	}
 	
-	//TODO: Need to ensure that this captures all rules.
+	//returns the max of the 3 types of rules we have unmet
 	public static int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
-		
-		int total = 0;
 
-		for( Rule rl : ruleList ) { //Does this reset the rules to false every time you query?
-			rl.resetStatus();				// Yes.
+		for( Rule rl : ruleList ) { //Reset the rules so each query is accurate
+			rl.resetStatus();				
 		}
 		
 		for(int i = 0; i < completed.size(); i++) {
@@ -73,7 +72,6 @@ public class Requirements {
 				//need to cycle through the ruleList to pull out the course from any duplicate lists
 				for(int k = 0; k < ruleList.size(); k++) {
 					if (ruleList.get(k).getRuleType().equals(s) && (ruleList.get(k).getFulfilled() == false)) {
-						//System.out.println("Removing " + completed.get(i) + "from " + k);
 						ruleList.get(k).removeCourse(completed.get(i));
 					}//endif
 				}
@@ -81,15 +79,9 @@ public class Requirements {
 			}
 			
 		}//end for
-
-		for(int a = 0; a < ruleList.size(); a++) {
-			
-			if (ruleList.get(a).getFulfilled()) {
-				total++;
-			}
-		}//end for
 		
-		return rulesLeft(Rule.BREADTH) + rulesLeft(Rule.ELECTIVE) + rulesLeft(Rule.REQUIREMENT);
+		//nested MAX to return the max of the three rule counts
+		return Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) );
 	}
 
 	

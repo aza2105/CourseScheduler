@@ -1,7 +1,17 @@
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Rule.java
+ * Description: This class is used to construct individual rule lists
+ */
+
 import java.util.*;
 
 public class Rule {
 	
+	
+	//the 3 constants for the rule types
 	static final String ELECTIVE = "ELECTIVE";
 	static final String BREADTH = "BREADTH";
 	static final String REQUIREMENT = "REQUIREMENT";
@@ -29,7 +39,7 @@ public class Rule {
 	}
 	
 	public boolean getFulfilled() {
-		
+
 		return fulfilled;
 	}
 	
@@ -63,21 +73,16 @@ public class Rule {
 		return rule;
 	}
 	
+	//checks to see if a course meets a rule
 	public String isRuleMet(Course completed) {
-		/*
-		System.out.println("Looking for: " + completed);
-		for(Course c : rule) {
-			System.out.println("In rule: " + c);
-		}*/
+
 		//if the rule has our course and has not yet been completed
-		//System.out.println(ruleType + fulfilled);
 		if (rule.contains(completed) && fulfilled == false) {
-			//System.out.println("YAY!");
+			
 			fulfilled = true;
 			return ruleType;
 		}
 
-		//System.out.println("returning TEST");
 		return null;
 	}
 }
