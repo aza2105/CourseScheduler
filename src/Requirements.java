@@ -89,7 +89,7 @@ public class Requirements {
 			}
 		}//end for
 		
-		return ruleList.size() - total;
+		return rulesLeft(Rule.BREADTH) + rulesLeft(Rule.ELECTIVE) + rulesLeft(Rule.REQUIREMENT);
 	}
 
 	
