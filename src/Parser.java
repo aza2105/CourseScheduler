@@ -13,35 +13,35 @@ public class Parser {
 
 	static Requirements reqs = new Requirements(); //static requirements object that holds all the rules
 	private String track;
-	
+
 	public Parser(String t) {
 
 		track = t;
 	}
-	
+
 	//method to parse all the rules at once
 	//We use "Lorem Ipsum" as a placeholder if we don't have the title at the moment
 	public void parseAll() {
-		
+
 		importElectives(track);
 		parseBreadthRequirements();
 		parseRequirements(track);
-		
+
 	}
-	
+
 	//Parses the ELECTIVE rules from their csv file
 	public void importElectives(String track) {
-		
+
 		track = track + "Courses.csv"; //concat the proper filename for parsing
-		
+
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + track));
 			String line = null;
 			Rule rule = null;
 
-			
+
 			while( (line = input.readLine()) != null) {
-				
+
 				String[] tokens = line.split(",");
 				if (tokens[0].equals("RULE")) { //starting a RULE
 					if (rule != null) {
@@ -55,27 +55,27 @@ public class Parser {
 				}	
 			}
 			reqs.addRule(rule);//adding that final rule that will be left over
-			
+
 			input.close();
 		}
 		catch (Exception e) {
 			System.out.println(e);
 			System.exit(1);
 		}
-		
+
 	}
-	
+
 	//Parse the BREADTH rules from their csv 
 	public void parseBreadthRequirements() {
-		
+
 		try {	
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + "AllTrackReqs.csv"));
 			String line = null;
 			Rule rule = null;
 
-			
+
 			while( (line = input.readLine()) != null) {
-				
+
 				String[] tokens = line.split(",");
 				if (tokens[0].equals("RULE")) { //starting a RULE
 					if (rule != null) {
@@ -89,30 +89,30 @@ public class Parser {
 				}	
 			}
 			reqs.addRule(rule); //add the final rule
-			
+
 			input.close();
 		}
 		catch(Exception e) {
 			System.out.println(e);
 			System.exit(1);
 		}
-		
-		
+
+
 	}
-	
+
 	//Parse the REQUIREMENTS rules from their csv file
 	public void parseRequirements(String filename) {
-		
+
 		filename += "Reqs.csv"; //concat proper file name
-		
+
 		try {
 			BufferedReader input = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" + filename));
 			String line = null;
 			Rule rule = null;
 
-			
+
 			while( (line = input.readLine()) != null) {
-				
+
 				String[] tokens = line.split(",");
 				if (tokens[0].equals("RULE")) { //starting a RULE
 					if (rule != null) {
@@ -126,14 +126,14 @@ public class Parser {
 				}	
 			}
 			reqs.addRule(rule); //add the final left-over rule
-			
+
 			input.close();
 		}
 		catch(Exception e) {
 			System.out.println(e);
 			System.exit(1);
 		}
-		
+
 	}
-	
+
 }
