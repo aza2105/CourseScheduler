@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 
 public class Utility {
-
+	
 	// Return the utility value of a semester full of section objects (lower return is better)
 	public static double getUtility(ArrayList <Section> section){
 		/* Required out of - (1 = 0, 2 = 1, 4 = 2, 8 = 3) - Not required = 10
@@ -21,46 +21,64 @@ public class Utility {
 		double dayNightVal = 0;
 		// Initial value for the length of day utility
 		double dayLengthVal = 0;
+		// Initial value for the nugget value
+		double nuggetVal = 0;
+		// Initial value for the requirement of a course
+		double requiredVal = 0;
 		
 		// Successively check and add the value of each sections utility to the total utility
 		// of the semester
 		for(int i = 0; i < section.size(); i++){
 			
 			// Initial value for the nugget value for each section
-			int nuggetVal = 0;
 			
 			// Convert nugget String to a value
 			if(section.get(i).getNuggetValue() != null){
 				if((section.get(i).getNuggetValue()).equals("none")){
-					nuggetVal = 10;
+					nuggetVal += 10;
 				}
 				else if((section.get(i).getNuggetValue()).equals("gold")){
-					nuggetVal = 0;
+					nuggetVal += 0;
 				}
 				else if((section.get(i).getNuggetValue()).equals("silver")){
-					nuggetVal = 2;
+					nuggetVal += 2;
 				}
 				else{
-					nuggetVal = 0;
+					nuggetVal += 10;
 				}
 			}
 			
-			// Initial value for the requirement of a course
-			double requiredVal = 0;
 			// Compute the utility for requirement points
-			requiredVal = section.get(i).getParent().getRequired() * 20;
+			requiredVal += section.get(i).getParent().getRequired() * 20;
 
 			// getDayNight() provides probability that a course is a night course			
 			// If user prefers day courses
-			if(Preferences.prefs.getDayNight() == 0){
-				dayNightVal = 8 * section.get(i).getDayNight();
-			}
-			// user prefers night courses
-			else if(Preferences.prefs.getDayNight() == 1){
-				dayNightVal = 1 * section.get(i).getDayNight();
+			double dayNightProb = section.get(i).getDayNight();
+
+			if(dayNightProb >= 0){
+				// User prefers day && most likely day
+				if(Preferences.prefs.getDayNight() == 0 && dayNightProb < 0.5){
+					dayNightVal += 2.5;
+				}
+				// User prefers day and most likely night
+				else if(Preferences.prefs.getDayNight() == 0 && dayNightProb >= 0.5){
+					dayNightVal += 6;
+				}
+				// User prefers night and most likely day
+				else if(Preferences.prefs.getDayNight() == 1 && dayNightProb < 0.5){
+					dayNightVal += 10;
+				}
+				// user prefers night and most likely night
+				else if(Preferences.prefs.getDayNight() == 1 && dayNightProb >= 0.5){
+					dayNightVal += 1;
+				}
+				else{
+					dayNightVal += 5;
+				}
 			}
 			else{
-				dayNightVal = 10;
+				// Unspecified course (dayNight = -1)
+				dayNightVal += 5;
 			}
 	
 			// Sum the components to compute total utility
@@ -83,9 +101,8 @@ public class Utility {
 			dayLengthVal += dayLengthVal(section, days[i]);
 		}
 		
-
 		// Sum total utilities for the given semester
-		totalUtility = tempUtil + dayLengthVal * 20;
+		totalUtility = tempUtil + dayLengthVal;
 				
 		return totalUtility;
 	}
@@ -135,7 +152,7 @@ public class Utility {
 		if(!nullTiming && section.size() > 1 ){
 			lengthOfDay = (tempLatest.getTime() - tempEarliest.getTime())/60000;// Day length in minutes
 			lengthOfDay = lengthOfDay/60; // Day length in hours
-			lengthOfDayVal = lengthOfDay/3; // Constant 3
+			lengthOfDayVal = lengthOfDay * 1.5; // Constant 1.5
 			
 			// Order the sections chronologically 
 			//ArrayList <String> dateList = new ArrayList <String> (section.size() * 2);
@@ -171,7 +188,7 @@ public class Utility {
 			gapTime = gapTime/100000; //gap time in minutes
 			avgGapTime = gapTime/(section.size()-1); // average gap time in minutes
 			
-			// Normalize avgGapVal with a constant - 12
+			// Normalize avgGapVal with a constant / 12
 			avgGapVal = avgGapTime / 12;
 			
 			// Determine total value for timing considerations (length of day and average gap time)
@@ -179,7 +196,7 @@ public class Utility {
 		}
 		// null timing so don't provide any value
 		else if(nullTiming){
-			dayTimingVal = 10;
+			dayTimingVal = 0;
 		}
 		return dayTimingVal;
 	}

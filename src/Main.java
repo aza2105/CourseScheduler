@@ -1,8 +1,6 @@
 import java.awt.EventQueue;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.Set;
 
 public class Main {
@@ -17,7 +15,7 @@ public class Main {
 		HistoricalData.parseUserInput("historical.csv");
 		Parser parser = new Parser(Track.SECURITY);
 		parser.parseAll();
-
+		
 		// Starts the GUI Front of FrontEnd
 		FrontEnd frame = new FrontEnd();
 		frame.setVisible(true);
