@@ -1,14 +1,22 @@
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+/**
+ * Authors: Sam Friedman, Abdullah Al-Syed, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Section.java
+ * Description: This class implements a section, which consists of a course
+ * and its corresponding variables (day schedule, start time, end time, section
+ * number, instructor name (and object), and course timing.
+ */
+
 
 public class Section {
 
 	private String daySchedule;
     private Date startTime;
     private Date endTime;
-    private int sectionNumber;
-    private String instructor;
     private Instructor inst;
     private double dayNight;
 
@@ -18,8 +26,6 @@ public class Section {
     	
     	this.parent = c;
     	this.daySchedule = days;
-//    	this.startTime = start;
-//    	this.endTime = end;
 
     	if ( start != null ) {
     	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -42,15 +48,9 @@ public class Section {
     	}
     }
 
-/*    public Section(String t, String n, char a) {
-    	super(t,n,a);
-    	//inst = new Instructor(String nugget, String firstName, String lastName, String middleName, int instructorID);
-    	inst = new Instructor(null, null, null, null, 0);
-    } */
     
     public String toString() {
     	return parent.toString();
-//    	return super.toString();
     }
     
     // Return the String value ("gold", "silver") for nugget
@@ -94,5 +94,4 @@ public class Section {
     	System.out.println( "returning "+parent.getRequired()+" for RU");
     	return parent.getRequired();
     }
-    
 }
