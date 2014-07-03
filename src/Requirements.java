@@ -81,6 +81,10 @@ public class Requirements {
 		}//end for
 
 		//nested MAX to return the max of the three rule counts
+		System.out.println("Required Left: " + rulesLeft(Rule.REQUIREMENT) );
+		System.out.println("ELECTIVE Left: " + rulesLeft(Rule.ELECTIVE) );
+		System.out.println("BREADTH Left: " + rulesLeft(Rule.BREADTH) );
+		
 		return Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) );
 	}
 
