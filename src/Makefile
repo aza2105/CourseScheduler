@@ -25,7 +25,9 @@ CLASSES = \
 	  Utility.java	\
 	  GeneticAlgorithm.java	\
 	  Chromosome.java	\
-	  RuleTestMain.java
+	  RuleTestMain.java	\
+	  AScheduler.java       \
+	  ASemester.java
 
 default: classes
 
