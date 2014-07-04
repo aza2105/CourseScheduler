@@ -55,7 +55,8 @@ public class GeneticAlgorithm {
 			allGens.add(population); //keep all the populations inside allGens
 		}
 		
-		//now cycle through allGens and remove all the chromosomes that have duplicates in them
+		//now cycle through allGens and concat to make full schedules
+		//After, remove all the chromosomes that have duplicates in them
 		
 		while( !allGens.get(0).isEmpty() ) {
 			
@@ -97,6 +98,7 @@ public class GeneticAlgorithm {
 			
 			if (Requirements.rulesLeft(Rule.REQUIREMENT) == toAdd) {
 				//We know we need to add requirements to finish
+
 			}
 			if (Requirements.rulesLeft(Rule.ELECTIVE) == toAdd) {
 				//We know we need to add electives to finish
