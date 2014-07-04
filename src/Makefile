@@ -22,7 +22,10 @@ CLASSES = \
 	  Section.java	\
 	  Semester.java \
 	  Track.java	\
-	  Utility.java	
+	  Utility.java	\
+	  GeneticAlgorithm.java	\
+	  Chromosome.java	\
+	  RuleTestMain.java
 
 default: classes
 

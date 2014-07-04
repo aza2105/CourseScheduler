@@ -90,6 +90,7 @@ public class Requirements {
 		Integer max = Integer.valueOf( Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) ));
 		retVal.add( total + max );
 		retVal.add( max );
+		retVal.add(total);
 		//		return Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) );
 		return retVal;
 	}
