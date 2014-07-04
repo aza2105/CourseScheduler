@@ -44,6 +44,10 @@ public class ScheduleDisplay extends JFrame {
 			System.exit(1);
 		}
 
+		if (semesters == null) {
+			System.out.println("Null semester list. No schedule given.");
+			System.exit(1);
+		}
 		//set the scaling on the window
 		OFFSET = WIDTH / semesters.size();
 
