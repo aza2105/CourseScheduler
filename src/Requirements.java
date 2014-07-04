@@ -59,7 +59,7 @@ public class Requirements {
 	}
 
 	//returns the max of the 3 types of rules we have unmet
-	public static int rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
+	public static ArrayList<Integer> rulesUnmet(LinkedList<Course> completed) { //if it returns 0, then all the rules should be met
 
 		for( Rule rl : ruleList ) { //Reset the rules so each query is accurate
 			rl.resetStatus();				
@@ -81,11 +81,17 @@ public class Requirements {
 		}//end for
 
 		//nested MAX to return the max of the three rule counts
-		System.out.println("Required Left: " + rulesLeft(Rule.REQUIREMENT) );
-		System.out.println("ELECTIVE Left: " + rulesLeft(Rule.ELECTIVE) );
-		System.out.println("BREADTH Left: " + rulesLeft(Rule.BREADTH) );
-		
-		return Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) );
+//		System.out.println("Required Left: " + rulesLeft(Rule.REQUIREMENT) );
+//		System.out.println("ELECTIVE Left: " + rulesLeft(Rule.ELECTIVE) );
+//		System.out.println("BREADTH Left: " + rulesLeft(Rule.BREADTH) );
+
+		ArrayList<Integer> retVal = new ArrayList<Integer>();
+		Integer total = Integer.valueOf( rulesLeft(Rule.BREADTH) + rulesLeft(Rule.ELECTIVE) + rulesLeft(Rule.REQUIREMENT) );
+		Integer max = Integer.valueOf( Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) ));
+		retVal.add( total + max );
+		retVal.add( max );
+		//		return Math.max( Math.max(rulesLeft(Rule.BREADTH), rulesLeft(Rule.ELECTIVE)), rulesLeft(Rule.REQUIREMENT) );
+		return retVal;
 	}
 
 
