@@ -1,3 +1,17 @@
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: GeneticAlgorithm.java
+ * 
+ * The base class for the genetic algorithm implementation. It also holds a private Parse class
+ * to parse the input, which will be obsolete when/if this is integrated with the rest of the system.
+ * Right now this class is testing by running the RuleTestMain.java class, and is separate from
+ * most of the outside system. As such, it doesn't take prior courses into account as those would be
+ * specified through the GUI
+ * 
+ */
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
@@ -50,23 +64,59 @@ public class GeneticAlgorithm {
 			for(int i = 0; i < allGens.size(); i++) {
 				temp.concat(temp, allGens.get(i).poll());
 			}
-			//if (temp.containsDuplicates() == false)
+			if (temp.containsDuplicates() == false)
 				testSet.add(temp);
+			else {
+				temp.removeDuplicates();
+				testSet.add(temp);
+			}
 
 		}
 		
-		System.out.println("size before final: " + testSet.size());
+		System.out.println("size before PRUNE : " + testSet.size());
 
 		
-		finalRun(GENERATIONS,testSet,10);
+		for(int i = 0; i < testSet.size(); i++) {
+			
+			//if you cannot meet the requirements
+			if(testSet.get(i).getSize() + (Requirements.rulesUnmet(testSet.get(i).toRuleLL())).get(1) > 10 ) {
+				testSet.remove(i);
+				i--;
+			}
+		}
 		
+		System.out.println("size after PRUNE : " + testSet.size());
+		
+		ArrayList<Section> ultraList = new ArrayList<Section>();
+		ultraList.addAll(current);
+		ultraList.addAll(prior);
+		
+		for(int i = 0; i < testSet.size(); i++) { //we need to go through each set and try to add stuff
+			
+			int toAdd = Requirements.rulesUnmet(testSet.get(i).toRuleLL()).get(1);
+			
+			if (Requirements.rulesLeft(Rule.REQUIREMENT) == toAdd) {
+				//We know we need to add requirements to finish
+			}
+			if (Requirements.rulesLeft(Rule.ELECTIVE) == toAdd) {
+				//We know we need to add electives to finish
+			}
+			if (Requirements.rulesLeft(Rule.BREADTH) == toAdd) {
+				//We know we need to add breadth to finish
+			}
+			
+		}
+
+		
+		//finalRun(GENERATIONS,testSet,10);
+		/*
 		testSet.clear();
 
 		int size = population.size();
 		for(int i = 0; i < size; i++) {
 			testSet.add(population.poll());
 		}
-		
+		*/
 		System.out.println("Final test set size: " + testSet.size());
 		
 		//Now lets test to see how many schedules this thing might have completed
@@ -83,6 +133,7 @@ public class GeneticAlgorithm {
 			System.out.println("Required Left: " + Requirements.rulesLeft(Rule.REQUIREMENT) );
 			System.out.println("ELECTIVE Left: " + Requirements.rulesLeft(Rule.ELECTIVE) );
 			System.out.println("BREADTH Left: " + Requirements.rulesLeft(Rule.BREADTH) );
+			System.out.println("LENGTH : " + testSet.get(i).getSize());
 			System.out.println("---");
 		}
 

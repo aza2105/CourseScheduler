@@ -1,3 +1,16 @@
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Chromosome.java
+ * 
+ * Chromosome class for the Genetic Algorithm. A chromosome in this case is made up of
+ * a variable arrayList of section objects, and has methods for mutation, concatenation,
+ * calculating fitness, and detecting/removing duplicates
+ * 
+ * 
+ */
+
 import java.util.*;
 
 
@@ -45,6 +58,21 @@ public class Chromosome implements Comparable<Chromosome>{
 		}
 		
 		return false;
+	}
+	
+	public void addSection(Section s) {
+		
+		chromosome.add(s);
+	}
+	
+	public LinkedList<Course> toRuleLL() {
+		
+		LinkedList<Course> temp = new LinkedList<Course>();
+		for(int i = 0; i < chromosome.size(); i++) {
+			temp.add(chromosome.get(i).getParent());
+		}
+		
+		return temp;
 	}
 	
 	public void removeDuplicates() {
