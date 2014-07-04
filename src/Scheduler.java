@@ -228,7 +228,7 @@ public class Scheduler
 
 		// instantiate the root semester, which contains any courses previously
 		//  taken, considered as one semester
-		Semester sem = new Semester(0, -1, 0, 2014, null, null, rootInheritedCourses, 0.0);
+		Semester sem = new Semester(0, -1, 0, 2014, null, null, rootInheritedCourses, 0.0, 0.0);
 
 		// set the root to active
 		activeSemester = sem;
@@ -242,8 +242,15 @@ public class Scheduler
 		// track current depth
 		currentDepth = 0;
 
+		// nodes explored
+		int nodeCount = 1;
+
+		// keep track of time
+		long startTime = System.nanoTime();
 		
-		PriorityQueue<Semester> childSem = new PriorityQueue<Semester>();
+
+		
+		List<Semester> childSem = new ArrayList<Semester>();
 		
 		while (true)
 		{
@@ -275,6 +282,10 @@ public class Scheduler
 					for( int x = 0; x < optimalSemesterList.size(); x++ ) {
 						System.out.println( optimalSemesterList.get(x));
 					}					
+
+					System.out.println( " Nodes explored: "+nodeCount);
+					System.out.println( " Time taken: "+(( System.nanoTime() - startTime ) / 1000000000 )+"s");
+					
 					break;
 				}
 				
@@ -284,26 +295,15 @@ public class Scheduler
 				if (activeSemester.getDepth() <= numCourses )		{
 
 					childSem = activeSemester.addChild();
+					Collections.sort( childSem );
 					
-					ArrayList<Semester>temp = new ArrayList<Semester>();
-					
-					// add new children to the frontier
-					while ( childSem.size() > 0 ) {
-						Semester cs = childSem.poll();
-						temp.add( cs );
-					}
-
-					// Randomize results
-//					long seed = System.nanoTime();
-//					Collections.shuffle(temp, new Random(seed));
-
 					// reverse the ordering of the pqueue and stack
-					for( int i=temp.size()-1; i>=0; i-- ) {
-						frontier.push( temp.get(i));
+					for( int i=childSem.size()-1; i>=0; i-- ) {
+						frontier.push( childSem.get(i));
 					}
 					
+					nodeCount++;
 					activeSemester = frontier.pop();
-					
 				}
 				
 				

@@ -78,12 +78,18 @@ public class Semester implements Comparable<Semester> {
 	private Set<Course> inheritedCourses;
 	private Set<Section> poolOfCoursesForChildSemesters;
 	private double utility;
-
+	private double hvalue;
+	
+	protected static Random r = new Random();
+	private double rangeMin = -0.00001;
+	private double rangeMax = 0.00001;
+	
 	/*
 	 * CONSTRUCTORS
 	 */
 	public Semester(int depth, int term, int sID, int sYear, Set<Section> sect,
-			Semester pSemester, Set<Course> iCourses, double inheritedPathCost)
+			Semester pSemester, Set<Course> iCourses, double inheritedPathCost, 
+			double hX )
 
 	{
 		combinationSets = new HashSet<Set<Section>>();
@@ -95,6 +101,7 @@ public class Semester implements Comparable<Semester> {
 		this.parentSemester = pSemester;
 		this.inheritedCourses = iCourses;
 		this.utility = inheritedPathCost;
+		this.hvalue = hX;
 		this.children = new ArrayList<Semester>();
 
 		this.id = nodeID;
@@ -168,6 +175,10 @@ public class Semester implements Comparable<Semester> {
 		return poolOfCoursesForChildSemesters;
 	}
 
+	public double getHvalue() {
+		return hvalue;
+	}
+	
 	public double getUtility() {
 		return utility;
 	}
@@ -196,7 +207,7 @@ public class Semester implements Comparable<Semester> {
 			}
 		}
 
-		semesterString += " at depth " + depth + " with cost " + utility;
+		semesterString += " at depth " + depth + " with cost " + utility + " h(x)="+hvalue;
 
 		return semesterString;
 	}
@@ -242,9 +253,9 @@ public class Semester implements Comparable<Semester> {
 	}
 
 	// add a new child
-	public PriorityQueue<Semester> addChild() {
+	public ArrayList<Semester> addChild() {
 
-		PriorityQueue<Semester> retVal = new PriorityQueue<Semester>();
+		ArrayList<Semester> retVal = new ArrayList<Semester>();
 
 		Set<Course> childsInheritance = new HashSet<Course>();
 
@@ -329,7 +340,9 @@ public class Semester implements Comparable<Semester> {
 			newPossibility.add(candidate);
 
 			// determine the utility of the child
-			double childUtility = Utility.getUtility(newPossibility);
+			double childUtility = Utility.getUtility(newPossibility) + 
+					rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+			
 
 			// add the courses we're considering to our inherited courses in a
 			// LL
@@ -353,8 +366,6 @@ public class Semester implements Comparable<Semester> {
 			ArrayList<Integer> reqScore = new ArrayList<Integer>();
 			reqScore = Requirements.rulesUnmet(validityCheckList);
 
-			utility += ( reqScore.get(0) * 20 );
-
 			if (reqScore.get(1) > (Preferences.prefs.getTotalCourses()
 					+ Preferences.prefs.coursesTaken.size() - validityCheckList
 						.size())) {
@@ -363,6 +374,20 @@ public class Semester implements Comparable<Semester> {
 				continue;
 
 			}
+
+			// set the value of our heuristic function
+			hvalue = utility + childUtility + ( reqScore.get(0) *
+					250 );
+					
+					/*
+					utility + childUtility + ( reqScore.get(1) +
+					( reqScore.get(0) / ( Preferences.prefs.getTotalCourses()
+							- Preferences.prefs.coursesTaken.size() - ( depth + 1 ) )
+							* 1000 ) / ( depth + 1 ) );
+			*/
+					
+					//( reqScore.get(0) * 15 );
+
 
 			Set<Section> childSections = new HashSet<Section>();
 
@@ -374,7 +399,7 @@ public class Semester implements Comparable<Semester> {
 
 			Semester newChild = new Semester(depth + 1, childTerm,
 					nextSemesterID, nextSemesterYear, childSections, this,
-					childsInheritance, utility + childUtility);
+					childsInheritance, utility + childUtility, hvalue );
 
 			retVal.add(newChild);
 
@@ -415,7 +440,7 @@ public class Semester implements Comparable<Semester> {
 	
 	@Override
 	public int compareTo(Semester s) {
-		if (this.utility < s.getPathUtility()) {
+		if (this.hvalue < s.getHvalue()) {
 			return -1;
 		}
 		return 1;
