@@ -1,7 +1,10 @@
-import java.util.*;
-
-
-/*
+/**
+ * Authors: Abdullah Al-Syed, Sam Friedman, Tim Waterman, Martin Wren
+ * Date: 7/3/14
+ * 
+ * Title: Semester.java
+ * 
+ *
  * Semester here refers to an object containing a proposed semester schedule
  * For instance, a proposed schedule for Fall 2014 would be 
  * considered an instance of Semester. A different proposed schedule
@@ -18,11 +21,9 @@ import java.util.*;
  * generated, and their path costs, to Scheduler, which maintains a 
  * priority queue of the semester object nodes to expand next.
  * 
- * remove this last comment (check with Marty)
- * Scheduler also keeps the k top complete generated goal state schedules.
- * It will handle pruning on our graph's frontier by comparing path costs 
- * against the minimum of the top x complete generated goals' path cost.
  */
+import java.util.*;
+
 
 public class Semester implements Comparable<Semester>
 {	
@@ -87,7 +88,7 @@ public class Semester implements Comparable<Semester>
     /*
      * CONSTRUCTORS
      */ 
-    public Semester(int depth, int term, int sID, int sYear, Set<Section> sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
+    public Semester(int depth, int term, int sID, int sYear, Set<Section> sect, Semester pSemester, Set<Course> iCourses, double inheritedPathCost) 
 //    public Semester(int depth, int term, int sID, int sYear, Section sect, Semester parentSemester, Set<Course> inheritedCourses, double inheritedPathCost) 
 
     {
@@ -97,8 +98,8 @@ public class Semester implements Comparable<Semester>
     	this.semesterID = sID;
     	this.semesterYear = sYear;
     	this.sections = sect;
-    	this.parentSemester = parentSemester;
-    	this.inheritedCourses = inheritedCourses;
+    	this.parentSemester = pSemester;
+    	this.inheritedCourses = iCourses;
     	this.utility = inheritedPathCost;
     	this.children = new ArrayList<Semester>();
 
@@ -107,12 +108,12 @@ public class Semester implements Comparable<Semester>
     		for ( Section s : sections )
     			System.out.println("Inherited "+s);
   */  	
-    
+    	System.out.println( this );
     	
     	this.id = nodeID;
     	nodeID++;
     	
-    	if ( Scheduler.semesterBreakpoints.contains( Integer.valueOf( depth ))) {
+    	if ( Scheduler.semesterBreakpoints.contains( Integer.valueOf( depth+1 ))) {
 
     //		System.out.println( "Found semester breakpoiint!");
     		//if current semester is a fall semester
@@ -138,12 +139,12 @@ public class Semester implements Comparable<Semester>
     	 * add current semester's courses,
     	 * and then add all previous semester courses
     	 */
-    	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
+/*    	Set<Course> childSemesterInheritedCourses = new HashSet<Course>();
     	if ( sections != null ) {
     		childSemesterInheritedCourses.addAll(sectionsToCourses( this.sections )); 
     	}
     	childSemesterInheritedCourses.addAll(this.inheritedCourses);
-    	
+  */  	
     	/*
     	 * subtract all inherited courses as well as current semester courses 
     	 * aka sections from set of possible courses for child semester
@@ -233,14 +234,14 @@ public class Semester implements Comparable<Semester>
     }
     
     //we may never use this method
-    public void setPoolOfCoursesForChildSemesters(Set<Section> allCourses)
+/*    public void setPoolOfCoursesForChildSemesters(Set<Section> allCourses)
     {
     	//subtract all inherited courses as well as current semester courses 
     	//aka sections from set of all courses 
     	allCourses.removeAll(inheritedCourses);
     	allCourses.removeAll(sections);
     	this.poolOfCoursesForChildSemesters = allCourses;
-    }
+    } */
     
     public double getUtility()
     {
@@ -353,8 +354,50 @@ public class Semester implements Comparable<Semester>
 
     
     
+    public int getTerm() {
+    	return term;
+    }
     
-    
+    // return a linked list for display
+    public LinkedList<Semester> getFinal() {
+    	
+    	LinkedList<Semester> rv = new LinkedList<Semester>();
+
+    	System.out.println( " Considering diplay LList at depth "+depth);
+    	
+    	if ( depth == 0 ) {
+    		return rv;
+    	}
+    	
+    	if ( depth == Preferences.prefs.getTotalCourses() - Preferences.prefs.coursesTaken.size() ) {
+    		rv = getParentSemester().getFinal();
+
+        	if ( term != getParentSemester().getTerm() ) {
+        		rv.addLast( getParentSemester() );
+        	}
+        	rv.addLast( this );
+    		
+    		return rv;
+    	}
+    		
+    	if ( term != getParentSemester().getTerm() ) {
+
+    		System.out.println( "mismatch detected with parent");
+    		if ( depth == 1 ) {
+    			return rv;
+    		}
+    		rv = getParentSemester().getFinal();
+//    		if ( this != null ) {
+    				
+    		rv.addLast( getParentSemester() );
+//    		}
+    		return rv;
+    }
+    	else {
+    		rv = getParentSemester().getFinal(); 
+    	}
+    	return rv;
+    }
     
     
     // add a new child 
@@ -381,27 +424,86 @@ public class Semester implements Comparable<Semester>
  *
  *
  */
+		Set<Course> childsInheritance = new HashSet<Course>();
     	
     	int childTerm = term;
-    	List<Section> inheritedSections = new ArrayList<Section>();
-    	if ( sections != null ) {
-    		inheritedSections.addAll( sections );
-    	}
+//    	List<Section> inheritedSections = new ArrayList<Section>();
+//    	if ( sections != null ) {
+//    		inheritedSections.addAll( sections );
+//    	}
     	
     	// if our next course would start a new semester, we need to know now
     	if ( Scheduler.semesterBreakpoints.contains( Integer.valueOf( depth+1 ))
     			|| term == -1 ) {
 
-  //  		System.out.println( "BREAKPOINT depth="+depth+" term="+term);
+    		// this is considering classes from a new term.  if the complete
+    		//  offerings of this term and subsequent terms could not complete
+    		//  the track, remove this node.
+    		LinkedList<Course> validityCheckList = new LinkedList<Course>( );
+    		for ( int i=term+1; i<Preferences.prefs.getNumSems(); i++ ) {
+    			for ( Section candidate : Scheduler.directoryOfClasses.get( i )) {
+    				validityCheckList.add( sectionsToCourses( candidate ));
+    			}
+    		}
+    		// add sections taken this semester
+    		if ( sections != null ) 
+    		for ( Section s : sections ) {
+    			validityCheckList.add( sectionsToCourses( s ));
+    		}
+    		// add inherited courses from previous semesters
+    		for ( Course c : inheritedCourses ) {
+    			validityCheckList.add( c );
+    		}
+    		
+    		ArrayList<Integer> reqScore = new ArrayList<Integer>();
+    		reqScore = Requirements.rulesUnmet( validityCheckList );
+
+    		System.out.println( "Rules Unmet Max: "+reqScore.get(1) );
+    		
+    		if ( reqScore.get(1) > 0 ) {
+    				// We can never end up valid
+    			return retVal;    			
+    		}
+    		
+    		
+    		
+    		validityCheckList.clear();
+    		
+    		for ( Course c : childsInheritance ) {
+    			if ( c != null ) {
+    				validityCheckList.add( c );
+  //  				System.out.println( "C adding "+c+" for consideration");
+    			}
+    		}	
+//    		System.out.println( "BREAKPOINT depth="+depth+" term="+term);
     		childTerm = term + 1;
-    		inheritedSections.clear();
+    		if ( sections != null ) {
+    			for ( Course c : sectionsToCourses( sections )) {
+    				childsInheritance.add( c );
+    			}
+    		
+//    			sections.clear();
+    		}
+    			//  		inheritedSections.clear();
     	}
+
+		// no matter what happens, add previous semester courses to the
+		//   next semester's lead course
+    	System.out.println( inheritedCourses );
+    	for ( Course c : inheritedCourses ) {
+//			System.out.println( "added "+c+" to inherited courses for children");
+			childsInheritance.add( c );
+		}
+
+    	
     	// find the section offerings for this term
 
  //   	System.out.println( "Found depth to be " + depth+" child term to be "+childTerm);
     	// build a list for holding possible children
     	ArrayList<ArrayList<Section>> possibleSemesters = new ArrayList<ArrayList<Section>>();
 
+    	int minReq = 99999;
+    	
 //    	System.out.println( Scheduler.directoryOfClasses.get( childTerm ));
     	for ( Section candidate : Scheduler.directoryOfClasses.get( childTerm )) {
 
@@ -418,7 +520,7 @@ public class Semester implements Comparable<Semester>
     		}
     		
     		ArrayList<Section> newPossibility = new ArrayList<Section>();
-    		if ( sections != null ) {
+    		if ( sections != null && term == childTerm ) {
     			newPossibility.addAll( sections );
     		}
     		newPossibility.add( candidate );
@@ -429,8 +531,19 @@ public class Semester implements Comparable<Semester>
     		double childUtility = Utility.getUtility( newPossibility );
 
     		// add the courses we're considering to our inherited courses in a LL
-    		LinkedList<Course> validityCheckList = new LinkedList<Course>( inheritedCourses );
+    		LinkedList<Course> validityCheckList = new LinkedList<Course>( );
+    		for ( Course c : childsInheritance ) {
+    			if ( c != null ) {
+    				validityCheckList.add( c );
+  //  				System.out.println( "C adding "+c+" for consideration");
+    			}
+    			else {
+  //  				System.out.println("C adding "+c+" for consid, nully");
+    			}
+    		
+    		}
     		for ( Section s : newPossibility ) {
+  //  			System.out.println( "S adding "+s.getParent()+" for consideration");
     			validityCheckList.add( s.getParent() );
     		}
     		
@@ -438,29 +551,45 @@ public class Semester implements Comparable<Semester>
     		//  of courses we can choose in subsequent semesters, we cannot complete
     		//  the degree as requested and will not create the child node.
 
-    		if ( Requirements.rulesUnmet( validityCheckList ) > 
-    			( Preferences.prefs.getTotalCourses() - validityCheckList.size() )) {
+    		ArrayList<Integer> reqScore = new ArrayList<Integer>();
+    		reqScore = Requirements.rulesUnmet( validityCheckList );
+  
+//    		utility *= reqScore.get(0) * reqScore.get(1) / 20 ;
+//    		System.out.println( "Rules unmet: "+reqScore.get(0)+" Unmet Max: "+reqScore.get(1)+" Courses in check list: "+validityCheckList.size()+" Total: "+(Preferences.prefs.getTotalCourses() + Preferences.prefs.coursesTaken.size() - validityCheckList.size() )+" "+ childsInheritance +sections+candidate);
+    		
+    		if ( reqScore.get(1) > 
+    			( Preferences.prefs.getTotalCourses() + Preferences.prefs.coursesTaken.size() - validityCheckList.size() )) {
     			
     			// We can never end up valid
     			continue;    			
+
+    		}
+/*
+    		if ( reqScore.get(0) + 4 > minReq ) {
+    			continue;
     		}
 
+
+    		if ( reqScore.get(0) < minReq ) {
+    			retVal.clear();
+    		}
+*/    		
         	Set<Section> childSections = new HashSet<Section>();
-        	
+
         	if ( sections != null && term == childTerm ) {
         		childSections.addAll( sections );
         	}
+        	
         	childSections.add( candidate );
 
         	
         	
         	// set up the child's inherited course list
-    		Set<Course> childsInheritance = new HashSet<Course>();
-    		if ( this.childrenSemestersInheritedCourses != null ) {
-    			childsInheritance.addAll( this.childrenSemestersInheritedCourses );
-    		}
+//    		if ( this.inheritedCourses != null ) {
+//    			childsInheritance.addAll( this.inheritedCourses );
+//    		}
 
-    		childsInheritance.addAll( sectionsToCourses( childSections ) );
+//    		childsInheritance.addAll( sectionsToCourses( childSections ) );
 
         	
     		Semester newChild = new Semester( depth + 1, childTerm, nextSemesterID, nextSemesterYear,
@@ -468,6 +597,7 @@ public class Semester implements Comparable<Semester>
 
     		
     		retVal.add( newChild );  
+    		
     		
     	}    
     	
@@ -495,6 +625,7 @@ public class Semester implements Comparable<Semester>
 		// add the child's inheritance by combining this node's inheritance with 
 		//   the sections it added
 		
+    	
 		
 /*
 		System.out.println( "Added a new child at depth "+(depth+1)+" with section string "+sectionCode+", cost="+(childUtility+utility));
@@ -510,12 +641,15 @@ public class Semester implements Comparable<Semester>
 		// return child to Scheduler for queueing
 		return newChild;
   */  	
+    
+
     }
     
     
+
     
     	
-	
+/*	
     // return a set of courses defined to match this semester's courses taken
     public ArrayList<Course> getCourses( ) {
     	ArrayList<Course> t = new ArrayList<Course>( this.inheritedCourses );
@@ -524,7 +658,8 @@ public class Semester implements Comparable<Semester>
     	}
     	return t;
     }
-
+*/
+        
 
     // convert a set of sections to a set of courses
     private static Set<Course> sectionsToCourses( Set<Section> givenSet ) {
