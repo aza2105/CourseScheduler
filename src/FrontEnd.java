@@ -555,7 +555,7 @@ public class FrontEnd extends JFrame {
 
 						LinkedList<Semester> test = new LinkedList<Semester>();
 						test = s.uniformCostSearch();
-						test.remove(0);
+						//test.remove(0);
 						ScheduleDisplay frame2 = new ScheduleDisplay();
 						frame2.giveSchedule(test, 1);
 						frame2.setVisible(true);
