@@ -302,8 +302,8 @@ public class Semester implements Comparable<Semester> {
 
 			childTerm = term + 1;
 			if (sections != null) {
-				for (Course c : sectionsToCourses(sections)) {
-					childsInheritance.add(c);
+				for (Section s : sections) {
+					childsInheritance.add(s.getParent());
 				}
 			}
 		}
@@ -327,9 +327,17 @@ public class Semester implements Comparable<Semester> {
 					continue;
 				}
 			}
-
+			
 			// already defined in previous semesters
-			if (inheritedCourses.contains(sectionsToCourses(candidate))) {
+			boolean dupeFound = false;
+			for( Course c : childsInheritance ) {
+//				System.out.println( "Comparing "+c.getInternal()+" and "+candidate.getParent().getInternal());
+				if ( c.getInternal().equals( candidate.getParent().getInternal() )) {
+					dupeFound = true;
+					continue;
+				}
+			}
+			if ( dupeFound == true ) {
 				continue;
 			}
 
@@ -379,15 +387,6 @@ public class Semester implements Comparable<Semester> {
 			hvalue = utility + childUtility + ( reqScore.get(0) *
 					250 );
 					
-					/*
-					utility + childUtility + ( reqScore.get(1) +
-					( reqScore.get(0) / ( Preferences.prefs.getTotalCourses()
-							- Preferences.prefs.coursesTaken.size() - ( depth + 1 ) )
-							* 1000 ) / ( depth + 1 ) );
-			*/
-					
-					//( reqScore.get(0) * 15 );
-
 
 			Set<Section> childSections = new HashSet<Section>();
 

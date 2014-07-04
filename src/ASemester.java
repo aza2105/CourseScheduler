@@ -302,8 +302,8 @@ public class ASemester implements Comparable<ASemester> {
 
 			childTerm = term + 1;
 			if (sections != null) {
-				for (Course c : sectionsToCourses(sections)) {
-					childsInheritance.add(c);
+				for (Section s : sections) {
+					childsInheritance.add(s.getParent());
 				}
 			}
 		}
@@ -328,11 +328,24 @@ public class ASemester implements Comparable<ASemester> {
 				}
 			}
 
+			
 			// already defined in previous semesters
-			if (inheritedCourses.contains(sectionsToCourses(candidate))) {
+			boolean dupeFound = false;
+			for( Course c : childsInheritance ) {
+//				System.out.println( "Comparing "+c.getInternal()+" and "+candidate.getParent().getInternal());
+				if ( c.getInternal().equals( candidate.getParent().getInternal() )) {
+					dupeFound = true;
+					continue;
+				}
+			}
+			if ( dupeFound == true ) {
 				continue;
 			}
-
+			/*
+			if (inheritedCourses.contains(candidate.getParent())) {
+				continue;
+			}
+*/
 			ArrayList<Section> newPossibility = new ArrayList<Section>();
 			if (sections != null && term == childTerm) {
 				newPossibility.addAll(sections);
