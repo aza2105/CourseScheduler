@@ -264,7 +264,7 @@ public class Scheduler
 				if (succeedsGoalTest(activeSemester))
 				{
 					optimalSemesterList.addFirst(activeSemester);
-					System.out.println( activeSemester );
+					
 					//backtrack up to the root to get the schedules for each semester
 					//along the path from the root to the goal semester
 
