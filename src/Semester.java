@@ -225,8 +225,8 @@ public class Semester implements Comparable<Semester> {
 			return rv;
 		}
 
-		if (depth == Preferences.prefs.getTotalCourses()
-				- Preferences.prefs.coursesTaken.size()) {
+		if (depth == Preferences.prefs.getTotalCourses() ) {
+//				- Preferences.prefs.coursesTaken.size()) {
 			rv = getParentSemester().getFinal();
 
 			if (term != getParentSemester().getTerm()) {
