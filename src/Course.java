@@ -206,6 +206,7 @@ public class Course {
 
 
 	public boolean probOffered( String season, String year ) {
+
 		if ( season.equals( 1 ) ) {
 			season = "Fall";
 		}
@@ -217,6 +218,11 @@ public class Course {
 
 		//		System.out.print( "Checking probability offered for "+this.toString()+": term is "+season+" "+year);
 
+		if ( 1 == 1 ) {
+			return true;
+
+		}
+		
 		if ( !this.offerings.containsKey( season ) ) {
 			//			System.out.println(":FALSE!");
 			return false;
