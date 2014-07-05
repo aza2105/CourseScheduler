@@ -14,6 +14,8 @@ executing 'java RuleTestMain'
 
 File List:
 src/
+        AScheduler.java
+        ASemester.java
         Chromosome.java
         Course.java
         FrontEnd.java
