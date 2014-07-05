@@ -107,7 +107,7 @@ public class AScheduler
 		// get the number of semesters to consider
 		maxDepth = Preferences.prefs.getNumSems();
 
-		numCourses = Preferences.prefs.getTotalCourses() - Preferences.prefs.coursesTaken.size();
+		numCourses = Preferences.prefs.getTotalCourses();// - Preferences.prefs.coursesTaken.size();
 	
 		System.out.println( "Generating "+numCourses+" courses over "+maxDepth+" semesters");
 		

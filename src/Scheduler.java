@@ -107,7 +107,7 @@ public class Scheduler
 		// get the number of semesters to consider
 		maxDepth = Preferences.prefs.getNumSems();
 
-		numCourses = Preferences.prefs.getTotalCourses() - Preferences.prefs.coursesTaken.size();
+		numCourses = Preferences.prefs.getTotalCourses();// - Preferences.prefs.coursesTaken.size();
 	
 		System.out.println( "Generating "+numCourses+" courses over "+maxDepth+" semesters");
 		
@@ -255,6 +255,7 @@ public class Scheduler
 		while (true)
 		{
 
+			
 			// failure condition. optimal not found and nothing to observe
 			if (frontier.isEmpty())
 			{
